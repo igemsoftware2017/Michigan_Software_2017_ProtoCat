@@ -1,0 +1,1 @@
+// This is this the js file for global functions
