@@ -17,7 +17,7 @@ class Protocol_Category(models.Model):
 	title = models.TextField()
 	author = models.ForeignKey(User)
 	description = models.TextField()
-	parent_category = models.ForeignKey('self')
+	parent_category = models.ForeignKey('self', blank=True, null=True)
 
 class Reagent(models.Model):
 	name = models.TextField()
@@ -33,6 +33,7 @@ class Protocol(models.Model):
 	number_of_ratings = models.IntegerField(default=0)
 	sum_of_ratings = models.IntegerField(default=0)
 	# many branching protocols to one parent protocol
-	last_revision = models.ForeignKey('self')
+	last_revision = models.ForeignKey('self', blank=True, null=True)
 	# many different protocols can use one reagent, one protocol can use many reagents
 	reagents = models.ManyToManyField(Reagent)
+	# still need to add steps, which could possible be a separate class instead of just text
