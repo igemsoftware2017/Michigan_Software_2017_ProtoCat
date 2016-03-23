@@ -1,1 +1,1 @@
-All static files will go in here(css, javascript, images) in the appropiate folders
+All static files will go in here (css, javascript, images) in the appropriate folders
