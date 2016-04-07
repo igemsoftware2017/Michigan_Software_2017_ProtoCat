@@ -9,3 +9,4 @@ Kyle LaChance
 Daniel Dineen
 Tyler Del Rose
 Josh Abramson
+Kyle Cochrane
