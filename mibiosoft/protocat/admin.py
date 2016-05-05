@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import ProfileInfo, Reagent, Category, Protocol, ProtocolStep, ReagentForProtocol, Rating
+from .models import ProfileInfo, Reagent, Category, Protocol, ProtocolStep, ReagentForProtocol, ProtocolRating, TextReagent
 
 
 
@@ -21,7 +21,7 @@ class ReagentAdmin(admin.ModelAdmin):
 		model = Reagent
 
 class ProtocolAdmin(admin.ModelAdmin):
-	list_display = ["__str__", "is_scaleable", "is_searchable", "get_category", "get_reagents", "author", "last_revision", "upload_date"]
+	list_display = ["__str__", "get_total_ratings", "get_number_ratings", "scaleable", "searchable", "category", "get_reagents", "author", "last_revision", "upload_date"]
 	class Meta:
 		model = Protocol
 
@@ -31,14 +31,19 @@ class ReagentForProtocolAdmin(admin.ModelAdmin):
 		model = ReagentForProtocol
 
 class ProtocolStepAdmin(admin.ModelAdmin):
-	list_display = ["__str__", "get_protocol", "get_reagents", "action"]
+	list_display = ["__str__", "protocol", "action"]
 	class Meta:
 		model = ProtocolStep
 
-class RatingAdmin(admin.ModelAdmin):
+class ProtocolRatingAdmin(admin.ModelAdmin):
 	list_display = ["person", "score", "protocol"]
 	class Meta:
-		model = Rating
+		model = ProtocolRating
+
+class TextReagentAdmin(admin.ModelAdmin):
+	list_display = ["__str__", "protocol"]
+	class Meta:
+		model = TextReagent
 
 # Register your models here.
 
@@ -48,4 +53,5 @@ admin.site.register(Reagent, ReagentAdmin)
 admin.site.register(Protocol, ProtocolAdmin)
 admin.site.register(ProtocolStep, ProtocolStepAdmin)
 admin.site.register(ReagentForProtocol, ReagentForProtocolAdmin)
-admin.site.register(Rating, RatingAdmin)
+admin.site.register(ProtocolRating, ProtocolRatingAdmin)
+admin.site.register(TextReagent, TextReagentAdmin)
