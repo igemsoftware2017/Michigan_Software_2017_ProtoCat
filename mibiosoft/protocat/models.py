@@ -11,7 +11,7 @@ So things like, User, Protocol, Reagents, etc.
 
 # connected to built in user but allow a picture
 class ProfileInfo(models.Model):
-	user = models.OneToOneField(User, on_delete=models.CASCADE)
+	user = models.OneToOneField(User, on_delete = models.CASCADE)
 	profile_image = models.FileField(blank = True, null = True)
 
 	def __str__(self):
@@ -31,6 +31,7 @@ class Category(models.Model):
 	title = models.TextField()
 	author = models.ForeignKey(User)
 	description = models.TextField()
+	upload_date = models.DateTimeField(auto_now_add = True)
 	parent_category = models.ForeignKey('self', blank = True, null = True)
 
 	def __str__(self):
@@ -39,6 +40,8 @@ class Category(models.Model):
 # the generic reagent that has links to the correct associated_reagents
 class Reagent(models.Model):
 	name = models.TextField()
+	molecular_weight = models.DecimalField(max_digits = 50, decimal_places = 25,
+											blank = True, null = True)
 	picture = models.FileField(blank = True, null = True)
 	website = models.URLField(blank = True, null = True)
 
@@ -53,7 +56,6 @@ class Protocol(models.Model):
 	title = models.TextField()
 	author = models.ForeignKey(User)
 	description = models.TextField()
-	notes = models.TextField(blank = True, null = True)
 
 	# Allow the revisionist to describe changes made
 	change_log = models.TextField()
@@ -93,7 +95,7 @@ class Protocol(models.Model):
 		all_ratings = ProtocolRating.objects.filter(protocol = self)
 		count = all_ratings.count()
 		if (count == 0):
-			return "No ratings"
+			return "N/A"
 		total = 0
 		for rating in all_ratings:
 			total = total + rating.score
@@ -109,7 +111,6 @@ class TextReagent(models.Model):
 
 # the data for each protocol step
 class ProtocolStep(models.Model):
-	# required fields
 	action = models.TextField()
 
 	# 2 denotes isConstant, and 3 denotes isLinear for
@@ -136,6 +137,14 @@ class ProtocolStep(models.Model):
 	def get_protocol(self):
 		return str(self.protocol)
 
+	def get_understandable_scaling_type(self):
+		if (self.time_scaling == 1):
+			return "Constant"
+		elif (self.time_scaling == 2):
+			return "Linear Scaling"
+		else:
+			return None
+
 # this is the instance of a reagent in a protocol step
 class ReagentForProtocol(models.Model):
 	# 1 denotes isFiller, 2 denotes isConstant, and 3 denotes isLinear for
@@ -156,16 +165,26 @@ class ReagentForProtocol(models.Model):
 	)
 	reagent_type = models.IntegerField(default = 1, choices=REAGENT_TYPES)
 
+
 	amount = models.DecimalField(max_digits = 50, decimal_places = 25)
 
-	# (L, mL, g, kg, M), might be better if we had a list of these stored
-	unit = models.CharField(max_length = 10)
+	UNIT_TYPES = (
+		('L', 'Liters'),
+		('g', 'Grams')
+	)
+
+	unit = models.CharField(max_length = 10, choices = UNIT_TYPES)
 
 	# link it and other of the same type to the right protocol
 	protocol = models.ForeignKey(Protocol)
 
 	# link the step to the correct reagents
 	protocol_step = models.ForeignKey(ProtocolStep)
+	protocol_step_number = models.IntegerField();
+
+	number_in_step = models.IntegerField()
+
+	significant_figures = models.IntegerField();
 
 	# link it to the correct generic reagent
 	reagent = models.ForeignKey(Reagent)
@@ -200,7 +219,9 @@ class ProtocolRating(models.Model):
 	protocol = models.ForeignKey(Protocol)
 
 # allow for each user to write their own private notes on each protocol step
-class ProtocolStepNotes(models.Model):
+class ProtocolStepNote(models.Model):
 	person = models.ForeignKey(ProfileInfo)
 	protocol_step = models.ForeignKey(ProtocolStep)
+	protocol = models.ForeignKey(Protocol)
+	upload_date = models.DateTimeField(auto_now_add = True)
 	note = models.TextField()

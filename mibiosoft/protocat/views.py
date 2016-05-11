@@ -42,17 +42,45 @@ def protocol(request, protocol_id):
 	protocol = Protocol.objects.get(id = protocol_id)
 	protocol_steps = ProtocolStep.objects.filter(protocol = protocol).order_by('step_number')
 	protocol_reagents = ReagentForProtocol.objects.filter(protocol = protocol)
+	next_protocols = Protocol.objects.filter(last_revision = protocol)
+	step_notes = ProtocolStepNote.objects.filter(protocol = protocol)
+	try:
+		text_reagents = TextReagent.objects.get(protocol = protocol)
+	except TextReagent.DoesNotExist:
+		text_reagents = None
+
+	aggregated_reagents = None
+	if (protocol_reagents != None):
+		aggregated_reagents = list(protocol_reagents[:1])
+		for protocol_reagent in protocol_reagents:
+			to_add = True
+			for aggregated_reagent in aggregated_reagents:
+				if (protocol_reagent.reagent_type == 1 and aggregated_reagent.reagent == protocol_reagent.reagent and aggregated_reagent.unit == protocol_reagent.unit):
+					to_add = False
+
+			if (to_add):
+				aggregated_reagents.append(protocol_reagent)
 
 	context = {
 		'title': 'ProtoCat',
 		'protocol': protocol,
 		'protocol_steps': protocol_steps,
+		'protocol_reagents': protocol_reagents,
+		'next_protocols': next_protocols,
+		'step_notes': step_notes,
+		'text_reagents': text_reagents,
+		'aggregated_reagents': aggregated_reagents,
 	}
 
 	print ("RENDERING PROTOCOL")
+	print(protocol)
 	for e in protocol_steps:
 		print(e)
 	for e in protocol_reagents:
 		print(e)
+	print()
+	print()
+	for e in aggregated_reagents:
+		print(e)
 
-	return render(request, 'index.html', context)
+	return render(request, 'protocol.html', context)

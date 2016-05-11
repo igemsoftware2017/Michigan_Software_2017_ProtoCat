@@ -2,6 +2,385 @@
 
 {% block content %}
 
+<script>
+	var reagents = [];
+	{% for reagent in protocol_reagents %}
+	var single_reagent = {
+		"number_in_step": {{ reagent.number_in_step }},
+		"scaling_type": {{ reagent.scaling_type }},
+		"amount": {{ reagent.amount }},
+		"unit": "{{ reagent.unit }}",
+		"significant_figures": {{ reagent.significant_figures }},
+		"reagent": "{{ reagent.reagent }}",
+		"reagent_type": {{ reagent.reagent_type }},
+		"protocol_step_number": {{ reagent.protocol_step_number }},
+		"reagent_id": {{ reagent.reagent.id }},
+	};
+	//var javascript_single_reagent = JSON.parse(single_reagent);
+	reagents.push(single_reagent);
+	{% endfor %}
+
+	var reactants;
+	var intermediaries;
+	var products;
 
 
+
+
+
+	function multiply_everything(factor) {
+		for (var reagent_num in reagents) {
+			reagents[reagent_num].amount *= factor;
+		}
+		reactants = get_list_of_reagent_type(reagents, "1");
+		reactants = get_display_reagent_type(reagents, reactants, "1");
+		intermediaries = get_list_of_reagent_type(reagents, "2");
+		intermediaries = get_display_reagent_type(reagents, intermediaries, "2");
+		products = get_list_of_reagent_type(reagents, "3");
+		products = get_display_reagent_type(reagents, products, "3");
+		update_visual_data();
+		console.log(reactants);
+		console.log(intermediaries);
+		console.log(products);
+	}
+
+
+
+	function get_display_reagent_type(reagents, given_list, type) {
+		for (var i in given_list) {
+			for (var j in reagents) {
+				if (reagents[j].reagent_type == type) {
+					if (reagents[j].reagent_id == given_list[i].reagent_id) {
+						if (reagents[j].unit == given_list[i].unit) {
+							given_list[i].amount += reagents[j].amount;
+						}
+					}
+				}
+			}
+		}
+		return given_list;
+	}
+
+
+
+	function get_list_of_reagent_type(reagents, type) {
+		var result = [];
+		for (var reagent_num in reagents) {
+			reagent = reagents[reagent_num];
+			if (reagent.reagent_type == type) {
+				var put_in = true;
+				for (var i in result) {
+					var temp = result[i];
+					if (temp.reagent_id == reagent.reagent_id && temp.unit == reagent.unit) {
+						put_in = false;
+					}
+				}
+				if (put_in) {
+					new_reagent = JSON.parse(JSON.stringify(reagent));
+					new_reagent.amount = 0;
+					result.push(new_reagent);
+				}
+			}
+		}
+		return result;
+	}
+
+	function update_visual_data() {
+		$('#steps').children('tr').each(function() {
+			// we are in each table row
+			//console.log(this);
+			$(this).children('td').filter('.action').each(function() {
+				step_num = Number($(this).attr('data-step-num'));
+				$(this).children('span').filter('.reagent').each(function() {
+					reagent_number = Number($(this).attr('data-reagent-number'));
+					//console.log(step_num);
+					//console.log(reagent_number);
+					var correct_reagent = null;
+					for (var reagent_num in reagents) {
+						reagent = reagents[reagent_num];
+						if (reagent.number_in_step == reagent_number && reagent.protocol_step_number == step_num) {
+							correct_reagent = reagent;
+							break;
+						}
+					}
+					if (correct_reagent != null) {
+						//console.log(correct_reagent);
+						this.innerHTML = correct_reagent.amount.toPrecision(correct_reagent.significant_figures) + correct_reagent.unit + " " + correct_reagent.reagent;
+					}
+					else {
+						this.innerHTML = "ERROR";
+					}
+				});
+			});
+		});
+
+		reactants = get_list_of_reagent_type(reagents, "1");
+		reactants = get_display_reagent_type(reagents, reactants, "1");
+		intermediaries = get_list_of_reagent_type(reagents, "2");
+		intermediaries = get_display_reagent_type(reagents, intermediaries, "2");
+		products = get_list_of_reagent_type(reagents, "3");
+		products = get_display_reagent_type(reagents, products, "3");
+
+
+		var main_str = "";
+		for (var i in reactants) {
+			var str = ["<tr>"
+    			,"<td>",reactants[i].reagent,"</td>"
+    			,"<td>",reactants[i].amount,"</td>"
+    			,"<td>",reactants[i].unit,"</td>"
+				,"<td>",reactants[i].reagent_id,"</td>"
+			,"</tr>"].join("");
+			main_str += str;
+		}
+
+		$('#reactants').children('tr').each(function() {
+			$(this).remove();
+		});
+		$('#reactants').append(main_str);
+
+		main_str = "";
+		for (var i in intermediaries) {
+			var str = ["<tr>"
+    			,"<td>",intermediaries[i].reagent,"</td>"
+    			,"<td>",intermediaries[i].amount,"</td>"
+    			,"<td>",intermediaries[i].unit,"</td>"
+				,"<td>",intermediaries[i].reagent_id,"</td>"
+			,"</tr>"].join("");
+			main_str += str;
+		}
+
+		$('#intermediaries').children('tr').each(function() {
+			$(this).remove();
+		});
+		$('#intermediaries').append(main_str);
+
+		main_str = "";
+		for (var i in products) {
+			var str = ["<tr>"
+    			,"<td>",products[i].reagent,"</td>"
+    			,"<td>",products[i].amount,"</td>"
+    			,"<td>",products[i].unit,"</td>"
+				,"<td>",products[i].reagent_id,"</td>"
+			,"</tr>"].join("");
+			main_str += str;
+		}
+
+		$('#products').children('tr').each(function() {
+			$(this).remove();
+		});
+		$('#products').append(main_str);
+
+		console.log(reactants);
+		console.log(intermediaries);
+		console.log(products);
+	}
+
+	window.onload = function() {
+		update_visual_data();
+	};
+
+
+	var last_time = Date.now();
+	var time_total = 0;
+	var running;
+
+	var refreshIntervalId = setInterval(timer, 100);
+
+	function timer() {
+		var new_time = Date.now();
+	    var delta = new_time - last_time; // milliseconds elapsed since start
+		time_total += delta;
+		last_time = new_time;
+	    console.log(Math.floor(time_total / 1000)); // in seconds
+		if (Math.floor(time_total / 1000) == 10) {
+			clearInterval(refreshIntervalId);
+			time_total -= delta;
+			running = false;
+		}
+	}
+
+	function pause() {
+		clearInterval(refreshIntervalId);
+		running = false;
+	}
+
+	function resume() {
+		if (!running) {
+			last_time = Date.now();
+			pause();
+			refreshIntervalId = setInterval(timer, 100);
+			running = true;
+		}
+	}
+
+	function reset() {
+		time_total = 0;
+		resume();
+	}
+
+
+	/*
+	window.onload = function() {
+		var steps = document.getElementById("steps").childNodes;
+		$('#steps').children('tr').each(function() {
+			// we are in each table row
+			console.log(this);
+
+			$(this).children('td').filter('.reagents').children('span').each(function() {
+				single_reagent.step_num = $(this).attr('data-step-num');
+				single_reagent.data-scaling-type = $(this).attr('data-scaling-type');
+				single_reagent.data-amount = $(this).attr('data-amount');
+				single_reagent.data-step-num = $(this).attr('data-step-num');
+
+			});
+			$(this).children('td').filter('.action').each(function() {
+				$(this).children('span').filter('.reagent').each(function() {
+					$(this).children('span')[0].innerHTML = "1";
+					$(this).children('span')[1].innerHTML = "L";
+					$(this).children('span')[2].innerHTML = "Air";
+				});
+			});
+		});
+	}*/
+</script>
+
+<span>Category: {{ protocol.category }}</span><br>
+<span>Title: {{ protocol.title }}</span><br>
+<span>Description: {{ protocol.description }}</span><br>
+<span>Author: {{ protocol.author }}</span><br>
+<span>Upload Date: {{ protocol.upload_date }}</span><br>
+{% if protocol.last_revision %}
+<span><a href="/protocol/{{ protocol.last_revision.id }}">Previous Revision</a></span><br>
+{% endif %}
+
+{% for next_protocol in next_protocols %}
+<span><a href="/protocol/{{ next_protocol.id }}">Next Revision</a></span><br>
+{% endfor %}
+
+{% if text_reagents %}
+<span>{{ text_reagents.reagents }}</span><br>
+{% endif %}
+
+<span>Rating: {{ protocol.get_average_ratings }} - {{ protocol.get_number_ratings }} ratings</span><br>
+<span>Change log: {{ protocol.change_log }}</span><br>
+
+<div class="col-md-12">
+	<div class="panel panel-primary">
+		<div class="panel-heading">Reactants</div>
+		<table class="table table-hover">
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Amount</th>
+					<th>Unit</th>
+					<th>Reagent ID</th>
+				</tr>
+			</thead>
+			<tbody id="reactants">
+
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<div class="col-md-12">
+	<div class="panel panel-primary">
+		<div class="panel-heading">Intermediaries</div>
+		<table class="table table-hover">
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Amount</th>
+					<th>Unit</th>
+					<th>Reagent ID</th>
+				</tr>
+			</thead>
+			<tbody id="intermediaries">
+
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<div class="col-md-12">
+	<div class="panel panel-primary">
+		<div class="panel-heading">Products</div>
+		<table class="table table-hover">
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Amount</th>
+					<th>Unit</th>
+					<th>Reagent ID</th>
+				</tr>
+			</thead>
+			<tbody id="products">
+
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<div class="col-md-12">
+	<div class="panel panel-primary">
+		<div class="panel-heading">Protocol data List</div>
+		<table class="table table-hover">
+			<thead>
+				<tr>
+					<th>Step Number</th>
+					<th>Action</th>
+					<th>Timing Scheme</th>
+					<th>Time length</th>
+					<th>Associated Reagents</th>
+					<th>Notes</th>
+				</tr>
+			</thead>
+			<tbody id="steps">
+				{% for protocol_step in protocol_steps %}
+				<!-- make the rows of data all clickable -->
+				<tr>
+					<td>{{ protocol_step.step_number }}</td>
+					<td class="action" data-step-num="{{ protocol_step.step_number }}">{{ protocol_step.action|safe }}</td>
+					<td>{{ protocol_step.get_understandable_scaling_type }}</td>
+					<td>{{ protocol_step.time }}</td>
+					<td class="reagents">
+					{% for protocol_reagent in protocol_reagents %}
+					{% if protocol_reagent.protocol_step == protocol_step %}
+					<span data-number-in-step="{{ protocol_reagent.number_in_step }}"
+						data-scaling-type="{{ protocol_reagent.scaling_type }}"
+						data-amount="{{ protocol_reagent.amount }}"
+						data-unit="{{ protocol_reagent.unit }}"
+						data-significant-figures="{{ protocol_reagent.significant_figures }}"
+						data-reagent="{{ protocol_reagent.reagent }}">
+						{{ protocol_reagent }}</span>
+					{% if protocol_reagent.reagent_type == 1 %}
+					- Reactant
+					{% elif protocol_reagent.reagent_type == 2 %}
+					- Intermediary
+					{% else %}
+					- Product
+					{% endif %}<br>
+					{% endif %}
+					{% endfor %}
+					</td>
+					<td>
+					{% for step_note in step_notes %}
+					{% if step_note.protocol_step == protocol_step %}
+					<span>{{ step_note.note }} - {{ step_note.person }}</span><br>
+					{% endif %}
+					{% endfor %}
+					</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+</div>
+{% if protocol_reagents.count != 0 %}
+<button onclick="multiply_everything(2);">Double me please!</button>
+<button onclick="multiply_everything(0.5);">Half me please!</button>
+<button onclick="pause();">Pause timer</button>
+<button onclick="resume();">Continue timer</button>
+<button onclick="reset();">Reset timer</button>
+{% endif %}
 {% endblock %}
