@@ -4,6 +4,7 @@
 
 <script>
 	var reagents = [];
+	var steps = [];
 	{% for reagent in protocol_reagents %}
 	var single_reagent = {
 		"number_in_step": {{ reagent.number_in_step }},
@@ -16,21 +17,36 @@
 		"protocol_step_number": {{ reagent.protocol_step_number }},
 		"reagent_id": {{ reagent.reagent.id }},
 	};
-	//var javascript_single_reagent = JSON.parse(single_reagent);
 	reagents.push(single_reagent);
+	{% endfor %}
+
+	{% for protocol_step in protocol_steps %}
+	var single_step = {
+		"action": '{{ protocol_step.action|safe }}',
+		"time": {{ protocol_step.time }},
+		"time_scaling": {{ protocol_step.time_scaling }},
+		"step_number": {{ protocol_step.step_number }},
+	};
+	//var javascript_single_reagent = JSON.parse(single_reagent);
+	steps.push(single_step);
 	{% endfor %}
 
 	var reactants;
 	var intermediaries;
 	var products;
 
-
-
-
+	var timer_id = [];
+	var last_time = [];
+	var time_total = [];
+	var running = [];
+	var count_to = [];
+	var update_element = [];
 
 	function multiply_everything(factor) {
 		for (var reagent_num in reagents) {
-			reagents[reagent_num].amount *= factor;
+			if (reagents[reagent_num].scaling_type == 3) {
+				reagents[reagent_num].amount *= factor;
+			}
 		}
 		reactants = get_list_of_reagent_type(reagents, "1");
 		reactants = get_display_reagent_type(reagents, reactants, "1");
@@ -38,13 +54,15 @@
 		intermediaries = get_display_reagent_type(reagents, intermediaries, "2");
 		products = get_list_of_reagent_type(reagents, "3");
 		products = get_display_reagent_type(reagents, products, "3");
+		for (var i = 1; i < time_total.length; i++) {
+			if (steps[i - 1].time_scaling == 2) {
+				time_total[i] *= factor;
+				count_to[i] *= factor;
+				update_element[i].innerHTML = get_time_total(i);
+			}
+		}
 		update_visual_data();
-		console.log(reactants);
-		console.log(intermediaries);
-		console.log(products);
 	}
-
-
 
 	function get_display_reagent_type(reagents, given_list, type) {
 		for (var i in given_list) {
@@ -60,8 +78,6 @@
 		}
 		return given_list;
 	}
-
-
 
 	function get_list_of_reagent_type(reagents, type) {
 		var result = [];
@@ -88,13 +104,10 @@
 	function update_visual_data() {
 		$('#steps').children('tr').each(function() {
 			// we are in each table row
-			//console.log(this);
 			$(this).children('td').filter('.action').each(function() {
 				step_num = Number($(this).attr('data-step-num'));
 				$(this).children('span').filter('.reagent').each(function() {
 					reagent_number = Number($(this).attr('data-reagent-number'));
-					//console.log(step_num);
-					//console.log(reagent_number);
 					var correct_reagent = null;
 					for (var reagent_num in reagents) {
 						reagent = reagents[reagent_num];
@@ -104,7 +117,6 @@
 						}
 					}
 					if (correct_reagent != null) {
-						//console.log(correct_reagent);
 						this.innerHTML = correct_reagent.amount.toPrecision(correct_reagent.significant_figures) + correct_reagent.unit + " " + correct_reagent.reagent;
 					}
 					else {
@@ -125,9 +137,9 @@
 		var main_str = "";
 		for (var i in reactants) {
 			var str = ["<tr>"
-    			,"<td>",reactants[i].reagent,"</td>"
-    			,"<td>",reactants[i].amount,"</td>"
-    			,"<td>",reactants[i].unit,"</td>"
+				,"<td>",reactants[i].reagent,"</td>"
+				,"<td>",reactants[i].amount,"</td>"
+				,"<td>",reactants[i].unit,"</td>"
 				,"<td>",reactants[i].reagent_id,"</td>"
 			,"</tr>"].join("");
 			main_str += str;
@@ -157,9 +169,9 @@
 		main_str = "";
 		for (var i in products) {
 			var str = ["<tr>"
-    			,"<td>",products[i].reagent,"</td>"
-    			,"<td>",products[i].amount,"</td>"
-    			,"<td>",products[i].unit,"</td>"
+				,"<td>",products[i].reagent,"</td>"
+				,"<td>",products[i].amount,"</td>"
+				,"<td>",products[i].unit,"</td>"
 				,"<td>",products[i].reagent_id,"</td>"
 			,"</tr>"].join("");
 			main_str += str;
@@ -169,88 +181,71 @@
 			$(this).remove();
 		});
 		$('#products').append(main_str);
-
-		console.log(reactants);
-		console.log(intermediaries);
-		console.log(products);
 	}
 
 	window.onload = function() {
 		update_visual_data();
-	};
-
-
-	var last_time = Date.now();
-	var time_total = 0;
-	var running;
-
-	var refreshIntervalId = setInterval(timer, 100);
-
-	function timer() {
-		var new_time = Date.now();
-	    var delta = new_time - last_time; // milliseconds elapsed since start
-		time_total += delta;
-		last_time = new_time;
-	    console.log(Math.floor(time_total / 1000)); // in seconds
-		if (Math.floor(time_total / 1000) == 10) {
-			clearInterval(refreshIntervalId);
-			time_total -= delta;
-			running = false;
-		}
-	}
-
-	function pause() {
-		clearInterval(refreshIntervalId);
-		running = false;
-	}
-
-	function resume() {
-		if (!running) {
-			last_time = Date.now();
-			pause();
-			refreshIntervalId = setInterval(timer, 100);
-			running = true;
-		}
-	}
-
-	function reset() {
-		time_total = 0;
-		resume();
-	}
-
-
-	/*
-	window.onload = function() {
-		var steps = document.getElementById("steps").childNodes;
-		$('#steps').children('tr').each(function() {
-			// we are in each table row
-			console.log(this);
-
-			$(this).children('td').filter('.reagents').children('span').each(function() {
-				single_reagent.step_num = $(this).attr('data-step-num');
-				single_reagent.data-scaling-type = $(this).attr('data-scaling-type');
-				single_reagent.data-amount = $(this).attr('data-amount');
-				single_reagent.data-step-num = $(this).attr('data-step-num');
-
-			});
-			$(this).children('td').filter('.action').each(function() {
-				$(this).children('span').filter('.reagent').each(function() {
-					$(this).children('span')[0].innerHTML = "1";
-					$(this).children('span')[1].innerHTML = "L";
-					$(this).children('span')[2].innerHTML = "Air";
-				});
+		$('#steps').children('tr').each(function(index) {
+			$(this).children('td').filter('.time').children('span').each(function() {
+				if (steps[index].time_scaling != 0) {
+					count_to[index + 1] = steps[index].time;
+					time_total[index + 1] = 0;
+					update_element[index + 1] = this;
+					if (count_to[index + 1] != -1) {
+						this.innerHTML = get_time_total(index + 1);
+					}
+				}
 			});
 		});
-	}*/
+	};
+
+	function timer(i) {
+		var new_time = Date.now();
+		var delta = new_time - last_time[i]; // milliseconds elapsed since start
+		time_total[i] += delta;
+		last_time[i] = new_time;
+		console.log(Math.floor(time_total[i] / 1000)); // in seconds
+		update_element[i].innerHTML = get_time_total(i);
+		if (Math.floor(time_total[i] / 1000) >= count_to[i]) {
+			clearInterval(timer_id[i]);
+			time_total[i] -= delta;
+			running[i] = false;
+		}
+	}
+
+	function pause(i) {
+		clearInterval(timer_id[i]);
+		running[i] = false;
+	}
+
+	function resume(i) {
+		if (!running[i]) {
+			last_time[i] = Date.now();
+			pause(i);
+			timer_id[i] = setInterval(timer, 100, i);
+			running[i] = true;
+		}
+	}
+
+	function reset(i) {
+		time_total[i] = 0;
+		pause(i);
+		update_element[i].innerHTML = get_time_total(i);
+	}
+
+	function get_time_total(i) {
+		return (count_to[i] - Math.floor(time_total[i] / 100) / 10.0).toFixed(1);
+	}
+
 </script>
 
-<span>Category: {{ protocol.category }}</span><br>
+<span>Category: <a href="/browse/{{ protocol.category.id }}/">{{ protocol.category }}</a></span><br>
 <span>Title: {{ protocol.title }}</span><br>
 <span>Description: {{ protocol.description }}</span><br>
-<span>Author: {{ protocol.author }}</span><br>
+<span>Author: <a href="/user/{{ protocol.author.id }}/">{{ protocol.author }}</a></span><br>
 <span>Upload Date: {{ protocol.upload_date }}</span><br>
-{% if protocol.last_revision %}
-<span><a href="/protocol/{{ protocol.last_revision.id }}">Previous Revision</a></span><br>
+{% if protocol.previous_revision %}
+<span><a href="/protocol/{{ protocol.previous_revision.id }}">Previous Revision</a></span><br>
 {% endif %}
 
 {% for next_protocol in next_protocols %}
@@ -277,7 +272,6 @@
 				</tr>
 			</thead>
 			<tbody id="reactants">
-
 			</tbody>
 		</table>
 	</div>
@@ -296,7 +290,6 @@
 				</tr>
 			</thead>
 			<tbody id="intermediaries">
-
 			</tbody>
 		</table>
 	</div>
@@ -315,7 +308,6 @@
 				</tr>
 			</thead>
 			<tbody id="products">
-
 			</tbody>
 		</table>
 	</div>
@@ -342,17 +334,15 @@
 					<td>{{ protocol_step.step_number }}</td>
 					<td class="action" data-step-num="{{ protocol_step.step_number }}">{{ protocol_step.action|safe }}</td>
 					<td>{{ protocol_step.get_understandable_scaling_type }}</td>
-					<td>{{ protocol_step.time }}</td>
+					<td class="time"><span></span>
+						{% if protocol_step.time != -1 %}
+						<button onclick="pause({{ protocol_step.step_number }});">Pause timer</button>
+						<button onclick="resume({{ protocol_step.step_number }});">Continue timer</button>
+						<button onclick="reset({{ protocol_step.step_number }});">Reset timer</button>{% endif %}</td>
 					<td class="reagents">
 					{% for protocol_reagent in protocol_reagents %}
 					{% if protocol_reagent.protocol_step == protocol_step %}
-					<span data-number-in-step="{{ protocol_reagent.number_in_step }}"
-						data-scaling-type="{{ protocol_reagent.scaling_type }}"
-						data-amount="{{ protocol_reagent.amount }}"
-						data-unit="{{ protocol_reagent.unit }}"
-						data-significant-figures="{{ protocol_reagent.significant_figures }}"
-						data-reagent="{{ protocol_reagent.reagent }}">
-						{{ protocol_reagent }}</span>
+					<span><a href="/reagent/{{ protocol_reagent.id }}/">{{ protocol_reagent }}</a></span>
 					{% if protocol_reagent.reagent_type == 1 %}
 					- Reactant
 					{% elif protocol_reagent.reagent_type == 2 %}
@@ -366,7 +356,7 @@
 					<td>
 					{% for step_note in step_notes %}
 					{% if step_note.protocol_step == protocol_step %}
-					<span>{{ step_note.note }} - {{ step_note.person }}</span><br>
+					<span>{{ step_note.note }} - <a href="/user/{{ step_note.author.id }}/">{{ step_note.author }}</a></span><br>
 					{% endif %}
 					{% endfor %}
 					</td>
@@ -379,8 +369,6 @@
 {% if protocol_reagents.count != 0 %}
 <button onclick="multiply_everything(2);">Double me please!</button>
 <button onclick="multiply_everything(0.5);">Half me please!</button>
-<button onclick="pause();">Pause timer</button>
-<button onclick="resume();">Continue timer</button>
-<button onclick="reset();">Reset timer</button>
+
 {% endif %}
 {% endblock %}

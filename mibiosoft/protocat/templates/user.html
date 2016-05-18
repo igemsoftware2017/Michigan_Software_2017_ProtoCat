@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% if user.is_authenticated %}
+{% if user == profile_info.user %}
+Me!<br>
+{% else %}
+Not me. I'm {{ user }}<br>
+{% endif %}
+<form action="/logoff/">
+	<input type="submit" value="Logout">
+</form>
+{% else %}
+Unauthenticated<br>
+{% endif %}
+
+{{ profile_info.user }}<br />
+{{ profile_info.about }}<br />
+{{ profile_info.contact_info }}<br />
+{{ profile_info.meows }}<br />
+{% if profile_info.profile_image != "" %}
+<img src="{{ profile_info.profile_image.url }}" width=300 height=300 alt="Image not found" onError="this.src='/static/basic_picture.jpg';"/><br />
+{% else %}
+<img src="/static/images/basic_picture.jpg" width=300 height=300 alt="Image not found"/><br />
+{% endif %}
+
+Protocols:<br>
+{% for protocol in user_created_protocols %}
+<a href="/protocol/{{ protocol.id }}">{{ protocol.title }}</a>, {{protocol.upload_date}} - Protocol<br />
+{% endfor %}
+Notes:<br>
+{% for note in notes %}
+<a href="/protocol/{{ note.protocol.id }}">{{ note.note }}</a>, {{note.upload_date}} - Note<br />
+{% endfor %}
+Ratings:<br>
+{% for rating in user_rated_protocols %}
+<a href="/protocol/{{ rating.protocol.id }}">{{ rating.protocol.title }}</a>, given a {{ rating.score }}  - Protocol<br />
+{% endfor %}
+
+
+{% endblock %}

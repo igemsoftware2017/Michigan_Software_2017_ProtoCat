@@ -12,7 +12,11 @@ So things like, User, Protocol, Reagents, etc.
 # connected to built in user but allow a picture
 class ProfileInfo(models.Model):
 	user = models.OneToOneField(User, on_delete = models.CASCADE)
-	profile_image = models.FileField(blank = True, null = True)
+	profile_image = models.ImageField(blank = True, null = True)
+	about = models.TextField(blank = True, null = True)
+	contact_info = models.TextField(blank = True, null = True)
+	meows = models.IntegerField(default = 0)
+
 
 	def __str__(self):
 		return str(self.user)
@@ -29,7 +33,7 @@ class ProfileInfo(models.Model):
 # data containing the name of the category and the category it is contained in
 class Category(models.Model):
 	title = models.TextField()
-	author = models.ForeignKey(User)
+	author = models.ForeignKey(ProfileInfo)
 	description = models.TextField()
 	upload_date = models.DateTimeField(auto_now_add = True)
 	parent_category = models.ForeignKey('self', blank = True, null = True)
@@ -40,8 +44,7 @@ class Category(models.Model):
 # the generic reagent that has links to the correct associated_reagents
 class Reagent(models.Model):
 	name = models.TextField()
-	molecular_weight = models.DecimalField(max_digits = 50, decimal_places = 25,
-											blank = True, null = True)
+	smiles_format = models.TextField(blank = True, null = True)
 	picture = models.FileField(blank = True, null = True)
 	website = models.URLField(blank = True, null = True)
 
@@ -54,7 +57,7 @@ class Reagent(models.Model):
 # has links to all the important parts of the protocol
 class Protocol(models.Model):
 	title = models.TextField()
-	author = models.ForeignKey(User)
+	author = models.ForeignKey(ProfileInfo)
 	description = models.TextField()
 
 	# Allow the revisionist to describe changes made
@@ -70,10 +73,20 @@ class Protocol(models.Model):
 	upload_date = models.DateTimeField(auto_now_add = True)
 
 	# many branching protocols to one parent protocol
-	last_revision = models.ForeignKey('self', blank = True, null = True)
+	previous_revision = models.ForeignKey('self', related_name='previous_revision1', blank = True, null = True)
+	first_revision = models.ForeignKey('self', related_name='first_revision1', blank = True, null = True)
 
 	def __str__(self):
 		return self.title
+
+	def type(self):
+		return "Protocol"
+
+	def get_previous_revision(self):
+		return previous_revision
+
+	def get_first_revisions(self):
+		return first_revision
 
 	def get_reagents(self):
 		return str(ReagentForProtocol.objects.filter(protocol = self))
@@ -100,7 +113,7 @@ class Protocol(models.Model):
 		for rating in all_ratings:
 			total = total + rating.score
 		count = all_ratings.count()
-		return total / count
+		return float(total) / count
 
 # just a text field for the reagents if they don't want to be fancy
 class TextReagent(models.Model):
@@ -116,14 +129,14 @@ class ProtocolStep(models.Model):
 	# 2 denotes isConstant, and 3 denotes isLinear for
 	# scaling of the time
 	SCALING_TYPES = (
+		(0, 'N/A'),
 		(1, 'Constant'),
 		(2, 'Linear Scaling')
 	)
-	time_scaling = models.IntegerField(blank = True, null = True,
-						default = 2, choices=SCALING_TYPES)
+	time_scaling = models.IntegerField(default = 2, choices=SCALING_TYPES)
 
 	# optional fields
-	time = models.IntegerField(blank = True, null = True)
+	time = models.IntegerField(default = -1)
 
 	step_number = models.IntegerField()
 	protocol = models.ForeignKey(Protocol)
@@ -220,8 +233,11 @@ class ProtocolRating(models.Model):
 
 # allow for each user to write their own private notes on each protocol step
 class ProtocolStepNote(models.Model):
-	person = models.ForeignKey(ProfileInfo)
+	author = models.ForeignKey(ProfileInfo)
 	protocol_step = models.ForeignKey(ProtocolStep)
 	protocol = models.ForeignKey(Protocol)
 	upload_date = models.DateTimeField(auto_now_add = True)
 	note = models.TextField()
+
+	def type(self):
+		return "Note"

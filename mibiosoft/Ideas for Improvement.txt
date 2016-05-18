@@ -1,0 +1,2 @@
+Use ChemDoodle to show the data, use Python version of OpenBabel to allow multiple input types
+Search through PubChem for data on reagents
