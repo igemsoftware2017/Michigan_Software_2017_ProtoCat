@@ -20,9 +20,9 @@ Unauthenticated<br>
 {{ profile_info.contact_info }}<br />
 {{ profile_info.meows }}<br />
 {% if profile_info.profile_image != "" %}
-<img src="{{ profile_info.profile_image.url }}" width=300 height=300 alt="Image not found" onError="this.src='/static/basic_picture.jpg';"/><br />
+<img src="{{ profile_info.profile_image.url }}" width=140 height=140 alt="Image not found" class="img-thumbnail"/><br />
 {% else %}
-<img src="/static/images/basic_picture.jpg" width=300 height=300 alt="Image not found"/><br />
+<img src="/static/images/basic_picture.jpg" width=140 height=140 alt="Image not found" class="img-thumbnail"/><br />
 {% endif %}
 
 Protocols:<br>
