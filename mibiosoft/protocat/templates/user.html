@@ -15,28 +15,54 @@ Not me. I'm {{ user }}<br>
 Unauthenticated<br>
 {% endif %}
 
-{{ profile_info.user }}<br />
-{{ profile_info.about }}<br />
-{{ profile_info.contact_info }}<br />
-{{ profile_info.meows }}<br />
+<div class="container">
+<div class="col-md-1"></div>
+<div class="col-md-2">
 {% if profile_info.profile_image != "" %}
-<img src="{{ profile_info.profile_image.url }}" width=140 height=140 alt="Image not found" class="img-thumbnail"/><br />
+<img src="{{ profile_info.profile_image.url }}" width=200 height=200 alt="Image not found" class="img-thumbnail"/><br />
 {% else %}
 <img src="/static/images/basic_picture.jpg" width=140 height=140 alt="Image not found" class="img-thumbnail"/><br />
 {% endif %}
+</div>
+<div class="col-md-4">
+<h2>{{ profile_info.user }}</h2>
+<p>{{ profile_info.about }}</p>
+<p> Website: <a href="http://{{ profile_info.contact_info }}"> {{ profile_info.contact_info }} </a> </p>
+<p>Meows: {{ profile_info.meows }}</p>
+</div>
+</div>
 
-Protocols:<br>
+<div class="container">
+<div class="row">
+<div class="col-md-2"></div>
+<div class="col-md-8">
+<div class="panel-primary">
+<h3>Protocols</h3>
+<div class="container">
 {% for protocol in user_created_protocols %}
-<a href="/protocol/{{ protocol.id }}">{{ protocol.title }}</a>, {{protocol.upload_date}} - Protocol<br />
+<div class="col-md-1"></div>
+<a href="/protocol/{{ protocol.id }}">{{ protocol.title }}</a>, {{protocol.upload_date}} <br />
 {% endfor %}
-Notes:<br>
+</div>
+
+<h3>Notes</h3>
+<div class="container">
 {% for note in notes %}
-<a href="/protocol/{{ note.protocol.id }}">{{ note.note }}</a>, {{note.upload_date}} - Note<br />
+<div class="col-md-1"></div>
+<a href="/protocol/{{ note.protocol.id }}">{{ note.note }}</a>, {{note.upload_date}} <br />
 {% endfor %}
-Ratings:<br>
+</div>
+
+<h3>Ratings</h3>
+<div class="container">
 {% for rating in user_rated_protocols %}
-<a href="/protocol/{{ rating.protocol.id }}">{{ rating.protocol.title }}</a>, given a {{ rating.score }}  - Protocol<br />
+<div class="col-md-1"></div>
+<a href="/protocol/{{ rating.protocol.id }}">{{ rating.protocol.title }}</a>, gave a {{ rating.score }} <br />
 {% endfor %}
-
-
+</div>
+</div>
+</div>
+<div class="col-md-2"></div>
+</div>
+</div>
 {% endblock %}
