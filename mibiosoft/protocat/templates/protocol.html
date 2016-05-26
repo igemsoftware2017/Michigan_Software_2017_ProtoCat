@@ -56,8 +56,10 @@
 		products = get_display_reagent_type(reagents, products, "3");
 		for (var i = 1; i < time_total.length; i++) {
 			if (steps[i - 1].time_scaling == 2) {
-				time_total[i] *= factor;
 				count_to[i] *= factor;
+				if (count_to[i] > time_total[i]) {
+					time_total[i] = count_to[i];
+				}
 				update_element[i].innerHTML = get_time_total(i);
 			}
 		}
@@ -204,13 +206,13 @@
 		var delta = new_time - last_time[i]; // milliseconds elapsed since start
 		time_total[i] += delta;
 		last_time[i] = new_time;
-		console.log(Math.floor(time_total[i] / 1000)); // in seconds
-		update_element[i].innerHTML = get_time_total(i);
-		if (Math.floor(time_total[i] / 1000) >= count_to[i]) {
+		console.log(Math.floor(time_total[i] / 100) / 10.0); // in seconds
+		if (time_total[i] >= 1000 * count_to[i]) {
 			clearInterval(timer_id[i]);
-			time_total[i] -= delta;
+			time_total[i] = count_to[i] * 1000;
 			running[i] = false;
 		}
+		update_element[i].innerHTML = get_time_total(i);
 	}
 
 	function pause(i) {
@@ -367,8 +369,7 @@
 	</div>
 </div>
 {% if protocol_reagents.count != 0 %}
-<button onclick="multiply_everything(2);">Double me please!</button>
 <button onclick="multiply_everything(0.5);">Half me please!</button>
-
+<button onclick="multiply_everything(2);">Double me please!</button>
 {% endif %}
 {% endblock %}

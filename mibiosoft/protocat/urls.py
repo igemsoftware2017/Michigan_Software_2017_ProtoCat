@@ -17,4 +17,5 @@ urlpatterns = [
 	url(r'^browse/(?P<category_id>[0-9]+)/$', views.category_specific, name="category_page"),
 	url(r'^protocol/(?P<protocol_id>[0-9]+)/$', views.protocol, name="category_page"),
 	url(r'^user/(?P<user_id>[0-9]+)/$', views.user, name="user_page"),
+	url(r'^about/$', views.about, name="about_page"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

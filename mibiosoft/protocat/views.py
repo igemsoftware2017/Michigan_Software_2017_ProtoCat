@@ -5,8 +5,15 @@ from django.contrib.auth import *
 
 # Create your views here.
 def index(request):
+	current_profile_info = request.user
+	if (not current_profile_info.is_anonymous()):
+		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
+		print(current_profile_info)
+	else:
+		current_profile_info = None
 	context = {
-		'title': 'ProtoCat'
+		'title': 'ProtoCat',
+		'current_profile_info': current_profile_info,
 	}
 	print ("RENDERING INDEX")
 	return render(request, 'index.html', context)
@@ -20,20 +27,33 @@ def category_specific(request, category_id):
 	return category_browser(request, current_parent)
 
 def category_browser(request, current_parent):
+	current_profile_info = request.user
+	if (not current_profile_info.is_anonymous()):
+		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
+		print(current_profile_info)
+	else:
+		current_profile_info = None
 	categories = Category.objects.filter(parent_category = current_parent)
 	protocols = Protocol.objects.filter(category = current_parent)
 
-	text = 'Protocat'
+	text = 'ProtoCat'
 	context = {
-		'title': 'Protocat - Browse Categories',
+		'title': 'ProtoCat - Browse Categories',
 		'parent_category': current_parent,
 		'categories': categories,
 		'protocols': protocols,
+		'current_profile_info': current_profile_info,
 	}
 
 	return render(request, 'category_browser.html', context)
 
 def protocol(request, protocol_id):
+	current_profile_info = request.user
+	if (not current_profile_info.is_anonymous()):
+		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
+		print(current_profile_info)
+	else:
+		current_profile_info = None
 	protocol = Protocol.objects.get(id = protocol_id)
 	protocol_steps = ProtocolStep.objects.filter(protocol = protocol).order_by('step_number')
 	protocol_reagents = ReagentForProtocol.objects.filter(protocol = protocol)
@@ -67,6 +87,7 @@ def protocol(request, protocol_id):
 		'step_notes': step_notes,
 		'text_reagents': text_reagents,
 		'aggregated_reagents': aggregated_reagents,
+		'current_profile_info': current_profile_info,
 	}
 
 	print ("RENDERING PROTOCOL")
@@ -74,6 +95,12 @@ def protocol(request, protocol_id):
 	return render(request, 'protocol.html', context)
 
 def user(request, user_id):
+	current_profile_info = request.user
+	if (not current_profile_info.is_anonymous()):
+		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
+		print(current_profile_info)
+	else:
+		current_profile_info = None
 	user = ProfileInfo.objects.get(id = user_id)
 	user_created_protocols = Protocol.objects.filter(author = user).order_by('-upload_date')
 	user_created_notes = ProtocolStepNote.objects.filter(author = user).order_by('-upload_date')
@@ -82,10 +109,11 @@ def user(request, user_id):
 	data = list(user_created_protocols) + list(user_created_notes)
 	sorted_data = sorted(data, key=lambda obj: obj.upload_date, reverse=True)
 
-	title = 'Protocat - ' + str(user.user)
+	title = 'ProtoCat - ' + str(user.user)
 
 	context = {
 		'title': title,
+		'current_profile_info': current_profile_info,
 		'profile_info': user,
 		'user_created_protocols': user_created_protocols,
 		'user_rated_protocols': user_rated_protocols,
@@ -95,12 +123,25 @@ def user(request, user_id):
 	return render(request, 'user.html', context)
 
 def sign_up(request):
+	current_profile_info = request.user
+	if (not current_profile_info.is_anonymous()):
+		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
+		print(current_profile_info)
+	else:
+		current_profile_info = None
 	context = {
-		'title': 'Protocat - Sign Up',
+		'title': 'ProtoCat - Sign Up',
+		'current_profile_info': current_profile_info,
 	}
 	return render(request, 'sign_up.html', context)
 
 def submit_sign_up(request):
+	current_profile_info = request.user
+	if (not current_profile_info.is_anonymous()):
+		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
+		print(current_profile_info)
+	else:
+		current_profile_info = None
 	username = request.POST['username']
 	password = request.POST['password']
 	user = User.objects.create_user(username, 'lennon@thebeatles.com', password)
@@ -110,10 +151,17 @@ def submit_sign_up(request):
 	return HttpResponseRedirect('/')
 
 def login_user(request):
+	current_profile_info = request.user
+	if (not current_profile_info.is_anonymous()):
+		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
+		print(current_profile_info)
+	else:
+		current_profile_info = None
 	context = {
-		'title': 'Protocat - Login',
+		'title': 'ProtoCat - Login',
+		'current_profile_info': current_profile_info,
 	}
-	return render(request, 'login.html', title)
+	return render(request, 'login.html', context)
 
 def submit_login(request):
 	username = request.POST['username']
@@ -136,9 +184,30 @@ def logoff(request):
 	return HttpResponseRedirect('/')
 
 def reagent(request, reagent_id):
+	current_profile_info = request.user
+	if (not current_profile_info.is_anonymous()):
+		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
+		print(current_profile_info)
+	else:
+		current_profile_info = None
 	act_reagent = Reagent.objects.get(id = reagent_id)
-	title = 'Protocat - ' + str(act_reagent)
+	title = 'ProtoCat - ' + str(act_reagent)
 	context = {
 		'title': title,
+		'current_profile_info': current_profile_info,
 	}
 	return render(request, 'reagent.html', context)
+
+def about(request):
+	current_profile_info = request.user
+	if (not current_profile_info.is_anonymous()):
+		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
+		print(current_profile_info)
+	else:
+		current_profile_info = None
+	context = {
+		'title': 'ProtoCat',
+		'current_profile_info': current_profile_info,
+	}
+	print ("RENDERING INDEX")
+	return render(request, 'index.html', context)

@@ -1,32 +1,149 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta name="description" content="{{ page.descr }}">
-	<meta name="author" content="MiBioSoft">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="author" content="MiBioSoft">
+		<link rel="shortcut icon" href="/static/images/protocat.ico" />
 
-	<!-- Bootstrap core CSS -->
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-	<link rel="shortcut icon" href="/static/images/protocat.ico" />
+		<title>{{ title }}</title>
 
-	<title>{{ title }}</title>
+		<!-- for the favicon -->
+		<link rel="shortcut icon" href="/static/images/protocat.ico" />
 
-	<!-- Jquery -->
-	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+		<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+		<script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+		<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+		<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 
-	<!-- Global js -->
-	<script src= "/static/js/main.js"></script>
-	<!-- If you want to add other js files, add it in the specific html page-->
-</head>
+		<!-- Global js -->
+		<script src= "/static/js/main.js"></script>
+		<script src= "/static/js/smoothscroll.js"></script>
+		<!-- If you want to add other js files, add it in the specific html page-->
+	</head>
+	<style>
+	#content {
+		padding-top: 70px;
+	}
+	#navbar-search-icon {
+		margin-top: 8px;
+		margin-right: 8px;
+	}
+	.center {
+		padding: 8px;
+	}
+	.no-margin {
+		margin: 0;
+	}
+	#no-padding {
+		padding: 0;
+	}
+	#no-vertical-padding {
+		padding-top: 0px;
+		padding-bottom: 0px;
+	}
+	#navbar-image {
+		margin-top: 10px;
+		margin-bottom: 10px;
+		margin-left: 15px;
+		margin-right: 15px;
+	}
+	#navbar-icon {
+		margin-top: 18px;
+		margin-bottom: 18px;
+		margin-left: 15px;
+		margin-right: 7.5px;
+	}
+	.fix-margin-right {
+		margin-right: 15px;
+	}
+	.fix-margin-left {
+		margin-left: 15px;
+	}
+	.zero-side-margins {
+		margin-left: 0px;
+		margin-right: 0px;
+	}
+	.fix-padding-right {
+		padding-right: 15px;
+	}
+	.make-50 {
+		min-height: 50px;
+	}
+	</style>
+	<body>
+		<nav class="navbar navbar-default navbar-fixed-top">
+			<div class="container">
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+						<span class="sr-only">Toggle navigation</span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<a class="navbar-brand" href="/"><b>ProtoCat</b></a>
+				</div>
+				<div id="navbar" class="navbar-collapse collapse">
+					<ul class="nav navbar-nav navbar-right">
+						<li class="search_box">
+							<!--form id="search_form" class="form-search center" method="GET" action="/search/">
+								<div class="form-group no-margin">
+									<input type="text" name="search" class="form-control" placeholder="Search ProtoCat" style="color:black">
+									<span id="navbar-search-icon" class="glyphicon glyphicon-search form-control-feedback" onclick="console.log('this')"></span></input>
+								</div>
+							</form-->
 
-<body>
-	<div id="content">
-		{% block content %}{% endblock %}
-	</div>
-
-	{% block footer %}
-
-	{% endblock %}
-</body>
+							<!-- add search form -->
+							<form class="navbar-form navbar-right zero-side-margins" role="search" method="GET" action="/search/">
+								<div class="input-group">
+									<input type="text" name="search" class="form-control" placeholder="Search ProtoCat">
+									<span class="input-group-btn">
+										<button type="submit" class="btn btn-default">
+											<span class="glyphicon glyphicon-search"></span>
+										</button>
+									</span>
+								</div>
+							</form>
+						</li>
+						<li class="dropdown no-padding hidden-xs">
+							<a id="no-padding" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+								{% if current_profile_info != None %}
+								<img id="navbar-image" src="{{ current_profile_info.profile_image.url }}" style="width:30px;height:30px;" alt="Image not found" class="img-rounded"/><span id="navbar-drop-down" class="fix-margin-right caret"></span>
+								{% else %}
+								<span class="fix-margin-right"><span id="navbar-icon" class="glyphicon glyphicon-user"></span>Login</span>
+								{% endif %}
+							</a>
+							<!-- TODO have drop-down menu open by default on small devices -->
+							<ul class="dropdown-menu">
+								{% if not user.is_authenticated %}
+								<li><a href="/signup/">Sign up</a></li>
+								<li><a href="/login/">Login</a></li>
+								{% else %}
+								<li><a href="/protocol_upload/">Upload Protocol</a></li>
+								<li><a href="/user/{{ user.id }}">User Profile</a></li>
+								<li><a href="/logoff/">Log out</a></li>
+								{% endif %}
+								<li role="separator" class="divider"></li>
+								<li><a href="/browse/">Browse</a></li>
+								<li><a href="/about/">About</a></li>
+							</ul>
+						</li>
+						{% if not user.is_authenticated %}
+						<li class="visible-xs"><a href="/signup/">Sign up</a></li>
+						<li class="visible-xs"><a href="/login/">Login</a></li>
+						{% else %}
+						<li class="visible-xs"><a href="/protocol_upload/">Upload Protocol</a></li>
+						<li class="visible-xs"><a href="/user/{{ user.id }}">User Profile</a></li>
+						<li class="visible-xs"><a href="/logoff/">Log out</a></li>
+						{% endif %}
+						<li class="visible-xs"><a href="/browse/">Browse</a></li>
+						<li class="visible-xs"><a href="/about/">About</a></li>
+					</ul>
+				</div>
+			</div>
+		</nav>
+		<div id="content" class="container">
+			{% block content %}{% endblock %}
+		</div>
+	</body>
 </html>
