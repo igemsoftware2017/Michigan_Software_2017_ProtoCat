@@ -140,8 +140,7 @@
 		for (var i in reactants) {
 			var str = ["<tr>"
 				,"<td>",reactants[i].reagent,"</td>"
-				,"<td>",reactants[i].amount,"</td>"
-				,"<td>",reactants[i].unit,"</td>"
+				,"<td>",reactants[i].amount," ",reactants[i].unit,"</td>"
 				,"<td>",reactants[i].reagent_id,"</td>"
 			,"</tr>"].join("");
 			main_str += str;
@@ -269,7 +268,6 @@
 				<tr>
 					<th>Name</th>
 					<th>Amount</th>
-					<th>Unit</th>
 					<th>Reagent ID</th>
 				</tr>
 			</thead>
