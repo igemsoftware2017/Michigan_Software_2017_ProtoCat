@@ -2,6 +2,8 @@ from django.shortcuts import *
 from django.http import *
 from .models import *
 from django.contrib.auth import *
+from django.db.models import Q
+from django.db import connection
 
 # Create your views here.
 def index(request):
@@ -16,6 +18,7 @@ def index(request):
 		'current_profile_info': current_profile_info,
 	}
 	print ("RENDERING INDEX")
+	print len(connection.queries)
 	return render(request, 'index.html', context)
 
 def category_default(request):
@@ -44,7 +47,7 @@ def category_browser(request, current_parent):
 		'protocols': protocols,
 		'current_profile_info': current_profile_info,
 	}
-
+	print len(connection.queries)
 	return render(request, 'category_browser.html', context)
 
 def protocol(request, protocol_id):
@@ -89,6 +92,7 @@ def protocol(request, protocol_id):
 		'aggregated_reagents': aggregated_reagents,
 		'current_profile_info': current_profile_info,
 	}
+	print len(connection.queries)
 
 	print ("RENDERING PROTOCOL")
 
@@ -119,6 +123,7 @@ def user(request, user_id):
 		'user_rated_protocols': user_rated_protocols,
 		'notes': user_created_notes
 	}
+	print len(connection.queries)
 
 	return render(request, 'user.html', context)
 
@@ -145,9 +150,10 @@ def submit_sign_up(request):
 	username = request.POST['username']
 	password = request.POST['password']
 	user = User.objects.create_user(username, 'lennon@thebeatles.com', password)
-	profile_info = ProfileInfo(user=user)
+	profile_info = ProfileInfo(user = user)
 	profile_info.save()
 	print(profile_info.id)
+	print len(connection.queries)
 	return HttpResponseRedirect('/')
 
 def login_user(request):
@@ -211,3 +217,27 @@ def about(request):
 	}
 	print ("RENDERING INDEX")
 	return render(request, 'index.html', context)
+
+def search(request):
+	text_filter = request.POST['text_filter']
+	try:
+		order = request.POST['order']
+	except:
+		order = 'title'
+	current_profile_info = request.user
+
+	if (not current_profile_info.is_anonymous()):
+		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
+		print(current_profile_info)
+	else:
+		current_profile_info = None
+
+	results = Protocol.objects.filter(Q(title__icontains = text_filter) | Q(description__icontains = text_filter)).order_by(order)
+	context = {
+		'title': 'ProtoCat',
+		'results': results,
+		'current_profile_info': current_profile_info,
+	}
+	print len(connection.queries)
+	print ("RENDERING SEARCH")
+	return render(request, 'search.html', context)

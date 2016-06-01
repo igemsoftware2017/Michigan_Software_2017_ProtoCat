@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<style>
+<!-- make the rows of data have the correct mouse cursor -->
+tr:hover{
+	cursor: hand;
+	cursor: pointer;
+}
+</style>
+
+<div class="col-md-12" >
+	<div class="panel panel-primary">
+		<div class="panel-heading">Protocol List</div>
+		<table class="table table-hover">
+			<thead>
+				<tr>
+					<th>Title</th>
+					<th>Author</th>
+					<th>Description</th>
+					<th>Upload Date</th>
+					<th>Rating</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for protocol in results %}
+				<tr onclick="location.href='/protocol/{{ protocol.id }}/'">
+					<td><a href="/protocol/{{ protocol.id }}/">{{ protocol.title }}</a></td>
+					<td>{{ protocol.author }}</td>
+					<td>{{ protocol.description }}</td>
+					<td>{{ protocol.upload_date }}</td>
+					<td>{{ protocol.get_average_ratings }}</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+</div>
+
+{% endblock %}
