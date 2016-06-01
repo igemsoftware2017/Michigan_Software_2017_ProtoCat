@@ -18,7 +18,7 @@ def index(request):
 		'current_profile_info': current_profile_info,
 	}
 	print ("RENDERING INDEX")
-	print len(connection.queries)
+	print(len(connection.queries))
 	return render(request, 'index.html', context)
 
 def category_default(request):
@@ -47,7 +47,7 @@ def category_browser(request, current_parent):
 		'protocols': protocols,
 		'current_profile_info': current_profile_info,
 	}
-	print len(connection.queries)
+	print(len(connection.queries))
 	return render(request, 'category_browser.html', context)
 
 def protocol(request, protocol_id):
@@ -92,7 +92,7 @@ def protocol(request, protocol_id):
 		'aggregated_reagents': aggregated_reagents,
 		'current_profile_info': current_profile_info,
 	}
-	print len(connection.queries)
+	print (len(connection.queries))
 
 	print ("RENDERING PROTOCOL")
 
@@ -123,7 +123,7 @@ def user(request, user_id):
 		'user_rated_protocols': user_rated_protocols,
 		'notes': user_created_notes
 	}
-	print len(connection.queries)
+	print(len(connection.queries))
 
 	return render(request, 'user.html', context)
 
@@ -153,7 +153,7 @@ def submit_sign_up(request):
 	profile_info = ProfileInfo(user = user)
 	profile_info.save()
 	print(profile_info.id)
-	print len(connection.queries)
+	print(len(connection.queries))
 	return HttpResponseRedirect('/')
 
 def login_user(request):
@@ -238,6 +238,6 @@ def search(request):
 		'results': results,
 		'current_profile_info': current_profile_info,
 	}
-	print len(connection.queries)
+	print(len(connection.queries))
 	print ("RENDERING SEARCH")
 	return render(request, 'search.html', context)
