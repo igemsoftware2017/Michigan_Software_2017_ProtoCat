@@ -187,13 +187,15 @@
 	window.onload = function() {
 		update_visual_data();
 		$('#steps').children('tr').each(function(index) {
-			$(this).children('td').filter('.time').children('span').each(function() {
-				if (steps[index].time_scaling != 0) {
-					count_to[index + 1] = steps[index].time;
-					time_total[index + 1] = 0;
-					update_element[index + 1] = this;
-					if (count_to[index + 1] != -1) {
-						this.innerHTML = get_time_total(index + 1);
+			$(this).children('td').filter('.time').children('span').each(function(new_index) {
+				if (new_index == 0) {
+					if (steps[index].time_scaling != 0) {
+						count_to[index + 1] = steps[index].time;
+						time_total[index + 1] = 0;
+						update_element[index + 1] = this;
+						if (count_to[index + 1] != -1) {
+							this.innerHTML = get_time_total(index + 1);
+						}
 					}
 				}
 			});
@@ -334,11 +336,13 @@
 					<td>{{ protocol_step.step_number }}</td>
 					<td class="action" data-step-num="{{ protocol_step.step_number }}">{{ protocol_step.action|safe }}</td>
 					<td>{{ protocol_step.get_understandable_scaling_type }}</td>
-					<td class="time"><span></span>
+					<td class="time"><span id="number"></span>
 						{% if protocol_step.time != -1 %}
-						<button onclick="pause({{ protocol_step.step_number }});">Pause timer</button>
-						<button onclick="resume({{ protocol_step.step_number }});">Continue timer</button>
-						<button onclick="reset({{ protocol_step.step_number }});">Reset timer</button>{% endif %}</td>
+						<span onclick="pause({{ protocol_step.step_number }});" class="glyphicon glyphicon-pause"></span>
+						<span onclick="resume({{ protocol_step.step_number }});" class="glyphicon glyphicon-play"></span>
+						<span onclick="reset({{ protocol_step.step_number }});" class="glyphicon glyphicon-fast-backward"></span>
+						{% endif %}
+					</td>
 					<td class="reagents">
 					{% for protocol_reagent in protocol_reagents %}
 					{% if protocol_reagent.protocol_step == protocol_step %}

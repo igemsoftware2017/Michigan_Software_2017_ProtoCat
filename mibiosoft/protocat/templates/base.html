@@ -29,18 +29,11 @@
 		margin-top: 8px;
 		margin-right: 8px;
 	}
-	.center {
-		padding: 8px;
-	}
 	.no-margin {
 		margin: 0;
 	}
 	#no-padding {
 		padding: 0;
-	}
-	#no-vertical-padding {
-		padding-top: 0px;
-		padding-bottom: 0px;
 	}
 	#navbar-image {
 		margin-top: 10px;
@@ -70,6 +63,59 @@
 	.make-50 {
 		min-height: 50px;
 	}
+	body {
+		background-color: #f8f8f8;
+	}
+	#content {
+		background-color: white;
+	}
+	html {
+		position: relative;
+		min-height: 100%;
+	}
+	body {
+		/* Margin bottom by footer height */
+		margin-bottom: 60px;
+	}
+	.footer {
+		position: absolute;
+		bottom: 0;
+		width: 100%;
+		/* Set the fixed height of the footer here */
+		height: 60px;
+		background-color: #f5f5f5;
+	}
+	.navbar {
+		/* for the background of whole navbar*/
+		background-color: #00274c;
+	}
+	#title, .navbar-default .navbar-nav>li>a{
+		/* for the login text on top right*/
+		color: #fff;
+	}
+	.navbar-default .navbar-nav>li>a:hover {
+		/* for the login text on top right during hover*/
+		color: lightgray;
+	}
+	.navbar-default .navbar-toggle .icon-bar {
+		/* for the ProtoCat text on top left */
+		background-color: #fff;
+	}
+	#logo {
+		margin: 10px;
+	}
+	.no-left-margin {
+		margin-left: 0px;
+		padding-left: 0px;
+	}
+	.footer-container {
+		margin-top: 15px;
+		margin-bottom: 15px;
+	}
+	#footer-text {
+		margin-top: 5px;
+		margin-bottom: 5px;
+	}
 	</style>
 	<body>
 		<nav class="navbar navbar-default navbar-fixed-top">
@@ -81,7 +127,13 @@
 						<span class="icon-bar"></span>
 						<span class="icon-bar"></span>
 					</button>
-					<a class="navbar-brand" href="/"><b>ProtoCat</b></a>
+					<a href="/" class="pull-left"><img src="/static/images/protocat.png" height=30 width=30 id="logo"/></a>
+					<span class="hidden-xs">
+						<a class="navbar-brand" href="/"><b id="title">ProtoCat</b></a>
+					</span>
+					<span class="visible-xs">
+						<a class="navbar-brand no-left-margin" href="/"><b id="title">ProtoCat</b></a>
+					</span>
 				</div>
 				<div id="navbar" class="navbar-collapse collapse">
 					<ul class="nav navbar-nav navbar-right">
@@ -106,7 +158,7 @@
 								{% csrf_token %}
 							</form>
 						</li>
-						<li class="dropdown no-padding hidden-xs">
+						<li class="dropdown hidden-xs">
 							<a id="no-padding" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
 								{% if current_profile_info != None %}
 								<img id="navbar-image" src="{{ current_profile_info.profile_image.url }}" style="width:30px;height:30px;" alt="Image not found" class="img-rounded"/><span id="navbar-drop-down" class="fix-margin-right caret"></span>
@@ -146,5 +198,11 @@
 		<div id="content" class="container">
 			{% block content %}{% endblock %}
 		</div>
+		<footer class="footer">
+			<!-- div class="container panel-footer footer-container"-->
+			<div class="container panel-footer">
+				<p class="text-muted" id="footer-text" style="text-align:center;">Made by Michigan Biological Software 2015-2016</p>
+			</div>
+		</footer>
 	</body>
 </html>
