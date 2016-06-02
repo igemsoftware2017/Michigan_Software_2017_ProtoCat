@@ -240,11 +240,18 @@
 
 </script>
 
-<span>Category: <a href="/browse/{{ protocol.category.id }}/">{{ protocol.category }}</a></span><br>
-<span>Title: {{ protocol.title }}</span><br>
-<span>Description: {{ protocol.description }}</span><br>
-<span>Author: <a href="/user/{{ protocol.author.id }}/">{{ protocol.author }}</a></span><br>
-<span>Upload Date: {{ protocol.upload_date }}</span><br>
+
+<div class="col-md-8 col-md-offset-2">
+<span><h1>Title: {{ protocol.title }}</h1></span>
+<span><h4>Category: <a href="/browse/{{ protocol.category.id }}/">{{ protocol.category }}</a></h4></span>
+<span><h4>Author: <a href="/user/{{ protocol.author.id }}/">{{ protocol.author }}</a> </h4></span>
+<span><h4>Upload Date: {{ protocol.upload_date }}</span></h4>
+<span><h4>Rating: {{ protocol.get_average_ratings }} - {{ protocol.get_number_ratings }} ratings</h4></span>
+
+</div>
+
+<div class="col-md-8 col-md-offset-2">
+<span>Description: {{ protocol.description }}</span></br>
 {% if protocol.previous_revision %}
 <span><a href="/protocol/{{ protocol.previous_revision.id }}">Previous Revision</a></span><br>
 {% endif %}
@@ -257,8 +264,8 @@
 <span>{{ text_reagents.reagents }}</span><br>
 {% endif %}
 
-<span>Rating: {{ protocol.get_average_ratings }} - {{ protocol.get_number_ratings }} ratings</span><br>
 <span>Change log: {{ protocol.change_log }}</span><br>
+</div>
 
 <div class="col-md-12">
 	<div class="panel panel-primary">
@@ -366,8 +373,12 @@
 		</table>
 	</div>
 </div>
+
+<div class="col-md-8 col-md-offset-2">
 {% if protocol_reagents.count != 0 %}
 <button onclick="multiply_everything(0.5);">Halve me please!</button>
 <button onclick="multiply_everything(2);">Double me please!</button>
 {% endif %}
+</div>
+
 {% endblock %}
