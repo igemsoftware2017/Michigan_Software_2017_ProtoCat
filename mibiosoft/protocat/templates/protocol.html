@@ -239,18 +239,26 @@
 	}
 
 </script>
+<style>
+.row{
+	background-color:#CCC;
+}
 
+</style>
 
+<div class="row">
 <div class="col-md-8 col-md-offset-2">
-<span><h1>Title: {{ protocol.title }}</h1></span>
-<span><h4>Category: <a href="/browse/{{ protocol.category.id }}/">{{ protocol.category }}</a></h4></span>
-<span><h4>Author: <a href="/user/{{ protocol.author.id }}/">{{ protocol.author }}</a> </h4></span>
-<span><h4>Upload Date: {{ protocol.upload_date }}</span></h4>
-<span><h4>Rating: {{ protocol.get_average_ratings }} - {{ protocol.get_number_ratings }} ratings</h4></span>
+<h1>Title: {{ protocol.title }}</h1>
+
+<h5>Category: <a href="/browse/{{ protocol.category.id }}/">{{ protocol.category }}</a> </h5>
+<h5>Author: <a href="/user/{{ protocol.author.id }}/">{{ protocol.author }}</a> </h5>
+<h5>Upload Date: {{ protocol.upload_date }}</h5>
+<h5>Rating: {{ protocol.get_average_ratings }} - {{ protocol.get_number_ratings }} ratings</h5>
 
 </div>
+</div>
 
-<div class="col-md-8 col-md-offset-2">
+<div class="col-md-8 col-md-offset-1">
 <span>Description: {{ protocol.description }}</span></br>
 {% if protocol.previous_revision %}
 <span><a href="/protocol/{{ protocol.previous_revision.id }}">Previous Revision</a></span><br>
