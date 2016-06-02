@@ -155,8 +155,7 @@
 		for (var i in intermediaries) {
 			var str = ["<tr>"
     			,"<td>",intermediaries[i].reagent,"</td>"
-    			,"<td>",intermediaries[i].amount,"</td>"
-    			,"<td>",intermediaries[i].unit,"</td>"
+    			,"<td>",intermediaries[i].amount," ",intermediaries[i].unit,"</td>"
 				,"<td>",intermediaries[i].reagent_id,"</td>"
 			,"</tr>"].join("");
 			main_str += str;
@@ -171,8 +170,7 @@
 		for (var i in products) {
 			var str = ["<tr>"
 				,"<td>",products[i].reagent,"</td>"
-				,"<td>",products[i].amount,"</td>"
-				,"<td>",products[i].unit,"</td>"
+				,"<td>",products[i].amount," ",products[i].unit,"</td>"
 				,"<td>",products[i].reagent_id,"</td>"
 			,"</tr>"].join("");
 			main_str += str;
@@ -287,7 +285,6 @@
 				<tr>
 					<th>Name</th>
 					<th>Amount</th>
-					<th>Unit</th>
 					<th>Reagent ID</th>
 				</tr>
 			</thead>
@@ -305,7 +302,6 @@
 				<tr>
 					<th>Name</th>
 					<th>Amount</th>
-					<th>Unit</th>
 					<th>Reagent ID</th>
 				</tr>
 			</thead>
