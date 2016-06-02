@@ -240,14 +240,14 @@
 
 </script>
 
-
-<div class="col-md-8 col-md-offset-2">
-<span><h1>Title: {{ protocol.title }}</h1></span>
-<span><h4>Category: <a href="/browse/{{ protocol.category.id }}/">{{ protocol.category }}</a></h4></span>
-<span><h4>Author: <a href="/user/{{ protocol.author.id }}/">{{ protocol.author }}</a> </h4></span>
-<span><h4>Upload Date: {{ protocol.upload_date }}</span></h4>
-<span><h4>Rating: {{ protocol.get_average_ratings }} - {{ protocol.get_number_ratings }} ratings</h4></span>
-
+<div class="row">
+	<div class="col-md-8 col-md-offset-2">
+		<h1>Title: {{ protocol.title }}</h1>
+		<h4>Category: <a href="/browse/{{ protocol.category.id }}/">{{ protocol.category }}</a></h4>
+		<h4>Author: <a href="/user/{{ protocol.author.id }}/">{{ protocol.author }}</a> </h4>
+		<h4>Upload Date: {{ protocol.upload_date }}</h4>
+		<h4>Rating: {{ protocol.get_average_ratings }} - {{ protocol.get_number_ratings }} ratings</h4>
+	</div>
 </div>
 
 <div class="col-md-8 col-md-offset-2">
