@@ -17,8 +17,9 @@
 		<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 
 		<!-- Global js -->
-		<script src= "/static/js/main.js"></script>
-		<script src= "/static/js/smoothscroll.js"></script>
+		<script src="/static/js/main.js"></script>
+		<script src="/static/js/bootstrap-rating-input.min.js"></script>
+		<script src="/static/js/smoothscroll.js"></script>
 		<!-- If you want to add other js files, add it in the specific html page-->
 	</head>
 	<style>
@@ -52,6 +53,9 @@
 	}
 	.fix-margin-left {
 		margin-left: 15px;
+	}
+	.fix-margin-top {
+		margin-top: 15px
 	}
 	.zero-side-margins {
 		margin-left: 0px;
@@ -161,7 +165,7 @@
 						<li class="dropdown hidden-xs">
 							<a id="no-padding" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
 								{% if current_profile_info != None %}
-								<img id="navbar-image" src="{{ current_profile_info.profile_image.url }}" style="width:30px;height:30px;" alt="Image not found" class="img-rounded"/><span id="navbar-drop-down" class="fix-margin-right caret"></span>
+								<img id="navbar-image" src="{{ current_profile_info.profile_image.url }}" width=30 height=30 alt="Image not found" class="img-rounded"/><span id="navbar-drop-down" class="fix-margin-right caret"></span>
 								{% else %}
 								<span class="fix-margin-right"><span id="navbar-icon" class="glyphicon glyphicon-user"></span>Login</span>
 								{% endif %}
