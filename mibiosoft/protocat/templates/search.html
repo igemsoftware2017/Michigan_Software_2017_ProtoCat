@@ -7,13 +7,13 @@
 </style>
 
 {% for protocol in results %}
-<div class="row">
+<div class="row" onclick="location.href='/protocol/{{ protocol.id }}/'">
 	<div class="col-md-8 col-md-offset-2 col-xs-12 well well-lg" >
 		<h1>{{ protocol.title }}</h1>
 		<h5>Category: <a href="/browse/{{ protocol.category.id }}/">{{ protocol.category }}</a> </h5>
 		<h5>Created by <a href="/user/{{ protocol.author.id }}/">{{ protocol.author }}</a> </h5>
 		<h5>Uploaded on {{ protocol.upload_date }}</h5>
-		<h5>{{ protocol.get_average_ratings }} - {{ protocol.get_number_ratings }} ratings</h5>
+		<h5>{{ protocol.get_average_ratings }}/5 - {{ protocol.get_number_ratings }} ratings</h5>
 	</div>
 </div>
 {% endfor %}
