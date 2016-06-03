@@ -260,13 +260,20 @@ color:inherit;
 </h1>
 </div>
 </div>
+<br>
 
 <div class="col-md-8 col-md-offset-2">
+
+<div class="panel panel-primary">
+<div class="panel panel-heading">
 <ul class="nav nav-tabs">
   <li class="active"><a data-toggle="tab" href="#Description">Description</a></li>
   <li><a data-toggle="tab" href="#Reagents">Reagents</a></li>
   <li><a data-toggle="tab" href="#Changelog">Change log</a></li>
 </ul>
+</div>
+
+<div class="panel-body">
 <div class="tab-content">
   <div id="Description" class="tab-pane fade in active">
     <span>{{ protocol.description }}</span><br>
@@ -285,6 +292,8 @@ color:inherit;
 	<span><a href="/protocol/{{ next_protocol.id }}">Next Revision</a></span><br>
 	{% endfor %}
   </div>
+</div>
+</div>
 </div>
 
 <div class="col-md-12">
