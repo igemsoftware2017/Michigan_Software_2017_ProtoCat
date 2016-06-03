@@ -239,15 +239,26 @@
 	}
 
 </script>
+<style>
+.row{
+	background-color:#CCC;
+}
+
+h5{
+color:inherit;
+}
+</style>
 
 <div class="row">
-	<div class="col-md-8 col-md-offset-2">
-		<h1>Title: {{ protocol.title }}</h1>
-		<h4>Category: <a href="/browse/{{ protocol.category.id }}/">{{ protocol.category }}</a></h4>
-		<h4>Author: <a href="/user/{{ protocol.author.id }}/">{{ protocol.author }}</a> </h4>
-		<h4>Upload Date: {{ protocol.upload_date }}</h4>
-		<h4>Rating: {{ protocol.get_average_ratings }} - {{ protocol.get_number_ratings }} ratings</h4>
-	</div>
+<div class="col-md-8 col-md-offset-2">
+<h1>{{ protocol.title }}<br>
+<small>Created by <a href="/user/{{ protocol.author.id }}/">{{ protocol.author }}</a><br>
+<h5>Uploaded on {{ protocol.upload_date }}</h5>
+<h5>Category: <a href="/browse/{{ protocol.category.id }}/">{{ protocol.category }}</a></h5>
+<h5>Rating: {{ protocol.get_average_ratings }}/5 - {{ protocol.get_number_ratings }} ratings</h5>
+</small>
+</h1>
+</div>
 </div>
 
 <div class="col-md-8 col-md-offset-2">
@@ -274,22 +285,6 @@
 	<span><a href="/protocol/{{ next_protocol.id }}">Next Revision</a></span><br>
 	{% endfor %}
   </div>
-</div>
-<br><br>
-<span>Description: {{ protocol.description }}</span></br>
-{% if protocol.previous_revision %}
-<span><a href="/protocol/{{ protocol.previous_revision.id }}">Previous Revision</a></span><br>
-{% endif %}
-
-{% for next_protocol in next_protocols %}
-<span><a href="/protocol/{{ next_protocol.id }}">Next Revision</a></span><br>
-{% endfor %}
-
-{% if text_reagents %}
-<span>{{ text_reagents.reagents }}</span><br>
-{% endif %}
-
-<span>Change log: {{ protocol.change_log }}</span><br>
 </div>
 
 <div class="col-md-12">
