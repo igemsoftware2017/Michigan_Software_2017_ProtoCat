@@ -251,11 +251,11 @@ color:inherit;
 
 <div class="row">
 <div class="col-md-8 col-md-offset-2">
-<h1>Title: {{ protocol.title }}<br>
-<small>Author: <a href="/user/{{ protocol.author.id }}/">{{ protocol.author }}</a><br>
+<h1>{{ protocol.title }}<br>
+<small>Created by <a href="/user/{{ protocol.author.id }}/">{{ protocol.author }}</a><br>
+<h5>Uploaded on {{ protocol.upload_date }}</h5>
 <h5>Category: <a href="/browse/{{ protocol.category.id }}/">{{ protocol.category }}</a></h5>
-<h5>Upload Date: {{ protocol.upload_date }}</h5>
-<h5>Rating: {{ protocol.get_average_ratings }} - {{ protocol.get_number_ratings }} ratings</h5>
+<h5>Rating: {{ protocol.get_average_ratings }}/5 - {{ protocol.get_number_ratings }} ratings</h5>
 </small>
 </h1>
 </div>
