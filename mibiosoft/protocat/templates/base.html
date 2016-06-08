@@ -10,16 +10,17 @@
 
 		<!-- for the favicon -->
 		<link rel="shortcut icon" href="/static/images/protocat.ico" />
-
-		<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
-		<script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
-		<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+		<script src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
+		<script src="https://code.jquery.com/jquery-migrate-1.4.1.min.js"></script>
+		<link rel="stylesheet" type="text/css" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
 		<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 
 		<!-- Global js -->
 		<script src="/static/js/main.js"></script>
-		<script src="/static/js/bootstrap-rating-input.min.js"></script>
+		<!--script src="/static/js/bootstrap-rating-input.min.js"></script-->
 		<script src="/static/js/smoothscroll.js"></script>
+		<link rel="stylesheet" type="text/css" href="/static/css/star-rating.min.css">
+		<script src="/static/js/star-rating.min.js"></script>
 		<!-- If you want to add other js files, add it in the specific html page-->
 	</head>
 	<style>
@@ -142,13 +143,6 @@
 				<div id="navbar" class="navbar-collapse collapse">
 					<ul class="nav navbar-nav navbar-right">
 						<li class="search_box">
-							<!--form id="search_form" class="form-search center" method="GET" action="/search/">
-								<div class="form-group no-margin">
-									<input type="text" name="search" class="form-control" placeholder="Search ProtoCat" style="color:black">
-									<span id="navbar-search-icon" class="glyphicon glyphicon-search form-control-feedback" onclick="console.log('this')"></span></input>
-								</div>
-							</form-->
-
 							<!-- add search form -->
 							<form class="navbar-form navbar-right zero-side-margins" role="search" method="POST" action="/search/">
 								<div class="input-group">

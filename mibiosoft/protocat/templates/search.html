@@ -8,26 +8,85 @@
 	margin-right: 15px;
 	width: 90px;
 }
+.star {
+	margin-left: 1.5px !important;
+	margin-right: 1.5px !important;
+}
+.star > i {
+	font-size: 14px;
+}
+.left-side-ratings {
+	margin-top:-15px;
+	height:40px;
+}
+.max-lines {
+  display: block; /* or inline-block */
+  text-overflow: ellipsis;
+  word-wrap: break-word;
+  overflow: hidden;
+  max-height: 2.856em;
+}
 </style>
+
+<script>
+$(document).on('ready', function(){
+	$('.input-2').rating({
+		{% if not user.is_authenticated%}
+		displayOnly: true,
+		{% endif %}
+	}).on('rating.change', function(event, value, caption) {
+		console.log($(this).parent().parent().serialize());
+		$.ajax({
+			type: "POST",
+			url: "/rating/",
+			data: $(this).parent().parent().serialize() + '&NewValue=' + value,
+			success: function(){
+				console.log("it worked")
+			},
+			failure: function(){
+				console.log("it failed")
+			}
+		});
+	});
+});
+</script>
+
+
 
 {% for protocol in results %}
 <div class="row">
-	<div class="col-md-8 col-md-offset-2 col-xs-10 col-xs-offset-1 well well-sm" onclick="location.href='/protocol/{{ protocol.id }}/'">
+	<div class="col-sm-8 col-sm-offset-2 col-xs-10 col-xs-offset-1 well well-sm" onclick="location.href='/protocol/{{ protocol.id }}/'">
 		<div class="row">
-			<div class="col-sm-10 fix-margin-left">
+			<div class="col-sm-8 fix-margin-left">
 				<h1>{{ protocol.title }}</h1>
-				<h5>Category: <a href="/browse/{{ protocol.category.id }}/">{{ protocol.category }}</a> </h5>
-				<h5>Created by <a href="/user/{{ protocol.author.id }}/">{{ protocol.author }}</a> </h5>
+				<h5 class="visible-xs">Uploaded by <a href="/user/{{ protocol.author.id }}/">{{ protocol.author }}</a></h5>
 				<h5>Uploaded on {{ protocol.upload_date }}</h5>
-				<h5>{{ protocol.get_average_ratings }}/5 - {{ protocol.get_number_ratings }} ratings</h5>
+				{% if protocol.get_average_ratings == "N/A" %}
+				<h5>Be the first to rate this protocol</h2>
+				{% else %}
+				<form role="search" method="POST" action="/ratings/" class="center-block left-side-ratings form-inline visible-xs">
+					<input id="input-2" name="input-2" value="{{ protocol.get_average_ratings }}" class="rating-loading input-2"data-size="xs" data-display-only="true">
+					<input id="id" name='id' type="hidden" value="{{protocol.id}}">
+					<label style="position:relative;top:-27px;left:87px"> - {{ protocol.get_number_ratings }} ratings</label>
+				</form>
+				{% endif %}
+				<h5>Category: <a href="/browse/{{ protocol.category.id }}/">{{ protocol.category }}</a></h5>
+				<p class="text-muted max-lines">{{ protocol.description }}</p>
 			</div>
-			<div class="col-sm-2 hidden-xs protocol-author-picture fix-margin-top ull-right">
-				<img src="{{ protocol.author.profile_image.url }}" width=75 height=75 alt="Image not found" class="img-circle"/>
+			<div class="col-sm-2 hidden-xs protocol-author-picture fix-margin-top pull-right">
+				<img src="{{ protocol.author.profile_image.url }}" width=75 height=75 alt="Image not found" class="img-circle center-block"/>
+				<h5 style="text-align:center;"><a href="/user/{{ protocol.author.id }}/">{{ protocol.author }}</a></h5>
+				{% if protocol.get_average_ratings == "N/A" %}
+				<h2 class="small" style="text-align:center;margin-top:0px;">Be the first to rate this protocol</h2>
+				{% else %}
+				<form role="search" method="POST" action="/ratings/" class="center-block" style="margin-top:-15px">
+					<input id="input-2" name="input-2" value="{{ protocol.get_average_ratings }}" class="rating-loading input-2" data-size="xs" data-step="1" data-show-caption="false" data-show-clear="false">
+					<input id="id" name='id' type="hidden" value="{{protocol.id}}">
+					{% csrf_token %}
+				</form>
+				<h2 class="small" style="text-align:center;margin-top:0px;">{{ protocol.get_number_ratings }} ratings</h2>
+				{% endif %}
 			</div>
-			<form role="search" method="POST" action="/ratings/">
-				<input type="number" name="your_awesome_parameter" id="some_id" class="rating"/>
-				{% csrf_token %}
-			</form>
 		</div>
 	</div>
 </div>

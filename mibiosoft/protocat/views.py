@@ -241,3 +241,25 @@ def search(request):
 	print(len(connection.queries))
 	print ("RENDERING SEARCH")
 	return render(request, 'search.html', context)
+
+def submit_rating(request):
+	current_profile_info = request.user
+	if (not current_profile_info.is_anonymous()):
+
+		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
+		new_value = request.POST['NewValue']
+		protocol_id = request.POST['id']
+		protocol = Protocol.objects.get(id = protocol_id)
+
+		try:
+			old_rating = ProtocolRating.objects.get(person = current_profile_info, protocol = protocol)
+			old_rating.score = new_value
+			old_rating.save()
+		except:
+			rating = ProtocolRating(person = current_profile_info, score = new_value, protocol = protocol)
+			rating.save()
+	context = {
+		'title': 'ProtoCat',
+		'current_profile_info': current_profile_info,
+	}
+	return render(request, 'index.html', context)

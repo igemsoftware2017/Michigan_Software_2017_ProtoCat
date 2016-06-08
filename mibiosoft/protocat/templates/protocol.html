@@ -3,246 +3,290 @@
 {% block content %}
 
 <script>
-	var reagents = [];
-	var steps = [];
-	{% for reagent in protocol_reagents %}
-	var single_reagent = {
-		"number_in_step": {{ reagent.number_in_step }},
-		"scaling_type": {{ reagent.scaling_type }},
-		"amount": {{ reagent.amount }},
-		"unit": "{{ reagent.unit }}",
-		"significant_figures": {{ reagent.significant_figures }},
-		"reagent": "{{ reagent.reagent }}",
-		"reagent_type": {{ reagent.reagent_type }},
-		"protocol_step_number": {{ reagent.protocol_step_number }},
-		"reagent_id": {{ reagent.reagent.id }},
-	};
-	reagents.push(single_reagent);
-	{% endfor %}
+var reagents = [];
+var steps = [];
+{% for reagent in protocol_reagents %}
+var single_reagent = {
+	"number_in_step": {{ reagent.number_in_step }},
+	"scaling_type": {{ reagent.scaling_type }},
+	"amount": {{ reagent.amount }},
+	"unit": "{{ reagent.unit }}",
+	"significant_figures": {{ reagent.significant_figures }},
+	"reagent": "{{ reagent.reagent }}",
+	"reagent_type": {{ reagent.reagent_type }},
+	"protocol_step_number": {{ reagent.protocol_step_number }},
+	"reagent_id": {{ reagent.reagent.id }},
+};
+reagents.push(single_reagent);
+{% endfor %}
 
-	{% for protocol_step in protocol_steps %}
-	var single_step = {
-		"action": '{{ protocol_step.action|safe }}',
-		"time": {{ protocol_step.time }},
-		"time_scaling": {{ protocol_step.time_scaling }},
-		"step_number": {{ protocol_step.step_number }},
-	};
-	//var javascript_single_reagent = JSON.parse(single_reagent);
-	steps.push(single_step);
-	{% endfor %}
+{% for protocol_step in protocol_steps %}
+var single_step = {
+	"action": '{{ protocol_step.action|safe }}',
+	"time": {{ protocol_step.time }},
+	"time_scaling": {{ protocol_step.time_scaling }},
+	"step_number": {{ protocol_step.step_number }},
+};
+//var javascript_single_reagent = JSON.parse(single_reagent);
+steps.push(single_step);
+{% endfor %}
 
-	var reactants;
-	var intermediaries;
-	var products;
+var reactants;
+var intermediaries;
+var products;
 
-	var timer_id = [];
-	var last_time = [];
-	var time_total = [];
-	var running = [];
-	var count_to = [];
-	var update_element = [];
+var timer_id = [];
+var last_time = [];
+var time_total = [];
+var running = [];
+var count_to = [];
+var update_element = [];
 
-	function multiply_everything(factor) {
-		for (var reagent_num in reagents) {
-			if (reagents[reagent_num].scaling_type == 3) {
-				reagents[reagent_num].amount *= factor;
-			}
+function multiply_everything(factor) {
+	for (var reagent_num in reagents) {
+		if (reagents[reagent_num].scaling_type == 3) {
+			reagents[reagent_num].amount *= factor;
 		}
-		reactants = get_list_of_reagent_type(reagents, "1");
-		reactants = get_display_reagent_type(reagents, reactants, "1");
-		intermediaries = get_list_of_reagent_type(reagents, "2");
-		intermediaries = get_display_reagent_type(reagents, intermediaries, "2");
-		products = get_list_of_reagent_type(reagents, "3");
-		products = get_display_reagent_type(reagents, products, "3");
-		for (var i = 1; i < time_total.length; i++) {
-			if (steps[i - 1].time_scaling == 2) {
-				count_to[i] *= factor;
-				if (count_to[i] > time_total[i]) {
-					time_total[i] = count_to[i];
-				}
-				update_element[i].innerHTML = get_time_total(i);
-			}
-		}
-		update_visual_data();
 	}
-
-	function get_display_reagent_type(reagents, given_list, type) {
-		for (var i in given_list) {
-			for (var j in reagents) {
-				if (reagents[j].reagent_type == type) {
-					if (reagents[j].reagent_id == given_list[i].reagent_id) {
-						if (reagents[j].unit == given_list[i].unit) {
-							given_list[i].amount += reagents[j].amount;
-						}
-					}
-				}
+	reactants = get_list_of_reagent_type(reagents, "1");
+	reactants = get_display_reagent_type(reagents, reactants, "1");
+	intermediaries = get_list_of_reagent_type(reagents, "2");
+	intermediaries = get_display_reagent_type(reagents, intermediaries, "2");
+	products = get_list_of_reagent_type(reagents, "3");
+	products = get_display_reagent_type(reagents, products, "3");
+	for (var i = 1; i < time_total.length; i++) {
+		if (steps[i - 1].time_scaling == 2) {
+			count_to[i] *= factor;
+			if (count_to[i] > time_total[i]) {
+				time_total[i] = count_to[i];
 			}
+			update_element[i].innerHTML = get_time_total(i);
 		}
-		return given_list;
 	}
+	update_visual_data();
+}
 
-	function get_list_of_reagent_type(reagents, type) {
-		var result = [];
-		for (var reagent_num in reagents) {
-			reagent = reagents[reagent_num];
-			if (reagent.reagent_type == type) {
-				var put_in = true;
-				for (var i in result) {
-					var temp = result[i];
-					if (temp.reagent_id == reagent.reagent_id && temp.unit == reagent.unit) {
-						put_in = false;
+function get_display_reagent_type(reagents, given_list, type) {
+	for (var i in given_list) {
+		for (var j in reagents) {
+			if (reagents[j].reagent_type == type) {
+				if (reagents[j].reagent_id == given_list[i].reagent_id) {
+					if (reagents[j].unit == given_list[i].unit) {
+						given_list[i].amount += reagents[j].amount;
 					}
-				}
-				if (put_in) {
-					new_reagent = JSON.parse(JSON.stringify(reagent));
-					new_reagent.amount = 0;
-					result.push(new_reagent);
 				}
 			}
 		}
-		return result;
 	}
+	return given_list;
+}
 
-	function update_visual_data() {
-		$('#steps').children('tr').each(function() {
-			// we are in each table row
-			$(this).children('td').filter('.action').each(function() {
-				step_num = Number($(this).attr('data-step-num'));
-				$(this).children('span').filter('.reagent').each(function() {
-					reagent_number = Number($(this).attr('data-reagent-number'));
-					var correct_reagent = null;
-					for (var reagent_num in reagents) {
-						reagent = reagents[reagent_num];
-						if (reagent.number_in_step == reagent_number && reagent.protocol_step_number == step_num) {
-							correct_reagent = reagent;
-							break;
-						}
-					}
-					if (correct_reagent != null) {
-						this.innerHTML = correct_reagent.amount.toPrecision(correct_reagent.significant_figures) + correct_reagent.unit + " " + correct_reagent.reagent;
-					}
-					else {
-						this.innerHTML = "ERROR";
-					}
-				});
-			});
-		});
-
-		reactants = get_list_of_reagent_type(reagents, "1");
-		reactants = get_display_reagent_type(reagents, reactants, "1");
-		intermediaries = get_list_of_reagent_type(reagents, "2");
-		intermediaries = get_display_reagent_type(reagents, intermediaries, "2");
-		products = get_list_of_reagent_type(reagents, "3");
-		products = get_display_reagent_type(reagents, products, "3");
-
-
-		var main_str = "";
-		for (var i in reactants) {
-			var str = ["<tr>"
-				,"<td>",reactants[i].reagent,"</td>"
-				,"<td>",reactants[i].amount," ",reactants[i].unit,"</td>"
-				,"<td>",reactants[i].reagent_id,"</td>"
-			,"</tr>"].join("");
-			main_str += str;
+function get_list_of_reagent_type(reagents, type) {
+	var result = [];
+	for (var reagent_num in reagents) {
+		reagent = reagents[reagent_num];
+		if (reagent.reagent_type == type) {
+			var put_in = true;
+			for (var i in result) {
+				var temp = result[i];
+				if (temp.reagent_id == reagent.reagent_id && temp.unit == reagent.unit) {
+					put_in = false;
+				}
+			}
+			if (put_in) {
+				new_reagent = JSON.parse(JSON.stringify(reagent));
+				new_reagent.amount = 0;
+				result.push(new_reagent);
+			}
 		}
-
-		$('#reactants').children('tr').each(function() {
-			$(this).remove();
-		});
-		$('#reactants').append(main_str);
-
-		main_str = "";
-		for (var i in intermediaries) {
-			var str = ["<tr>"
-    			,"<td>",intermediaries[i].reagent,"</td>"
-    			,"<td>",intermediaries[i].amount," ",intermediaries[i].unit,"</td>"
-				,"<td>",intermediaries[i].reagent_id,"</td>"
-			,"</tr>"].join("");
-			main_str += str;
-		}
-
-		$('#intermediaries').children('tr').each(function() {
-			$(this).remove();
-		});
-		$('#intermediaries').append(main_str);
-
-		main_str = "";
-		for (var i in products) {
-			var str = ["<tr>"
-				,"<td>",products[i].reagent,"</td>"
-				,"<td>",products[i].amount," ",products[i].unit,"</td>"
-				,"<td>",products[i].reagent_id,"</td>"
-			,"</tr>"].join("");
-			main_str += str;
-		}
-
-		$('#products').children('tr').each(function() {
-			$(this).remove();
-		});
-		$('#products').append(main_str);
 	}
+	return result;
+}
 
-	window.onload = function() {
-		update_visual_data();
-		$('#steps').children('tr').each(function(index) {
-			$(this).children('td').filter('.time').children('span').each(function(new_index) {
-				if (new_index == 0) {
-					if (steps[index].time_scaling != 0) {
-						count_to[index + 1] = steps[index].time;
-						time_total[index + 1] = 0;
-						update_element[index + 1] = this;
-						if (count_to[index + 1] != -1) {
-							this.innerHTML = get_time_total(index + 1);
-						}
+function update_visual_data() {
+	$('#steps').children('tr').each(function() {
+		// we are in each table row
+		$(this).children('td').filter('.action').each(function() {
+			step_num = Number($(this).attr('data-step-num'));
+			$(this).children('span').filter('.reagent').each(function() {
+				reagent_number = Number($(this).attr('data-reagent-number'));
+				var correct_reagent = null;
+				for (var reagent_num in reagents) {
+					reagent = reagents[reagent_num];
+					if (reagent.number_in_step == reagent_number && reagent.protocol_step_number == step_num) {
+						correct_reagent = reagent;
+						break;
 					}
+				}
+				if (correct_reagent != null) {
+					this.innerHTML = correct_reagent.amount.toPrecision(correct_reagent.significant_figures) + correct_reagent.unit + " " + correct_reagent.reagent;
+				}
+				else {
+					this.innerHTML = "ERROR";
 				}
 			});
 		});
-	};
+	});
 
-	function timer(i) {
-		var new_time = Date.now();
-		var delta = new_time - last_time[i]; // milliseconds elapsed since start
-		time_total[i] += delta;
-		last_time[i] = new_time;
-		console.log(Math.floor(time_total[i] / 100) / 10.0); // in seconds
-		if (time_total[i] >= 1000 * count_to[i]) {
-			clearInterval(timer_id[i]);
-			time_total[i] = count_to[i] * 1000;
-			running[i] = false;
-		}
-		update_element[i].innerHTML = get_time_total(i);
+	reactants = get_list_of_reagent_type(reagents, "1");
+	reactants = get_display_reagent_type(reagents, reactants, "1");
+	intermediaries = get_list_of_reagent_type(reagents, "2");
+	intermediaries = get_display_reagent_type(reagents, intermediaries, "2");
+	products = get_list_of_reagent_type(reagents, "3");
+	products = get_display_reagent_type(reagents, products, "3");
+
+
+	var main_str = "";
+	for (var i in reactants) {
+		var str = ["<tr>"
+		,"<td>",reactants[i].reagent,"</td>"
+		,"<td>",reactants[i].amount," ",reactants[i].unit,"</td>"
+		,"<td>",reactants[i].reagent_id,"</td>"
+		,"</tr>"].join("");
+		main_str += str;
 	}
 
-	function pause(i) {
+	$('#reactants').children('tr').each(function() {
+		$(this).remove();
+	});
+	$('#reactants').append(main_str);
+
+	main_str = "";
+	for (var i in intermediaries) {
+		var str = ["<tr>"
+		,"<td>",intermediaries[i].reagent,"</td>"
+		,"<td>",intermediaries[i].amount," ",intermediaries[i].unit,"</td>"
+		,"<td>",intermediaries[i].reagent_id,"</td>"
+		,"</tr>"].join("");
+		main_str += str;
+	}
+
+	$('#intermediaries').children('tr').each(function() {
+		$(this).remove();
+	});
+	$('#intermediaries').append(main_str);
+
+	main_str = "";
+	for (var i in products) {
+		var str = ["<tr>"
+		,"<td>",products[i].reagent,"</td>"
+		,"<td>",products[i].amount," ",products[i].unit,"</td>"
+		,"<td>",products[i].reagent_id,"</td>"
+		,"</tr>"].join("");
+		main_str += str;
+	}
+
+	$('#products').children('tr').each(function() {
+		$(this).remove();
+	});
+	$('#products').append(main_str);
+}
+
+window.onload = function() {
+	update_visual_data();
+	$('#steps').children('tr').each(function(index) {
+		$(this).children('td').filter('.time').children('span').each(function(new_index) {
+			if (new_index == 0) {
+				if (steps[index].time_scaling != 0) {
+					count_to[index + 1] = steps[index].time;
+					time_total[index + 1] = 0;
+					update_element[index + 1] = this;
+					if (count_to[index + 1] != -1) {
+						this.innerHTML = get_time_total(index + 1);
+					}
+				}
+			}
+		});
+	});
+};
+
+function timer(i) {
+	var new_time = Date.now();
+	var delta = new_time - last_time[i]; // milliseconds elapsed since start
+	time_total[i] += delta;
+	last_time[i] = new_time;
+	console.log(Math.floor(time_total[i] / 100) / 10.0); // in seconds
+	if (time_total[i] >= 1000 * count_to[i]) {
 		clearInterval(timer_id[i]);
+		time_total[i] = count_to[i] * 1000;
 		running[i] = false;
 	}
+	update_element[i].innerHTML = get_time_total(i);
+}
 
-	function resume(i) {
-		if (!running[i]) {
-			last_time[i] = Date.now();
-			pause(i);
-			timer_id[i] = setInterval(timer, 100, i);
-			running[i] = true;
-		}
-	}
+function pause(i) {
+	clearInterval(timer_id[i]);
+	running[i] = false;
+}
 
-	function reset(i) {
-		time_total[i] = 0;
+function resume(i) {
+	if (!running[i]) {
+		last_time[i] = Date.now();
 		pause(i);
-		update_element[i].innerHTML = get_time_total(i);
+		timer_id[i] = setInterval(timer, 100, i);
+		running[i] = true;
 	}
+}
 
-	function get_time_total(i) {
-		return (count_to[i] - Math.floor(time_total[i] / 100) / 10.0).toFixed(1);
-	}
+function reset(i) {
+	time_total[i] = 0;
+	pause(i);
+	update_element[i].innerHTML = get_time_total(i);
+}
+
+function get_time_total(i) {
+	return (count_to[i] - Math.floor(time_total[i] / 100) / 10.0).toFixed(1);
+}
+
+$(document).on('ready', function(){
+	$('.input-2').rating({
+		{% if not user.is_authenticated%}
+		displayOnly: true,
+		{% endif %}
+	}).on('rating.change', function(event, value, caption) {
+		$.ajax({
+			type: "POST",
+			url: "/rating/",
+			data: $('#inline-form').serialize() + '&NewValue=' + value,
+			success: function(){
+				console.log("it worked")
+			},
+			failure: function(){
+				console.log("it failed")
+			}
+		});
+	});
+});
+
 
 </script>
 <style>
 .protocol_title{
-	background-color:#CCC;
-	//Change this
+	/*background-color:#CCC;
+	Change this*/
+}
+.protocol-author-picture {
+	padding: 0px;
+	margin-right: 15px;
+	width: 90px;
+}
+.star {
+	margin-left: 1.5px !important;
+	margin-right: 1.5px !important;
+}
+.star > i {
+	font-size: 14px;
+}
+.left-side-ratings {
+	margin-top:-15px;
+	height:40px;
+}
+.max-lines {
+	display: block; /* or inline-block */
+	text-overflow: ellipsis;
+	word-wrap: break-word;
+	overflow: hidden;
+	max-height: 2.856em;
 }
 
 h5{
@@ -251,50 +295,67 @@ h5{
 </style>
 
 <div class="row protocol_title">
-<div class="col-md-8 col-md-offset-2 col-xs-12">
-<h1>{{ protocol.title }}<br>
-<small>Created by <a href="/user/{{ protocol.author.id }}/">{{ protocol.author }}</a><br>
-<h5>Uploaded on {{ protocol.upload_date }}</h5>
-<h5>Category: <a href="/browse/{{ protocol.category.id }}/">{{ protocol.category }}</a></h5>
-<h5>Rating: {{ protocol.get_average_ratings }}/5 - {{ protocol.get_number_ratings }} ratings</h5>
-</small>
-</h1>
-</div>
+	<div class="col-sm-8 col-sm-offset-2 col-xs-10 col-xs-offset-1 well well-sm" onclick="location.href='/protocol/{{ protocol.id }}/'">
+		<div class="row">
+			<div class="col-sm-8 fix-margin-left">
+				<h1>{{ protocol.title }}</h1>
+				<h5 class="visible-xs">Uploaded by <a href="/user/{{ protocol.author.id }}/">{{ protocol.author }}</a></h5>
+				<h5>Uploaded on {{ protocol.upload_date }}</h5>
+				<form id="inline-form" method="POST" action="/ratings/" class="center-block left-side-ratings visible-xs">
+					<input id="input-2" name="input-2" value="{%if protocol.get_average_ratings == "N/A"%}0{%else%}{{ protocol.get_average_ratings }}{%endif%}" class="rating-loading input-2" data-size="xs" data-step="1" data-show-caption="false" data-show-clear="false">
+					<input id="id" name='id' type="hidden" value="{{protocol.id}}">
+					{% csrf_token %}
+					<label style="position:relative;top:-27px;left:87px"> - {{ protocol.get_number_ratings }} ratings</label>
+				</form>
+				<h5>Category: <a href="/browse/{{ protocol.category.id }}/">{{ protocol.category }}</a></h5>
+			</div>
+			<div class="col-sm-2 hidden-xs protocol-author-picture fix-margin-top pull-right">
+				<img src="{{ protocol.author.profile_image.url }}" width=75 height=75 alt="Image not found" class="img-circle center-block"/>
+				<h5 style="text-align:center;"><a href="/user/{{ protocol.author.id }}/">{{ protocol.author }}</a></h5>
+				<form id="inline-form" method="POST" action="/ratings/" class="center-block" style="margin-top:-15px">
+					<input id="input-2" name="input-2" value="{%if protocol.get_average_ratings == "N/A"%}0{%else%}{{ protocol.get_average_ratings }}{%endif%}" class="rating-loading input-2" data-size="xs" data-step="1" data-show-caption="false" data-show-clear="false">
+					<input id="id" name='id' type="hidden" value="{{protocol.id}}">
+					{% csrf_token %}
+				</form>
+				<h2 class="small" style="text-align:center;margin-top:0px;">{{ protocol.get_number_ratings }} ratings</h2>
+			</div>
+		</div>
+	</div>
 </div>
 <br>
 
 <div class="col-md-8 col-md-offset-2">
+	<div class="panel panel-primary">
+		<div class="panel panel-heading">
+			<ul class="nav nav-tabs">
+				<li class="active"><a data-toggle="tab" href="#Description">Description</a></li>
+				<li><a data-toggle="tab" href="#Reagents">Reagents</a></li>
+				<li><a data-toggle="tab" href="#Changelog">Change log</a></li>
+			</ul>
+		</div>
 
-<div class="panel panel-primary">
-<div class="panel panel-heading">
-<ul class="nav nav-tabs">
-  <li class="active"><a data-toggle="tab" href="#Description">Description</a></li>
-  <li><a data-toggle="tab" href="#Reagents">Reagents</a></li>
-  <li><a data-toggle="tab" href="#Changelog">Change log</a></li>
-</ul>
-</div>
-
-<div class="panel-body">
-<div class="tab-content">
-  <div id="Description" class="tab-pane fade in active">
-    <span>{{ protocol.description }}</span><br>
-  </div>
-  <div id="Reagents" class="tab-pane fade">
-    {% if text_reagents %}
-    <span>{{ text_reagents.reagents }}</span><br>
-    {% endif %}
-  </div>
-  <div id="Changelog" class="tab-pane fade">
-    <span>{{ protocol.change_log }}</span><br>
-    {% if protocol.previous_revision %}
-    <span><a href="/protocol/{{ protocol.previous_revision.id }}">Previous Revision</a></span><br>
-    {% endif %}
-    {% for next_protocol in next_protocols %}
-	<span><a href="/protocol/{{ next_protocol.id }}">Next Revision</a></span><br>
-	{% endfor %}
-  </div>
-</div>
-</div>
+		<div class="panel-body">
+			<div class="tab-content">
+				<div id="Description" class="tab-pane fade in active">
+					<span>{{ protocol.description }}</span><br>
+				</div>
+				<div id="Reagents" class="tab-pane fade">
+					{% if text_reagents %}
+					<span>{{ text_reagents.reagents }}</span><br>
+					{% endif %}
+				</div>
+				<div id="Changelog" class="tab-pane fade">
+					<span>{{ protocol.change_log }}</span><br>
+					{% if protocol.previous_revision %}
+					<span><a href="/protocol/{{ protocol.previous_revision.id }}">Previous Revision</a></span><br>
+					{% endif %}
+					{% for next_protocol in next_protocols %}
+					<span><a href="/protocol/{{ next_protocol.id }}">Next Revision</a></span><br>
+					{% endfor %}
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
 
 <div class="col-md-12">
@@ -377,25 +438,25 @@ h5{
 						{% endif %}
 					</td>
 					<td class="reagents">
-					{% for protocol_reagent in protocol_reagents %}
-					{% if protocol_reagent.protocol_step == protocol_step %}
-					<span><a href="/reagent/{{ protocol_reagent.id }}/">{{ protocol_reagent }}</a></span>
-					{% if protocol_reagent.reagent_type == 1 %}
-					- Reactant
-					{% elif protocol_reagent.reagent_type == 2 %}
-					- Intermediary
-					{% else %}
-					- Product
-					{% endif %}<br>
-					{% endif %}
-					{% endfor %}
+						{% for protocol_reagent in protocol_reagents %}
+						{% if protocol_reagent.protocol_step == protocol_step %}
+						<span><a href="/reagent/{{ protocol_reagent.reagent.id }}/">{{ protocol_reagent }}</a></span>
+						{% if protocol_reagent.reagent_type == 1 %}
+						- Reactant
+						{% elif protocol_reagent.reagent_type == 2 %}
+						- Intermediary
+						{% else %}
+						- Product
+						{% endif %}<br>
+						{% endif %}
+						{% endfor %}
 					</td>
 					<td>
-					{% for step_note in step_notes %}
-					{% if step_note.protocol_step == protocol_step %}
-					<span>{{ step_note.note }} - <a href="/user/{{ step_note.author.id }}/">{{ step_note.author }}</a></span><br>
-					{% endif %}
-					{% endfor %}
+						{% for step_note in step_notes %}
+						{% if step_note.protocol_step == protocol_step %}
+						<span>{{ step_note.note }} - <a href="/user/{{ step_note.author.id }}/">{{ step_note.author }}</a></span><br>
+						{% endif %}
+						{% endfor %}
 					</td>
 				</tr>
 				{% endfor %}
@@ -405,10 +466,10 @@ h5{
 </div>
 
 <div class="col-md-8 col-md-offset-2">
-{% if protocol_reagents.count != 0 %}
-<button onclick="multiply_everything(0.5);">Halve me please!</button>
-<button onclick="multiply_everything(2);">Double me please!</button>
-{% endif %}
+	{% if protocol_reagents.count != 0 %}
+	<button onclick="multiply_everything(0.5);">Halve me please!</button>
+	<button onclick="multiply_everything(2);">Double me please!</button>
+	{% endif %}
 </div>
 
 {% endblock %}
