@@ -289,6 +289,19 @@ $(document).on('ready', function(){
 	max-height: 2.856em;
 }
 
+li a{
+	color: white;
+}
+
+.nav-tabs>li.active>a, .nav-pills>li.active>a:focus, .nav-pills>li.active>a:hover {
+	color: #337ab7;
+    background-color: #fff;
+}
+
+#pill-tab-heading {
+	padding-bottom: 0px;
+}
+
 h5{
 	color:inherit;
 }
@@ -326,7 +339,7 @@ h5{
 
 <div class="col-md-8 col-md-offset-2">
 	<div class="panel panel-primary">
-		<div class="panel panel-heading">
+		<div id="pill-tab-heading" class="panel panel-heading">
 			<ul class="nav nav-tabs">
 				<li class="active"><a data-toggle="tab" href="#Description">Description</a></li>
 				<li><a data-toggle="tab" href="#Reagents">Reagents</a></li>
@@ -337,20 +350,20 @@ h5{
 		<div class="panel-body">
 			<div class="tab-content">
 				<div id="Description" class="tab-pane fade in active">
-					<span>{{ protocol.description }}</span><br>
+					<p>{{ protocol.description }}</p><br>
 				</div>
 				<div id="Reagents" class="tab-pane fade">
 					{% if text_reagents %}
-					<span>{{ text_reagents.reagents }}</span><br>
+					<p>{{ text_reagents.reagents }}</p><br>
 					{% endif %}
 				</div>
 				<div id="Changelog" class="tab-pane fade">
-					<span>{{ protocol.change_log }}</span><br>
+					<p>{{ protocol.change_log }}</p><br>
 					{% if protocol.previous_revision %}
-					<span><a href="/protocol/{{ protocol.previous_revision.id }}">Previous Revision</a></span><br>
+					<p><a href="/protocol/{{ protocol.previous_revision.id }}">Previous Revision</a></p><br>
 					{% endif %}
 					{% for next_protocol in next_protocols %}
-					<span><a href="/protocol/{{ next_protocol.id }}">Next Revision</a></span><br>
+					<p><a href="/protocol/{{ next_protocol.id }}">Next Revision</a></p><br>
 					{% endfor %}
 				</div>
 			</div>
