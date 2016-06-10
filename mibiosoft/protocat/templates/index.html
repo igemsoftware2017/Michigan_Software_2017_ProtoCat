@@ -2,9 +2,37 @@
 
 {% block content %}
 
-<div class="jumbotron">
-	<h1>Congrats, you made it to {{title}}!</h1>
-	<h3>Now it's time to start working	</h3>
-</div>
+<style>
+	.centered {
+		text-align: center;
+	}
+</style>
 
+<div class="jumbotron">
+	<h1>Welcome to {{title}}!</h1>
+	<h3>The open source protocol catalog</h3>
+</div>
+	<!-- INTRO WRAP -->
+	<div id="intro">
+		<div class="container">
+			<div class="row centered">
+				<h1>Collaborating Towards Success</h1>
+				<br>
+				<br>
+				<div class="col-lg-4">
+					<img src="http://2015.igem.org/wiki/images/7/7f/Team_Michigan_Software_Collaboration.png" width="100%" alt="">
+					<h3>Share it</h3>
+				</div>
+				<div class="col-lg-4">
+					<img src="http://2015.igem.org/wiki/images/5/5d/Team_Michigan_Software_banner.jpg" width="83%" alt="">
+					<h3>Try it</h3>
+				</div>
+				<div class="col-lg-4">
+					<img src="http://2015.igem.org/wiki/images/d/d0/Team_Michigan_Software_Celebration.png" width="60%" alt="">
+					<h3>Like it</h3>
+				</div>
+			</div>
+			<br>
+	    </div> <!--/ .container -->
+	</div><!--/ #introwrap -->
 {% endblock %}
