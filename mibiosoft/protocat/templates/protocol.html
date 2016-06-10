@@ -409,6 +409,27 @@ h5{
 	</div>
 </div>
 
+
+<div class="col-md-8">
+	<div class="panel panel-primary">
+		<div class="panel-group">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h3 class="panel-title">Step one</h3>
+				</div>	
+				<div class="panel-body">Body info for step one</div>
+					<div class="panel panel-danger">
+					<!-- Want to get rid of defualt border radius -->
+							<div class="panel-heading">
+							<h3 class="panel-title">Warning!</h3>
+							This is the body of the warning
+							</div>
+					</div>
+			</div>
+		</div>
+	</div>
+</div>
+
 <div class="col-md-12">
 	<div class="panel panel-primary">
 		<div class="panel-heading">Protocol data List</div>
@@ -452,9 +473,7 @@ h5{
 						{% endfor %}
 					</td>
 					<td>
-						{% for step_note in step_notes %}
-						{% if step_note.protocol_step == protocol_step %}
-						<span>{{ step_note.note }} - <a href="/user/{{ step_note.author.id }}/">{{ step_note.author }}</a></span><br>
+						{% for step_note in step_notes %} {% if step_note.protocol_step == protocol_step %} <span>{{ step_note.note }} - <a href="/user/{{ step_note.author.id }}/">{{ step_note.author }}</a></span><br>
 						{% endif %}
 						{% endfor %}
 					</td>
