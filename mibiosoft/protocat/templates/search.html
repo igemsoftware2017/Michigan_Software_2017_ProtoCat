@@ -90,66 +90,66 @@ $(document).on('ready', function(){
 </script>
 
 <div class="row">
-<div class="panel-group col-sm-8 col-sm-offset-2 col-xs-10 col-xs-offset-1" id="accordion">
-  <div class="panel panel-default">
-    <div class="panel-heading" >
-      <a data-toggle="collapse" data-parent="#accordion" href="#collapse1">
-		<div class="panel-title">
-			<h4>
-				Advanced Options
-			</h4>
+	<div class="panel-group col-sm-8 col-sm-offset-2 col-xs-10 col-xs-offset-1" id="accordion">
+		<div class="panel panel-default">
+			<div class="panel-heading" >
+				<a data-toggle="collapse" data-parent="#accordion" href="#collapse1">
+				<div class="panel-title">
+					<h4>
+					Advanced Options
+					</h4>
+				</div>
+				</a>
+			</div>
+			<div id="collapse1" class="panel-collapse collapse">
+				<div class="panel-body">
+					Filter by: Rating between X and Y, Uses x Reagent, Created between day1 and day2, Min # ratings, time, # steps, author
+					<ul>
+						<li>Textboxes</li>
+						<li>Vertically aligned</li>	
+					</ul>
+					<form>
+						<fieldset class="form-group">
+							<label for="formGroupExampleInput">Example label</label>
+							<input type="text" class="form-control" id="formGroupExampleInput" placeholder="Author">
+						</fieldset>
+						<fieldset class="form-group">
+							<label for="formGroupExampleInput2">Another label</label>
+							<input type="text" class="form-control" id="formGroupExampleInput2" placeholder="Another input">
+						</fieldset>
+					</form>	
+			
+					<br><br><br>
+			
+					Order by: Num Rating, Title (alphabet), Upload date (by original?), #Steps, author (alpha)<br>
+					<ul>
+						<li>Radio buttions/clickable divs, only one at a time</li>
+						<li>Horizontally done</li>	
+					</ul>
+					<div class="btn-group btn-group-justified" data-toggle="buttons">
+						<label class="btn btn-primary active">
+							<input type="radio" name="options" id="option1" autocomplete="off" checked>Average Rating
+						</label>
+						<label class="btn btn-primary">
+							<input type="radio" name="options" id="option2" autocomplete="off">Title
+						</label>
+						<label class="btn btn-primary">
+							<input type="radio" name="options" id="option2" autocomplete="off">Author
+						</label>
+						<label class="btn btn-primary">
+							<input type="radio" name="options" id="option2" autocomplete="off">Upload date
+						</label>
+						<label class="btn btn-primary">
+							<input type="radio" name="options" id="option2" autocomplete="off"># Ratings
+						</label>
+						<label class="btn btn-primary">
+							<input type="radio" name="options" id="option3" autocomplete="off"># Steps
+						</label>
+					</div>
+				</div>
+			</div>
 		</div>
-	  </a>
-    </div>
-    <div id="collapse1" class="panel-collapse collapse">
-      <div class="panel-body">
-	  
-			Filter by: Rating between X and Y, Uses x Reagent, Created between day1 and day2, Min # ratings, time, # steps, author
-			<ul>
-				<li>Textboxes</li>
-				<li>Vertically aligned</li>	
-			</ul>
-			
-			<form>
-			<fieldset class="form-group">
-				<label for="formGroupExampleInput">Example label</label>
-				<input type="text" class="form-control" id="formGroupExampleInput" placeholder="Author">
-			</fieldset>
-			<fieldset class="form-group">
-				<label for="formGroupExampleInput2">Another label</label>
-				<input type="text" class="form-control" id="formGroupExampleInput2" placeholder="Another input">
-			</fieldset>
-			</form>
-			
-			<br><br><br>
-			
-			Order by: Num Rating, Title (alphabet), Upload date (by original?), #Steps, author (alpha)<br>
-			<ul>
-				<li>Radio buttions/clickable divs, only one at a time</li>
-				<li>Horizontally done</li>	
-			</ul>
-			
-		<div class="btn-group btn-group-justified" role="group" aria-label="...">
-			<div class="btn-group" role="group">
-				<button type="button" class="btn btn-default">Title</button>
-			</div>
-			<div class="btn-group" role="group">
-				<button type="button" class="btn btn-default">Author</button>
-			</div>
-			<div class="btn-group" role="group">
-				<button type="button" class="btn btn-default">Upload date</button>
-			</div>
-			<div class="btn-group" role="group">
-				<button type="button" class="btn btn-default"># Ratings</button>
-			</div>
-			<div class="btn-group" role="group">
-				<button type="button" class="btn btn-default"># Steps</button>
-			</div>
-		</div>
-	  </div>
-    </div>
-  </div>
-</div>
+	</div>
 </div>
 
 {% for protocol in results %}
