@@ -106,26 +106,68 @@ $(document).on('ready', function(){
 					Filter by: Rating between X and Y, Uses x Reagent, Created between day1 and day2, Min # ratings, time, # steps, author
 					<ul>
 						<li>Textboxes</li>
-						<li>Vertically aligned</li>	
+						<li>Vertically aligned</li>
 					</ul>
 					<form>
 						<fieldset class="form-group">
-							<label for="formGroupExampleInput">Example label</label>
-							<input type="text" class="form-control" id="formGroupExampleInput" placeholder="Author">
+							<label for="formGroupExampleInput">Filter by Author</label>
+							<input type="text" class="form-control" id="formGroupExampleInput" placeholder="Author name">
+						</fieldset>
+				<fieldset class="form-group">
+							<label for="formGroupExampleInput2">Rating Between</label>
+						<div class="form-group">
+  						<label for="sel1">Lower Bound:</label>
+  					<select class="form-control" id="sel1">
+							<option>0</option>
+    					<option>1</option>
+    					<option>2</option>
+    					<option>3</option>
+    					<option>4</option>
+							<option>5</option>
+  				</select>
+				</div>
+				<div class="form-group">
+					<label for="sel1">Upper Bound:</label>
+					<select class="form-control" id="sel1">
+						<option>0</option>
+						<option>1</option>
+						<option>2</option>
+						<option>3</option>
+						<option>4</option>
+						<option>5</option>
+					</select>
+				</div>
+				</fieldset>
+						<fieldset class="form-group">
+							<label for="formGroupExampleInput2">Min # of Ratings</label>
+							<input type="number" class="form-control" id="formGroupExampleInput2" placeholder="Number">
 						</fieldset>
 						<fieldset class="form-group">
-							<label for="formGroupExampleInput2">Another label</label>
-							<input type="text" class="form-control" id="formGroupExampleInput2" placeholder="Another input">
+							<label for="formGroupExampleInput2"># of Steps</label>
+							<input type="number" class="form-control" id="formGroupExampleInput2" placeholder="Lower bound">
+							<input type="number" class="form-control" id="formGroupExampleInput2" placeholder="Upper bound">
 						</fieldset>
-					</form>	
-			
+
+						<fieldset class="form-group">
+							<label for="formGroupExampleInput2">Uses X Reagent</label>
+							<input type="text" class="form-control" id="formGroupExampleInput2" placeholder="DO SOMETHING">
+						</fieldset>
+
+					<fieldset class="form-group">
+						<label for="formGroupExampleInput">Posted between these dates</label>
+						<input type="date" class="form-control" id="formGroupExampleInput" placeholder="day1">
+						<input type="date" class="form-control" id="formGroupExampleInput" placeholder="day2">
+					</fieldset>
+					</form>
+
 					<br><br><br>
-			
+
 					Order by: Num Rating, Title (alphabet), Upload date (by original?), #Steps, author (alpha)<br>
 					<ul>
 						<li>Radio buttions/clickable divs, only one at a time</li>
-						<li>Horizontally done</li>	
+						<li>Horizontally done</li>
 					</ul>
+					<label for="formGroupExampleInput2">Sort by:</label>
 					<div class="btn-group btn-group-justified" data-toggle="buttons">
 						<label class="btn btn-primary active">
 							<input type="radio" name="options" id="option1" autocomplete="off" checked>Average Rating
