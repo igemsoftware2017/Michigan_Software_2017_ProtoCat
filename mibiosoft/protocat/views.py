@@ -216,7 +216,7 @@ def about(request):
 		'current_profile_info': current_profile_info,
 	}
 	print ("RENDERING INDEX")
-	return render(request, 'index.html', context)
+	return render(request, 'about.html', context)
 
 def search(request):
 	text_filter = request.POST['text_filter']
@@ -263,3 +263,28 @@ def submit_rating(request):
 		'current_profile_info': current_profile_info,
 	}
 	return render(request, 'index.html', context)
+
+
+def upload_default(request):
+	current_data = None
+	return upload_page(request, current_data)
+
+def upload_branch(request, protocol_id):
+	#current_parent = Category.objects.get(id = category_id)
+	current_data = None
+	return upload_page(request, current_data)
+
+def upload_page(request, current_data):
+	current_profile_info = request.user
+	if (not current_profile_info.is_anonymous()):
+		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
+		print(current_profile_info)
+	else:
+		current_profile_info = None
+
+	context = {
+		'title': 'ProtoCat - Browse Categories',
+		'current_profile_info': current_profile_info,
+	}
+	print(len(connection.queries))
+	return render(request, 'upload_protocol.html', context)
