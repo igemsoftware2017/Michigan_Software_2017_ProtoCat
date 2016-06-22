@@ -3,14 +3,14 @@
 {% block content %}
 
 <div class="row hidden-xs">
-	<div class="col-md-2 col-md-offset-1">
+	<div class="col-sm-2 col-sm-offset-1">
 		{% if profile_info.profile_image != "" %}
 		<img src="{{ profile_info.profile_image.url }}" width=200 height=200 alt="Image not found" class="img-responsive img-circle"/>
 		{% else %}
 		<img src="/static/images/basic_picture.jpg" width=200 height=200 alt="Image not found" class="img-responsive img-circle"/>
 		{% endif %}
 	</div>
-	<div class="col-md-4">
+	<div class="col-sm-4">
 		<h2>{{ profile_info.user }}<br/>
 		<small>{{ profile_info.about }}</small></h2>
 		<p>Website: <a href="http://{{ profile_info.contact_info }}">{{ profile_info.contact_info }}</a></p>
@@ -38,7 +38,7 @@
 
 
 <div class="row">
-	<div class="col-md-8 col-md-offset-2">
+	<div class="col-sm-10 col-sm-offset-1">
 		<div class="panel-primary">
 			<h3>Protocols</h3>
 			{% for protocol in user_created_protocols %}

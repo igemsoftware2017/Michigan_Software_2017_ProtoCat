@@ -64,9 +64,11 @@
 	color: inherit;
 	text-decoration: none;
 }
+
 </style>
 
 <script>
+
 $(document).on('ready', function(){
 	$('.input-2').rating({
 		{% if not user.is_authenticated%}
@@ -86,65 +88,181 @@ $(document).on('ready', function(){
 			}
 		});
 	});
+
+	$('#collapse1').on('shown.bs.collapse', function () {
+		console.log("noticed");
+		$("#flipper").removeClass("dropdown").addClass("dropup");
+	});
+
+	$('#collapse1').on('hidden.bs.collapse', function () {
+		console.log("noticed");
+		$("#flipper").removeClass("dropup").addClass("dropdown");
+	});
+});
+
+$(function() {
+	$('input[name="birthdate"]').daterangepicker({
+		singleDatePicker: true,
+		showDropdowns: true
+	},
+	function(start, end, label) {
+		var years = moment().diff(start, 'years');
+		alert("You are " + years + " years old.");
+	});
 });
 </script>
 
 <div class="row">
-	<div class="panel-group col-sm-8 col-sm-offset-2 col-xs-10 col-xs-offset-1" id="accordion">
+	<div class="panel-group col-sm-10 col-sm-offset-1 col-xs-10 col-xs-offset-1" id="accordion">
 		<div class="panel panel-default">
 			<div class="panel-heading" >
 				<a data-toggle="collapse" data-parent="#accordion" href="#collapse1">
 				<div class="panel-title">
 					<h4>
-					Advanced Options
+					Advanced Options <span id="flipper" class=""><span class="caret"></span></span>
 					</h4>
 				</div>
 				</a>
 			</div>
 			<div id="collapse1" class="panel-collapse collapse">
 				<div class="panel-body">
+					<h3>Filter:</h3>
 					Filter by: Rating between X and Y, Uses x Reagent, Created between day1 and day2, Min # ratings, time, # steps, author
 					<ul>
 						<li>Textboxes</li>
-						<li>Vertically aligned</li>	
+						<li>Vertically aligned</li>
 					</ul>
 					<form>
-						<fieldset class="form-group">
-							<label for="formGroupExampleInput">Example label</label>
-							<input type="text" class="form-control" id="formGroupExampleInput" placeholder="Author">
-						</fieldset>
-						<fieldset class="form-group">
-							<label for="formGroupExampleInput2">Another label</label>
-							<input type="text" class="form-control" id="formGroupExampleInput2" placeholder="Another input">
-						</fieldset>
-					</form>	
-			
-					<br><br><br>
-			
-					Order by: Num Rating, Title (alphabet), Upload date (by original?), #Steps, author (alpha)<br>
-					<ul>
-						<li>Radio buttions/clickable divs, only one at a time</li>
-						<li>Horizontally done</li>	
-					</ul>
-					<div class="btn-group btn-group-justified" data-toggle="buttons">
-						<label class="btn btn-primary active">
-							<input type="radio" name="options" id="option1" autocomplete="off" checked>Average Rating
-						</label>
-						<label class="btn btn-primary">
-							<input type="radio" name="options" id="option2" autocomplete="off">Title
-						</label>
-						<label class="btn btn-primary">
-							<input type="radio" name="options" id="option2" autocomplete="off">Author
-						</label>
-						<label class="btn btn-primary">
-							<input type="radio" name="options" id="option2" autocomplete="off">Upload date
-						</label>
-						<label class="btn btn-primary">
-							<input type="radio" name="options" id="option2" autocomplete="off"># Ratings
-						</label>
-						<label class="btn btn-primary">
-							<input type="radio" name="options" id="option3" autocomplete="off"># Steps
-						</label>
+						<div class="row">
+							<div class="col-xs-12 col-sm-6">
+								<fieldset class="form-group">
+									<label for="formGroupExampleInput">Number of ratings between:</label>
+									<div class="row">
+										<div class="col-xs-5" style="padding-right:0px">
+											<input type="number" class="form-control" id="min-num-ratings" value="0" style="text-align:center;">
+										</div>
+										<div class="col-xs-2" style="text-align:center;padding-top:7px;padding-left:0px;padding-right:0px;">
+											and
+										</div>
+										<div class="col-xs-5" style="padding-left:0px">
+											<input type="number" class="form-control" id="max-num-ratings" placeholder="10" style="text-align:center;">
+										</div>
+									</div>
+								</fieldset>
+							</div>
+							<div class="col-xs-12 col-sm-6">
+								<fieldset class="form-group">
+									<label for="formGroupExampleInput2">Average rating between:</label>
+									<div class="row">
+										<div class="col-xs-5" style="padding-right:0px">
+											<input type="number" class="form-control" id="min-avg-ratings" value="1" style="text-align:center;">
+										</div>
+										<div class="col-xs-2" style="text-align:center;padding-top:7px;padding-left:0px;padding-right:0px;">
+											and
+										</div>
+										<div class="col-xs-5" style="padding-left:0px">
+											<input type="number" class="form-control" id="max-avg-ratings" value="5" style="text-align:center;">
+										</div>
+									</div>
+								</fieldset>
+							</div>
+							<div class="col-xs-12 col-sm-6">
+								<fieldset class="form-group">
+									<label for="formGroupExampleInput2">Original version published between:</label>
+									<div class="row">
+										<div class="col-xs-5" style="padding-right:0px">
+											<input type="text" class="form-control" name="birthdate" value="10/24/1984" style="text-align:center;"/>
+										</div>
+										<div class="col-xs-2" style="text-align:center;padding-top:7px;padding-left:0px;padding-right:0px;">
+											and
+										</div>
+										<div class="col-xs-5" style="padding-left:0px">
+											<input type="text" class="form-control" name="birthdate" value="10/24/1984" style="text-align:center;"/>
+										</div>
+									</div>
+								</fieldset>
+							</div>
+							<div class="col-xs-12 col-sm-6">
+								<fieldset class="form-group">
+									<label for="formGroupExampleInput2">Revision published between:</label>
+									<div class="row">
+										<div class="col-xs-5" style="padding-right:0px">
+											<input type="text" class="form-control" name="birthdate" value="10/24/1984" style="text-align:center;"/>
+										</div>
+										<div class="col-xs-2" style="text-align:center;padding-top:7px;padding-left:0px;padding-right:0px;">
+											and
+										</div>
+										<div class="col-xs-5" style="padding-left:0px">
+											<input type="text" class="form-control" name="birthdate" value="10/24/1984" style="text-align:center;"/>
+										</div>
+									</div>
+								</fieldset>
+							</div>
+						</div>
+					</form>
+
+					<h3>Sort by:</h3>
+					<div class="row">
+						<div class="col-sm-9 col-xs-12 hidden-xs">
+							<div id="desktop-order-group" class="btn-group btn-group-justified" role="group" data-toggle="buttons">
+								<label class="btn btn-primary active">
+									<input type="radio" name="options" id="option1" autocomplete="off" checked>Rating
+								</label>
+								<label class="btn btn-primary">
+									<input type="radio" name="options" id="option2" autocomplete="off">Title
+								</label>
+								<label class="btn btn-primary">
+									<input type="radio" name="options" id="option2" autocomplete="off">Author
+								</label>
+								<label class="btn btn-primary">
+									<input type="radio" name="options" id="option3" autocomplete="off">Upload Date
+								</label>
+								<label class="btn btn-primary">
+									<input type="radio" name="options" id="option3" autocomplete="off">Branch Upload Date
+								</label>
+								<label class="btn btn-primary">
+									<input type="radio" name="options" id="option4" autocomplete="off"># Ratings
+								</label>
+								<label class="btn btn-primary">
+									<input type="radio" name="options" id="option5" autocomplete="off"># Steps
+								</label>
+							</div>
+						</div>
+						<div class="col-xs-12 visible-xs" aria-label="Vertical Order">
+							<div id="mobile-order-group" class="btn-group btn-group-vertical" role="group" data-toggle="buttons" style="width:100%;">
+								<label class="btn btn-primary active" style="border-top-right-radius: 4px;">
+									<input type="radio" name="options2" id="option6" autocomplete="off">Average Rating
+								</label>
+								<label class="btn btn-primary">
+									<input type="radio" name="options2" id="option7" autocomplete="off" checked>Title
+								</label>
+								<label class="btn btn-primary">
+									<input type="radio" name="options2" id="option8" autocomplete="off">Author
+								</label>
+								<label class="btn btn-primary">
+									<input type="radio" name="options2" id="option9" autocomplete="off">Upload Date
+								</label>
+								<label class="btn btn-primary">
+									<input type="radio" name="options" id="option3" autocomplete="off">Branch Upload Date
+								</label>
+								<label class="btn btn-primary">
+									<input type="radio" name="options2" id="option10" autocomplete="off"># Ratings
+								</label>
+								<label class="btn btn-primary">
+									<input type="radio" name="options2" id="option11" autocomplete="off"># Steps
+								</label>
+							</div>
+						</div>
+						<div class="col-xs-12 col-sm-3">
+							<div id="asc-des-group" class="btn-group btn-group-justified" data-toggle="buttons">
+								<label class="btn btn-primary active">
+									<input type="radio" name="options" id="option1" autocomplete="off" checked>Asc <span class="glyphicon glyphicon-sort-by-attributes"></span>
+								</label>
+								<label class="btn btn-primary">
+									<input type="radio" name="options" id="option3" autocomplete="off">Des <span class="glyphicon glyphicon-sort-by-attributes-alt"></span>
+								</label>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -154,7 +272,7 @@ $(document).on('ready', function(){
 
 {% for protocol in results %}
 <div class="row">
-	<div class="col-sm-8 col-sm-offset-2 col-xs-10 col-xs-offset-1 well well-sm" onclick="location.href='/protocol/{{ protocol.id }}/'">
+	<div class="col-sm-10 col-sm-offset-1 col-xs-10 col-xs-offset-1 well well-sm" onclick="location.href='/protocol/{{ protocol.id }}/'">
 		<div class="row">
 			<div class="col-sm-8 fix-margin-left">
 				<h1>{{ protocol.title }}</h1>
