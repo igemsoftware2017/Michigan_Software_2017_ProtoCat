@@ -2,6 +2,29 @@
 
 {% block content %}
 
+<script>
+tinymce.init({
+	selector: 'textarea',
+	height: 250,
+	theme: 'modern',
+	plugins: [
+		'advlist autolink lists link image charmap print preview hr anchor pagebreak',
+		'searchreplace wordcount visualblocks visualchars code fullscreen',
+		'insertdatetime media nonbreaking save table contextmenu directionality',
+		'emoticons template paste textcolor colorpicker textpattern imagetools'
+	],
+	toolbar1: 'undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image',
+	toolbar2: 'print preview media',
+	image_advtab: true,
+	content_css: [
+		'//fast.fonts.net/cssapi/e6dc9b99-64fe-4292-ad98-6974f93cd2a2.css',
+		'//www.tinymce.com/css/codepen.min.css'
+	],
+	menubar:false,
+    statusbar: false,
+});
+</script>
+
 <style>
 .star {
 	margin-left: 1.5px !important;
@@ -92,14 +115,21 @@ h5{
 		<div class="panel-group">
 			<div class="panel panel-default">
 				<div class="panel-heading">
-					<h3 class="panel-title">Step one</h3>
+					<div class="form-group form-group-lg">
+						<input class="form-control" type="text" class="title" placeholder="Title">
+					</div>
+					<div class="form-group form-group-sm" style="margin-bottom:0px;">
+						<input class="form-control input-sm" type="number" class="time" placeholder="Optional amount of time">
+					</div>
 				</div>
-				<div class="panel-body">Body info for step one</div>
+				<div class="panel-body">
+					<textarea>Body info for step one</textarea>
+				</div>
 				<div class="panel panel-danger">
 				<!-- Want to get rid of defualt border radius -->
 						<div class="panel-heading">
-						<h3 class="panel-title">Warning!</h3>
-						This is the body of the warning
+							<h3 class="panel-title">Warnings</h3>
+							<textarea rows="5"></textarea>
 						</div>
 				</div>
 			</div>

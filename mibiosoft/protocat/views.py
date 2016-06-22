@@ -215,7 +215,7 @@ def about(request):
 		'title': 'ProtoCat',
 		'current_profile_info': current_profile_info,
 	}
-	print ("RENDERING INDEX")
+	print ("RENDERING ABOUT")
 	return render(request, 'about.html', context)
 
 def search(request):
