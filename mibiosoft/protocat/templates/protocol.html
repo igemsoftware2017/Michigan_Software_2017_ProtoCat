@@ -410,88 +410,36 @@ h5{
 	</div>
 </div>
 
-<div class="col-sm-10 col-sm-offset-1">
-	<div class="panel">
-		<div class="panel-group">
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<h3 class="panel-title">Step one</h3>
-				</div>
-				<div class="panel-body">Body info for step one</div>
-				<div class="panel panel-danger">
-					<!-- Want to get rid of defualt border radius -->
-					<div class="panel-heading">
-						<h3 class="panel-title">Warning!</h3>
-						This is the body of the warning
-					</div>
-				</div>
-				<div class="panel-heading">
-					<h3 class="panel-title">Step one</h3>
-				</div>
-				<div class="panel-body">Body info for step one</div>
-				<div class="panel panel-danger">
-					<!-- Want to get rid of defualt border radius -->
-					<div class="panel-heading">
-						<h3 class="panel-title">Warning!</h3>
-						This is the body of the warning
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
-
-<div class="col-sm-10 col-sm-offset-1">
+<div class="col-md-8">
 	<div class="panel panel-primary">
-		<div class="panel-heading">Protocol data List</div>
-		<table class="table table-hover">
-			<thead>
-				<tr>
-					<th>Step Number</th>
-					<th>Action</th>
-					<th>Timing Scheme</th>
-					<th>Time length</th>
-					<th>Associated Reagents</th>
-					<th>Notes</th>
-				</tr>
-			</thead>
-			<tbody id="steps">
+		<div class="panel-heading">Procedure</div>
+			<div class="panel-group">
 				{% for protocol_step in protocol_steps %}
-				<!-- make the rows of data all clickable -->
-				<tr>
-					<td>{{ protocol_step.step_number }}</td>
-					<td class="action" data-step-num="{{ protocol_step.step_number }}">{{ protocol_step.action|safe }}</td>
-					<td>{{ protocol_step.get_understandable_scaling_type }}</td>
-					<td class="time"><span id="number"></span>
-						{% if protocol_step.time != -1 %}
-						<span onclick="pause({{ protocol_step.step_number }});" class="glyphicon glyphicon-pause"></span>
-						<span onclick="resume({{ protocol_step.step_number }});" class="glyphicon glyphicon-play"></span>
-						<span onclick="reset({{ protocol_step.step_number }});" class="glyphicon glyphicon-fast-backward"></span>
-						{% endif %}
-					</td>
-					<td class="reagents">
-						{% for protocol_reagent in protocol_reagents %}
-						{% if protocol_reagent.protocol_step == protocol_step %}
-						<span><a href="/reagent/{{ protocol_reagent.reagent.id }}/">{{ protocol_reagent }}</a></span>
-						{% if protocol_reagent.reagent_type == 1 %}
-						- Reactant
-						{% elif protocol_reagent.reagent_type == 2 %}
-						- Intermediary
-						{% else %}
-						- Product
-						{% endif %}<br>
-						{% endif %}
-						{% endfor %}
-					</td>
-					<td>
-						{% for step_note in step_notes %} {% if step_note.protocol_step == protocol_step %} <span>{{ step_note.note }} - <a href="/user/{{ step_note.author.id }}/">{{ step_note.author }}</a></span><br>
-						{% endif %}
-						{% endfor %}
-					</td>
-				</tr>
+				<div class="panel panel-default">
+					<!-- Modified margin to get rid of negative margin inherent to row -->
+					<div class="row panel-heading" style="margin:0">
+						<h3 class="panel-title col-xs-6">Step {{ protocol_step.step_number }}</h3>
+						<div class="col-xs-6" align="right"> {{ protocol_step.time }}
+							<!-- Need to modify javascript to display actual time -->
+							{% if protocol_step.time != -1 %}
+							<span onclick="pause({{ protocol_step.step_number }});" class="glyphicon glyphicon-pause"></span>
+							<span onclick="resume({{ protocol_step.step_number }});" class="glyphicon glyphicon-play"></span>
+							<span onclick="reset({{ protocol_step.step_number }});" class="glyphicon glyphicon-fast-backward"></span>
+							{% endif %}
+						</div>
+					</div>
+					<!-- Modify Javascript to include reagents with each step -->
+					<div class="panel-body action" data-step-num="{{ protocol_step.step_number }}">{{ protocol_step.action|safe }}</div>
+						<div class="panel panel-danger">
+						<!-- Want to get rid of defualt border radius -->
+								<div class="panel-heading">
+									<h3 class="panel-title">Warning!</h3>
+								<!-- Include Warning data field with each step -->
+								</div>
+						</div>
+				</div>
 				{% endfor %}
-			</tbody>
-		</table>
+			</div>
 	</div>
 </div>
 

@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<script>
+tinymce.init({
+	selector: 'textarea',
+	height: 250,
+	theme: 'modern',
+	plugins: [
+		'advlist autolink lists link image charmap print preview hr anchor pagebreak',
+		'searchreplace wordcount visualblocks visualchars code fullscreen',
+		'insertdatetime media nonbreaking save table contextmenu directionality',
+		'emoticons template paste textcolor colorpicker textpattern imagetools'
+	],
+	toolbar1: 'undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image',
+	toolbar2: 'print preview media',
+	image_advtab: true,
+	content_css: [
+		'//fast.fonts.net/cssapi/e6dc9b99-64fe-4292-ad98-6974f93cd2a2.css',
+		'//www.tinymce.com/css/codepen.min.css'
+	],
+	menubar:false,
+    statusbar: false,
+});
+</script>
+
+<style>
+.star {
+	margin-left: 1.5px !important;
+	margin-right: 1.5px !important;
+}
+.star > i {
+	font-size: 14px;
+}
+.left-side-ratings {
+	margin-top:-15px;
+	height:40px;
+}
+.max-lines {
+	display: block; /* or inline-block */
+	text-overflow: ellipsis;
+	word-wrap: break-word;
+	overflow: hidden;
+	max-height: 2.856em;
+}
+
+li a{
+	color: white;
+}
+
+.nav-tabs>li.active>a, .nav-pills>li.active>a:focus, .nav-pills>li.active>a:hover {
+	color: #337ab7;
+    background-color: #fff;
+}
+
+#pill-tab-heading {
+	padding-bottom: 0px;
+}
+
+h5{
+	color:inherit;
+}
+</style>
+
+<div class="row protocol_title">
+	<div class="col-sm-8 col-sm-offset-2 col-xs-10 col-xs-offset-1 well well-sm">
+		<div class="row">
+			<div class="col-sm-8 fix-margin-left">
+				<h1>Title</h1>
+				<h5>Category: <a href="/browse/{{ protocol.category.id }}/">{{ protocol.category }}</a></h5>
+			</div>
+		</div>
+	</div>
+</div>
+<br>
+
+<div class="col-md-8 col-md-offset-2">
+	<div class="panel panel-primary">
+		<div id="pill-tab-heading" class="panel panel-heading">
+			<ul class="nav nav-tabs">
+				<li class="active"><a data-toggle="tab" href="#Description">Description</a></li>
+				<li><a data-toggle="tab" href="#Reagents">Reagents</a></li>
+				<li><a data-toggle="tab" href="#Changelog">Change log</a></li>
+			</ul>
+		</div>
+
+		<div class="panel-body">
+			<div class="tab-content">
+				<div id="Description" class="tab-pane fade in active">
+					<p>{{ protocol.description }}</p><br>
+				</div>
+				<div id="Reagents" class="tab-pane fade">
+					{% if text_reagents %}
+					<p>{{ text_reagents.reagents }}</p><br>
+					{% endif %}
+				</div>
+				<div id="Changelog" class="tab-pane fade">
+					<p>{{ protocol.change_log }}</p><br>
+					{% if protocol.previous_revision %}
+					<p><a href="/protocol/{{ protocol.previous_revision.id }}">Previous Revision</a></p><br>
+					{% endif %}
+					{% for next_protocol in next_protocols %}
+					<p><a href="/protocol/{{ next_protocol.id }}">Next Revision</a></p><br>
+					{% endfor %}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<div class="col-md-8 col-md-offset-2">
+	<div class="panel panel-primary">
+		<div class="panel-group">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<div class="form-group form-group-lg">
+						<input class="form-control" type="text" class="title" placeholder="Title">
+					</div>
+					<div class="form-group form-group-sm" style="margin-bottom:0px;">
+						<input class="form-control input-sm" type="number" class="time" placeholder="Optional amount of time">
+					</div>
+				</div>
+				<div class="panel-body">
+					<textarea>Body info for step one</textarea>
+				</div>
+				<div class="panel panel-danger">
+				<!-- Want to get rid of defualt border radius -->
+						<div class="panel-heading">
+							<h3 class="panel-title">Warnings</h3>
+							<textarea rows="5"></textarea>
+						</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+{% endblock %}

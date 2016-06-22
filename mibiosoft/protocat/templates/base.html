@@ -13,6 +13,7 @@
 		<script src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
 		<script src="https://code.jquery.com/jquery-migrate-1.4.1.min.js"></script>
 		<script src="//cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+		<script src="https://cdn.tinymce.com/4/tinymce.min.js"></script>
 		<link rel="stylesheet" type="text/css" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
 		<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 		<script type="text/javascript" src="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script>
@@ -196,7 +197,7 @@
 				</div>
 			</div>
 		</nav>
-		<div id="content" class="container">
+		<div id="content" class="container" style="min-height:100vh">
 			{% block content %}{% endblock %}
 		</div>
 		<footer class="footer">
