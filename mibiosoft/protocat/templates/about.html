@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% load staticfiles %}
+
+<section id="home" name="home"></section>
+	<div id="headerwrap">
+	    <div class="container">
+	    	<div class="row centered">
+	    		<div class="col-lg-12">
+					<h1>So what's a <b>ProtoCat</b>?</h1>
+					<br>
+	    		</div>
+	    		
+                <div class="col-md-12">
+
+                </div>
+	    	</div> <!--.row centered-->
+	    </div> <!--/ .container -->
+	</div><!--/ #headerwrap -->
+
+
+	<section id="desc" name="desc"></section>
+	<!-- INTRO WRAP -->
+<div class="about_section">
+    <div class="row">
+        <div class="col-sm-5">
+            <h2>The Problem</h2>
+        </div>
+        <div class="col-sm-offset-2">
+            <h2>The Solution</h2>
+        </div>
+        <div class="col-sm-5">
+            At its core, synthetic biology is the practice of genetically engineering novel organisms to perform a particular function. However, <a href="https://peerj.com/articles/148"><strong>recent review studies</strong></a> estimate only 10-25% of published scientific results are reproducible. A <a href="http://2014.igem.org/Team:Michigan_Software/Project#Description"><strong>2014 survey</strong></a> conducted by the University of Michigan Biological Software Team confirmed that the repeatability problem exists in synthetic biology, with <em>every scientist surveyed reporting prior struggles with replicating protocols.</em> The majority of these scientists indicate <em>unclear language and missing steps</em> are the greatest contributors to the irreproducibility of synthetic biology protocols. ProtoCat is designed to address both of these issues by making it easier for scientists to share troubleshooting techniques and submit edits to existing protocols. 
+        </div>
+        <div class="col-sm-offset-2">
+            Every respondent indicated that they would use a database to browse and download protocols, <em>with over 85% indicating that they would upload and maintain their own protocols if such a site existed</em>. ProtoCat is a free database of crowd sourced protocols designed to make existing protocols more repeatable and enable more accurate computational models of biological systems. We believe this can most efficiently be accomplished with a commitment to open source protocols and a broader more active community of digital troubleshooters. ProtoCat works to establish such a community by giving anyone with an internet connection or smartphone access to a repository of synthetic biology protocols collected from all over the world. Additionally, ProtoCat encourages the development of higher quality, more repeatable protocols by allowing users to document trails, rate, review, and edit existing methods, and easily locate related protocols. 
+        </div>
+        <center><img src = "http://2015.igem.org/wiki/images/5/5d/Team_Michigan_Software_banner.jpg" width=50% /></center>
+    </div>
+</div>
+
+
+{% endblock %}
