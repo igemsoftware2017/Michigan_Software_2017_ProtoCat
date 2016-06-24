@@ -20,11 +20,11 @@
 	height:40px;
 }
 .max-lines {
-  display: block; /* or inline-block */
-  text-overflow: ellipsis;
-  word-wrap: break-word;
-  overflow: hidden;
-  max-height: 2.856em;
+	display: block; /* or inline-block */
+	text-overflow: ellipsis;
+	word-wrap: break-word;
+	overflow: hidden;
+	max-height: 2.856em;
 }
 
 .panel-group{
@@ -63,6 +63,10 @@
 .panel-heading a:active{
 	color: inherit;
 	text-decoration: none;
+}
+
+.filt_btn{
+	margin-top:15px;
 }
 
 </style>
@@ -117,22 +121,17 @@ $(function() {
 		<div class="panel panel-default">
 			<div class="panel-heading" >
 				<a data-toggle="collapse" data-parent="#accordion" href="#collapse1">
-				<div class="panel-title">
-					<h4>
-					Advanced Options <span id="flipper" class=""><span class="caret"></span></span>
-					</h4>
-				</div>
+					<div class="panel-title">
+						<h4>
+							Advanced Options <span id="flipper" class=""><span class="caret"></span></span>
+						</h4>
+					</div>
 				</a>
 			</div>
 			<div id="collapse1" class="panel-collapse collapse">
 				<div class="panel-body">
-					<h3>Filter:</h3>
-					Filter by: Rating between X and Y, Uses x Reagent, Created between day1 and day2, Min # ratings, time, # steps, author
-					<ul>
-						<li>Textboxes</li>
-						<li>Vertically aligned</li>
-					</ul>
-					<form>
+
+					<form method="POST" action="/search/">
 						<div class="row">
 							<div class="col-xs-12 col-sm-6">
 								<fieldset class="form-group">
@@ -199,91 +198,75 @@ $(function() {
 								</fieldset>
 							</div>
 						</div>
-					</form>
 
-					<h3>Sort by:</h3>
-					<div class="row">
-						<div class="col-sm-9 col-xs-12 hidden-xs">
-							<div id="desktop-order-group" class="btn-group btn-group-justified" role="group" data-toggle="buttons">
-								<label class="btn btn-primary active">
-									<input type="radio" name="options" id="option1" autocomplete="off" checked>Rating
-								</label>
-								<label class="btn btn-primary">
-									<input type="radio" name="options" id="option2" autocomplete="off">Title
-								</label>
-								<label class="btn btn-primary">
-									<input type="radio" name="options" id="option2" autocomplete="off">Author
-								</label>
-								<label class="btn btn-primary">
-									<input type="radio" name="options" id="option3" autocomplete="off">Upload Date
-								</label>
-								<label class="btn btn-primary">
-									<input type="radio" name="options" id="option3" autocomplete="off">Branch Upload Date
-								</label>
-								<label class="btn btn-primary">
-									<input type="radio" name="options" id="option4" autocomplete="off"># Ratings
-								</label>
-								<label class="btn btn-primary">
-									<input type="radio" name="options" id="option5" autocomplete="off"># Steps
-								</label>
+						<h3>Sort by:</h3>
+						<div class="row">
+							<div class="col-sm-9 col-xs-12 hidden-xs">
+								<div id="desktop-order-group" class="btn-group btn-group-justified" role="group" data-toggle="buttons">
+									<label class="btn btn-primary active">
+										<input type="radio" name="options" id="option1" autocomplete="off" checked>Rating
+									</label>
+									<label class="btn btn-primary">
+										<input type="radio" name="options" id="option2" autocomplete="off">Title
+									</label>
+									<label class="btn btn-primary">
+										<input type="radio" name="options" id="option2" autocomplete="off">Author
+									</label>
+									<label class="btn btn-primary">
+										<input type="radio" name="options" id="option3" autocomplete="off">Upload Date
+									</label>
+									<label class="btn btn-primary">
+										<input type="radio" name="options" id="option3" autocomplete="off">Branch Upload Date
+									</label>
+									<label class="btn btn-primary">
+										<input type="radio" name="options" id="option4" autocomplete="off"># Ratings
+									</label>
+									<label class="btn btn-primary">
+										<input type="radio" name="options" id="option5" autocomplete="off"># Steps
+									</label>
+								</div>
 							</div>
-						</div>
-						<div class="col-xs-12 visible-xs" aria-label="Vertical Order">
-							<div id="mobile-order-group" class="btn-group btn-group-vertical" role="group" data-toggle="buttons" style="width:100%;">
-								<label class="btn btn-primary active" style="border-top-right-radius: 4px;">
-									<input type="radio" name="options2" id="option6" autocomplete="off">Average Rating
-								</label>
-								<label class="btn btn-primary">
-									<input type="radio" name="options2" id="option7" autocomplete="off" checked>Title
-								</label>
-								<label class="btn btn-primary">
-									<input type="radio" name="options2" id="option8" autocomplete="off">Author
-								</label>
-								<label class="btn btn-primary">
-									<input type="radio" name="options2" id="option9" autocomplete="off">Upload Date
-								</label>
-								<label class="btn btn-primary">
-									<input type="radio" name="options" id="option3" autocomplete="off">Branch Upload Date
-								</label>
-								<label class="btn btn-primary">
-									<input type="radio" name="options2" id="option10" autocomplete="off"># Ratings
-								</label>
-								<label class="btn btn-primary">
-									<input type="radio" name="options2" id="option11" autocomplete="off"># Steps
-								</label>
+							<div class="col-xs-12 visible-xs" aria-label="Vertical Order">
+								<div id="mobile-order-group" class="btn-group btn-group-vertical" role="group" data-toggle="buttons" style="width:100%;">
+									<label class="btn btn-primary active" style="border-top-right-radius: 4px;">
+										<input type="radio" name="options2" id="option6" autocomplete="off">Average Rating
+									</label>
+									<label class="btn btn-primary">
+										<input type="radio" name="options2" id="option7" autocomplete="off" checked>Title
+									</label>
+									<label class="btn btn-primary">
+										<input type="radio" name="options2" id="option8" autocomplete="off">Author
+									</label>
+									<label class="btn btn-primary">
+										<input type="radio" name="options2" id="option9" autocomplete="off">Upload Date
+									</label>
+									<label class="btn btn-primary">
+										<input type="radio" name="options" id="option3" autocomplete="off">Branch Upload Date
+									</label>
+									<label class="btn btn-primary">
+										<input type="radio" name="options2" id="option10" autocomplete="off"># Ratings
+									</label>
+									<label class="btn btn-primary">
+										<input type="radio" name="options2" id="option11" autocomplete="off"># Steps
+									</label>
+								</div>
 							</div>
-						</div>
-						<div class="col-xs-12 col-sm-3">
-							<div id="asc-des-group" class="btn-group btn-group-justified" data-toggle="buttons">
-								<label class="btn btn-primary active">
-									<input type="radio" name="options" id="option1" autocomplete="off" checked>Asc <span class="glyphicon glyphicon-sort-by-attributes"></span>
-								</label>
-								<label class="btn btn-primary">
-									<input type="radio" name="options" id="option3" autocomplete="off">Des <span class="glyphicon glyphicon-sort-by-attributes-alt"></span>
-								</label>
+							<div class="col-xs-12 col-sm-3">
+								<div id="asc-des-group" class="btn-group btn-group-justified" data-toggle="buttons">
+									<label class="btn btn-primary active">
+										<input type="radio" name="options" id="option1" autocomplete="off" checked>Asc <span class="glyphicon glyphicon-sort-by-attributes"></span>
+									</label>
+									<label class="btn btn-primary">
+										<input type="radio" name="options" id="option3" autocomplete="off">Des <span class="glyphicon glyphicon-sort-by-attributes-alt"></span>
+									</label>
+								</div>
 							</div>
-						</div>
-						<label for="formGroupExampleInput2">Sort by:</label>
-						<div class="btn-group btn-group-justified" data-toggle="buttons">
-							<label class="btn btn-primary active">
-								<input type="radio" name="options" id="option1" autocomplete="off" checked>Average Rating
-							</label>
-							<label class="btn btn-primary">
-								<input type="radio" name="options" id="option2" autocomplete="off">Title
-							</label>
-							<label class="btn btn-primary">
-								<input type="radio" name="options" id="option2" autocomplete="off">Author
-							</label>
-							<label class="btn btn-primary">
-								<input type="radio" name="options" id="option2" autocomplete="off">Upload date
-							</label>
-							<label class="btn btn-primary">
-								<input type="radio" name="options" id="option2" autocomplete="off"># Ratings
-							</label>
-							<label class="btn btn-primary">
-								<input type="radio" name="options" id="option3" autocomplete="off"># Steps
-							</label>
-						</div>
+
+							<div class="col-xs-8 col-sm-8 col-sm-offset-2 col-xs-offset-2 filt_btn">
+								<button type="submit" class="btn btn-primary btn-block disabled">Apply Filters (DO NOT CLICK)</button>
+							</div>
+
+						</form>
 					</div>
 				</div>
 			</div>
@@ -301,34 +284,34 @@ $(function() {
 				<h5>Uploaded on {{ protocol.upload_date }}</h5>
 				{% if protocol.get_average_ratings == "N/A" %}
 				<h5>Be the first to rate this protocol</h2>
-				{% else %}
-				<form role="search" method="POST" action="/ratings/" class="center-block left-side-ratings form-inline visible-xs">
-					<input id="input-2" name="input-2" value="{{ protocol.get_average_ratings }}" class="rating-loading input-2"data-size="xs" data-display-only="true">
-					<input id="id" name='id' type="hidden" value="{{protocol.id}}">
-					<label style="position:relative;top:-27px;left:87px"> - {{ protocol.get_number_ratings }} ratings</label>
-				</form>
-				{% endif %}
-				<h5>Category: <a href="/browse/{{ protocol.category.id }}/">{{ protocol.category }}</a></h5>
-				<p class="text-muted max-lines">{{ protocol.description }}</p>
-			</div>
-			<div class="col-sm-2 hidden-xs protocol-author-picture fix-margin-top pull-right">
-				<img src="{{ protocol.author.profile_image.url }}" width=75 height=75 alt="Image not found" class="img-circle center-block"/>
-				<h5 style="text-align:center;"><a href="/user/{{ protocol.author.id }}/">{{ protocol.author }}</a></h5>
-				{% if protocol.get_average_ratings == "N/A" %}
-				<h2 class="small" style="text-align:center;margin-top:0px;">Be the first to rate this protocol</h2>
-				{% else %}
-				<form role="search" method="POST" action="/ratings/" class="center-block" style="margin-top:-15px">
-					<input id="input-2" name="input-2" value="{{ protocol.get_average_ratings }}" class="rating-loading input-2" data-size="xs" data-step="1" data-show-caption="false" data-show-clear="false">
-					<input id="id" name='id' type="hidden" value="{{protocol.id}}">
-					{% csrf_token %}
-				</form>
-				<h2 class="small" style="text-align:center;margin-top:0px;">{{ protocol.get_number_ratings }} ratings</h2>
-				{% endif %}
+					{% else %}
+					<form role="search" method="POST" action="/ratings/" class="center-block left-side-ratings form-inline visible-xs">
+						<input id="input-2" name="input-2" value="{{ protocol.get_average_ratings }}" class="rating-loading input-2"data-size="xs" data-display-only="true">
+						<input id="id" name='id' type="hidden" value="{{protocol.id}}">
+						<label style="position:relative;top:-27px;left:87px"> - {{ protocol.get_number_ratings }} ratings</label>
+					</form>
+					{% endif %}
+					<h5>Category: <a href="/browse/{{ protocol.category.id }}/">{{ protocol.category }}</a></h5>
+					<p class="text-muted max-lines">{{ protocol.description }}</p>
+				</div>
+				<div class="col-sm-2 hidden-xs protocol-author-picture fix-margin-top pull-right">
+					<img src="{{ protocol.author.profile_image.url }}" width=75 height=75 alt="Image not found" class="img-circle center-block"/>
+					<h5 style="text-align:center;"><a href="/user/{{ protocol.author.id }}/">{{ protocol.author }}</a></h5>
+					{% if protocol.get_average_ratings == "N/A" %}
+					<h2 class="small" style="text-align:center;margin-top:0px;">Be the first to rate this protocol</h2>
+					{% else %}
+					<form role="search" method="POST" action="/ratings/" class="center-block" style="margin-top:-15px">
+						<input id="input-2" name="input-2" value="{{ protocol.get_average_ratings }}" class="rating-loading input-2" data-size="xs" data-step="1" data-show-caption="false" data-show-clear="false">
+						<input id="id" name='id' type="hidden" value="{{protocol.id}}">
+						{% csrf_token %}
+					</form>
+					<h2 class="small" style="text-align:center;margin-top:0px;">{{ protocol.get_number_ratings }} ratings</h2>
+					{% endif %}
+				</div>
 			</div>
 		</div>
 	</div>
-</div>
-{% endfor %}
+	{% endfor %}
 
 
-{% endblock %}
+	{% endblock %}
