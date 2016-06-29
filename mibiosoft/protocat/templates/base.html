@@ -163,7 +163,11 @@
 						<li class="dropdown hidden-xs">
 							<a id="no-padding" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
 								{% if current_profile_info != None %}
+								{% if current_profile_info.profile_image != "" %}
 								<img id="navbar-image" src="{{ current_profile_info.profile_image.url }}" width=30 height=30 alt="Image not found" class="img-rounded"/><span id="navbar-drop-down" class="fix-margin-right caret"></span>
+								{% else %}
+								<img id="navbar-image" src="http://2014.igem.org/wiki/images/thumb/0/04/ChrisP.jpg/330px-ChrisP.jpg.png" width=30 height=30 alt="Image not found" class="img-rounded"/><span id="navbar-drop-down" class="fix-margin-right caret"></span>
+								{% endif %}
 								{% else %}
 								<span class="fix-margin-right"><span id="navbar-icon" class="glyphicon glyphicon-user"></span>Login</span>
 								{% endif %}
@@ -203,7 +207,7 @@
 		<footer class="footer">
 			<!-- div class="container panel-footer footer-container"-->
 			<div class="container panel-footer">
-				<p class="text-muted" id="footer-text" style="text-align:center;">Made by Michigan Biological Software 2015-2016</p>
+				<p class="text-muted" id="footer-text" style="text-align:center;">Made by Michigan Biological Software 2014-2016</p>
 			</div>
 		</footer>
 	</body>

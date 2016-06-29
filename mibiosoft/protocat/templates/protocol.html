@@ -104,29 +104,27 @@ function get_list_of_reagent_type(reagents, type) {
 }
 
 function update_visual_data() {
-	$('#steps').children('tr').each(function() {
-		// we are in each table row
-		$(this).children('td').filter('.action').each(function() {
-			step_num = Number($(this).attr('data-step-num'));
-			$(this).children('span').filter('.reagent').each(function() {
-				reagent_number = Number($(this).attr('data-reagent-number'));
-				var correct_reagent = null;
-				for (var reagent_num in reagents) {
-					reagent = reagents[reagent_num];
-					if (reagent.number_in_step == reagent_number && reagent.protocol_step_number == step_num) {
-						correct_reagent = reagent;
-						break;
-					}
+	$('.action').each(function() {
+		step_num = Number($(this).attr('data-step-num'));
+		$(this).children('span').filter('.reagent').each(function() {
+			reagent_number = Number($(this).attr('data-reagent-number'));
+			var correct_reagent = null;
+			for (var reagent_num in reagents) {
+				reagent = reagents[reagent_num];
+				if (reagent.number_in_step == reagent_number && reagent.protocol_step_number == step_num) {
+					correct_reagent = reagent;
+					break;
 				}
-				if (correct_reagent != null) {
-					this.innerHTML = correct_reagent.amount.toPrecision(correct_reagent.significant_figures) + correct_reagent.unit + " " + correct_reagent.reagent;
-				}
-				else {
-					this.innerHTML = "ERROR";
-				}
-			});
+			}
+			if (correct_reagent != null) {
+				this.innerHTML = correct_reagent.amount.toPrecision(correct_reagent.significant_figures) + correct_reagent.unit + " " + correct_reagent.reagent;
+			}
+			else {
+				this.innerHTML = "ERROR";
+			}
 		});
 	});
+
 
 	reactants = get_list_of_reagent_type(reagents, "1");
 	reactants = get_display_reagent_type(reagents, reactants, "1");
@@ -184,19 +182,16 @@ function update_visual_data() {
 
 window.onload = function() {
 	update_visual_data();
-	$('#steps').children('tr').each(function(index) {
-		$(this).children('td').filter('.time').children('span').each(function(new_index) {
-			if (new_index == 0) {
-				if (steps[index].time_scaling != 0) {
-					count_to[index + 1] = steps[index].time;
-					time_total[index + 1] = 0;
-					update_element[index + 1] = this;
-					if (count_to[index + 1] != -1) {
-						this.innerHTML = get_time_total(index + 1);
-					}
-				}
+	$('.timer').each(function(index) {
+		console.log(index)
+		if (steps[index].time_scaling != 0) {
+			count_to[index + 1] = steps[index].time;
+			time_total[index + 1] = 0;
+			update_element[index + 1] = this;
+			if (count_to[index + 1] != -1) {
+				this.innerHTML = get_time_total(index + 1);
 			}
-		});
+		}
 	});
 };
 
@@ -410,7 +405,7 @@ h5{
 	</div>
 </div>
 
-<div class="col-md-8">
+<div class="col-sm-10 col-sm-offset-1">
 	<div class="panel panel-primary">
 		<div class="panel-heading">Procedure</div>
 			<div class="panel-group">
@@ -419,9 +414,10 @@ h5{
 					<!-- Modified margin to get rid of negative margin inherent to row -->
 					<div class="row panel-heading" style="margin:0">
 						<h3 class="panel-title col-xs-6">Step {{ protocol_step.step_number }}</h3>
-						<div class="col-xs-6" align="right"> {{ protocol_step.time }}
-							<!-- Need to modify javascript to display actual time -->
+						<div class="col-xs-6" align="right">
+							<span class="timer"></span>
 							{% if protocol_step.time != -1 %}
+							<!-- Need to modify javascript to display actual time -->
 							<span onclick="pause({{ protocol_step.step_number }});" class="glyphicon glyphicon-pause"></span>
 							<span onclick="resume({{ protocol_step.step_number }});" class="glyphicon glyphicon-play"></span>
 							<span onclick="reset({{ protocol_step.step_number }});" class="glyphicon glyphicon-fast-backward"></span>
@@ -431,11 +427,11 @@ h5{
 					<!-- Modify Javascript to include reagents with each step -->
 					<div class="panel-body action" data-step-num="{{ protocol_step.step_number }}">{{ protocol_step.action|safe }}</div>
 						<div class="panel panel-danger">
-						<!-- Want to get rid of defualt border radius -->
-								<div class="panel-heading">
-									<h3 class="panel-title">Warning!</h3>
+							<!-- Want to get rid of defualt border radius -->
+							<div class="panel-heading">
+								<h3 class="panel-title">Warning!</h3>
 								<!-- Include Warning data field with each step -->
-								</div>
+							</div>
 						</div>
 				</div>
 				{% endfor %}
