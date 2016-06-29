@@ -68,7 +68,10 @@
 .filt_btn{
 	margin-top:15px;
 }
-
+.keep-margin {
+	margin-left: 0px !important;
+	margin-right: 0px !important;
+}
 </style>
 
 <script>
@@ -105,13 +108,16 @@ $(document).on('ready', function(){
 });
 
 $(function() {
-	$('input[name="birthdate"]').daterangepicker({
+	$('input.datepicker').daterangepicker({
+		autoUpdateInput: false,
 		singleDatePicker: true,
-		showDropdowns: true
-	},
-	function(start, end, label) {
-		var years = moment().diff(start, 'years');
-		alert("You are " + years + " years old.");
+		showDropdowns: true,
+	});
+	$('input.datepicker').on('apply.daterangepicker', function(ev, picker) {
+		$(this).val(picker.startDate.format('MM/DD/YYYY'));
+	});
+	$('input.datepicker').on('cancel.daterangepicker', function(ev, picker) {
+		$(this).val('');
 	});
 });
 </script>
@@ -130,15 +136,21 @@ $(function() {
 			</div>
 			<div id="collapse1" class="panel-collapse collapse">
 				<div class="panel-body">
-
-					<form method="POST" action="/search/">
-						<div class="row">
+					<form method="POST" class="form-horizontal hidden-xs" action="/search/">
+						<div class="form-group form-group-lg">
+							<label class="col-sm-2 control-label" for="formGroupInputLarge" style="font-size:20px;padding-left:0px;">Search for:</label>
+							<div class="col-sm-10">
+								<input class="form-control" type="text" name="text_filter" value="{{ text_filter }}">
+							</div>
+						</div>
+						<h3>Filter:</h3>
+						<div class="row keep-margin" style="margin-left:15px;">
 							<div class="col-xs-12 col-sm-6">
-								<fieldset class="form-group">
+								<fieldset class="form-group keep-margin">
 									<label for="formGroupExampleInput">Number of ratings between:</label>
 									<div class="row">
 										<div class="col-xs-5" style="padding-right:0px">
-											<input type="number" class="form-control" id="min-num-ratings" value="0" style="text-align:center;">
+											<input type="number" class="form-control" id="min-num-ratings" placeholder="0" style="text-align:center;">
 										</div>
 										<div class="col-xs-2" style="text-align:center;padding-top:7px;padding-left:0px;padding-right:0px;">
 											and
@@ -150,123 +162,214 @@ $(function() {
 								</fieldset>
 							</div>
 							<div class="col-xs-12 col-sm-6">
-								<fieldset class="form-group">
+								<fieldset class="form-group keep-margin">
 									<label for="formGroupExampleInput2">Average rating between:</label>
 									<div class="row">
 										<div class="col-xs-5" style="padding-right:0px">
-											<input type="number" class="form-control" id="min-avg-ratings" value="1" style="text-align:center;">
+											<input type="number" class="form-control" id="min-avg-ratings" placeholder="1" style="text-align:center;">
 										</div>
 										<div class="col-xs-2" style="text-align:center;padding-top:7px;padding-left:0px;padding-right:0px;">
 											and
 										</div>
 										<div class="col-xs-5" style="padding-left:0px">
-											<input type="number" class="form-control" id="max-avg-ratings" value="5" style="text-align:center;">
+											<input type="number" class="form-control" id="max-avg-ratings" placeholder="5" style="text-align:center;">
 										</div>
 									</div>
 								</fieldset>
 							</div>
 							<div class="col-xs-12 col-sm-6">
-								<fieldset class="form-group">
+								<fieldset class="form-group keep-margin">
 									<label for="formGroupExampleInput2">Original version published between:</label>
 									<div class="row">
 										<div class="col-xs-5" style="padding-right:0px">
-											<input type="text" class="form-control" name="birthdate" value="10/24/1984" style="text-align:center;"/>
+											<input type="text" class="form-control datepicker" name="original-start-upload" placeholder="10/24/1984" style="text-align:center;"/>
 										</div>
 										<div class="col-xs-2" style="text-align:center;padding-top:7px;padding-left:0px;padding-right:0px;">
 											and
 										</div>
 										<div class="col-xs-5" style="padding-left:0px">
-											<input type="text" class="form-control" name="birthdate" value="10/24/1984" style="text-align:center;"/>
+											<input type="text" class="form-control datepicker" name="original-end-upload" placeholder="10/24/1984" style="text-align:center;"/>
 										</div>
 									</div>
 								</fieldset>
 							</div>
 							<div class="col-xs-12 col-sm-6">
-								<fieldset class="form-group">
+								<fieldset class="form-group keep-margin">
 									<label for="formGroupExampleInput2">Revision published between:</label>
 									<div class="row">
 										<div class="col-xs-5" style="padding-right:0px">
-											<input type="text" class="form-control" name="birthdate" value="10/24/1984" style="text-align:center;"/>
+											<input type="text" class="form-control datepicker" name="revision-start-upload" placeholder="10/24/1984" style="text-align:center;"/>
 										</div>
 										<div class="col-xs-2" style="text-align:center;padding-top:7px;padding-left:0px;padding-right:0px;">
 											and
 										</div>
 										<div class="col-xs-5" style="padding-left:0px">
-											<input type="text" class="form-control" name="birthdate" value="10/24/1984" style="text-align:center;"/>
+											<input type="text" class="form-control datepicker" name="revision-end-upload" placeholder="10/24/1984" style="text-align:center;"/>
 										</div>
 									</div>
 								</fieldset>
 							</div>
 						</div>
 						<h3>Sort by:</h3>
-						<div class="row">
+						<div class="row keep-margin">
 							<div class="col-sm-9 col-xs-12 hidden-xs">
 								<div id="desktop-order-group" class="btn-group btn-group-justified" role="group" data-toggle="buttons">
 									<label class="btn btn-primary active">
-										<input type="radio" name="options" id="option1" autocomplete="off" checked>Rating
+										<input type="radio" name="sort-order" value="sort-avg-rating" autocomplete="off" checked>Rating
 									</label>
 									<label class="btn btn-primary">
-										<input type="radio" name="options" id="option2" autocomplete="off">Title
+										<input type="radio" name="sort-order" value="sort-title" autocomplete="off">Title
 									</label>
 									<label class="btn btn-primary">
-										<input type="radio" name="options" id="option2" autocomplete="off">Author
+										<input type="radio" name="sort-order" value="sort-author" autocomplete="off">Author
 									</label>
 									<label class="btn btn-primary">
-										<input type="radio" name="options" id="option3" autocomplete="off">Upload Date
+										<input type="radio" name="sort-order" value="sort-revised-upload-date" autocomplete="off">Upload Date
 									</label>
 									<label class="btn btn-primary">
-										<input type="radio" name="options" id="option3" autocomplete="off">Branch Upload Date
+										<input type="radio" name="sort-order" value="sort-original-upload-date" autocomplete="off">Branch Upload Date
 									</label>
 									<label class="btn btn-primary">
-										<input type="radio" name="options" id="option4" autocomplete="off"># Ratings
+										<input type="radio" name="sort-order" value="sort-num-ratings" autocomplete="off"># Ratings
 									</label>
 									<label class="btn btn-primary">
-										<input type="radio" name="options" id="option5" autocomplete="off"># Steps
-									</label>
-								</div>
-							</div>
-							<div class="col-xs-12 visible-xs" aria-label="Vertical Order">
-								<div id="mobile-order-group" class="btn-group btn-group-vertical" role="group" data-toggle="buttons" style="width:100%;">
-									<label class="btn btn-primary active" style="border-top-right-radius: 4px;">
-										<input type="radio" name="options2" id="option6" autocomplete="off">Average Rating
-									</label>
-									<label class="btn btn-primary">
-										<input type="radio" name="options2" id="option7" autocomplete="off" checked>Title
-									</label>
-									<label class="btn btn-primary">
-										<input type="radio" name="options2" id="option8" autocomplete="off">Author
-									</label>
-									<label class="btn btn-primary">
-										<input type="radio" name="options2" id="option9" autocomplete="off">Upload Date
-									</label>
-									<label class="btn btn-primary">
-										<input type="radio" name="options" id="option3" autocomplete="off">Branch Upload Date
-									</label>
-									<label class="btn btn-primary">
-										<input type="radio" name="options2" id="option10" autocomplete="off"># Ratings
-									</label>
-									<label class="btn btn-primary">
-										<input type="radio" name="options2" id="option11" autocomplete="off"># Steps
+										<input type="radio" name="sort-order" value="sort-num-steps" autocomplete="off"># Steps
 									</label>
 								</div>
 							</div>
 							<div class="col-xs-12 col-sm-3">
 								<div id="asc-des-group" class="btn-group btn-group-justified" data-toggle="buttons">
 									<label class="btn btn-primary active">
-										<input type="radio" name="options" id="option1" autocomplete="off" checked>Asc <span class="glyphicon glyphicon-sort-by-attributes"></span>
+										<input type="radio" value="asc" name="sort-asc-des" autocomplete="off">Asc <span class="glyphicon glyphicon-sort-by-attributes"></span>
 									</label>
 									<label class="btn btn-primary">
-										<input type="radio" name="options" id="option3" autocomplete="off">Des <span class="glyphicon glyphicon-sort-by-attributes-alt"></span>
+										<input type="radio" value="des" name="sort-asc-des" autocomplete="off" checked>Des <span class="glyphicon glyphicon-sort-by-attributes-alt"></span>
 									</label>
 								</div>
 							</div>
-
-							<div class="col-xs-8 col-sm-8 col-sm-offset-2 col-xs-offset-2 filt_btn">
-								<button type="submit" class="btn btn-primary btn-block disabled">Apply Filters (DO NOT CLICK)</button>
+							{% csrf_token %}
+							<div class="col-xs-12 col-sm-8 col-sm-offset-2 filt_btn">
+								<button type="submit" class="btn btn-primary btn-block">Apply Filters (DO NOT CLICK)</button>
 							</div>
-
-						</form>
-					</div>
+						</div>
+					</form>
+					<form method="POST" class="form-horizontal visible-xs" action="/search/">
+						<div class="form-group form-group-lg">
+							<label class="col-sm-2 control-label" for="formGroupInputLarge" style="font-size:20px;padding-left:0px;">Search for:</label>
+							<div class="col-sm-10">
+								<input class="form-control" type="text" name="text_filter" value="{{ text_filter }}">
+							</div>
+						</div>
+						<h3>Filter:</h3>
+						<div class="row keep-margin" style="margin-left:15px;">
+							<div class="col-xs-12 col-sm-6">
+								<fieldset class="form-group keep-margin">
+									<label for="formGroupExampleInput">Number of ratings between:</label>
+									<div class="row">
+										<div class="col-xs-5" style="padding-right:0px">
+											<input type="number" class="form-control" id="min-num-ratings" placeholder="0" style="text-align:center;">
+										</div>
+										<div class="col-xs-2" style="text-align:center;padding-top:7px;padding-left:0px;padding-right:0px;">
+											and
+										</div>
+										<div class="col-xs-5" style="padding-left:0px">
+											<input type="number" class="form-control" id="max-num-ratings" placeholder="10" style="text-align:center;">
+										</div>
+									</div>
+								</fieldset>
+							</div>
+							<div class="col-xs-12 col-sm-6">
+								<fieldset class="form-group keep-margin">
+									<label for="formGroupExampleInput2">Average rating between:</label>
+									<div class="row">
+										<div class="col-xs-5" style="padding-right:0px">
+											<input type="number" class="form-control" id="min-avg-ratings" placeholder="1" style="text-align:center;">
+										</div>
+										<div class="col-xs-2" style="text-align:center;padding-top:7px;padding-left:0px;padding-right:0px;">
+											and
+										</div>
+										<div class="col-xs-5" style="padding-left:0px">
+											<input type="number" class="form-control" id="max-avg-ratings" placeholder="5" style="text-align:center;">
+										</div>
+									</div>
+								</fieldset>
+							</div>
+							<div class="col-xs-12 col-sm-6">
+								<fieldset class="form-group keep-margin">
+									<label for="formGroupExampleInput2">Original version published between:</label>
+									<div class="row">
+										<div class="col-xs-5" style="padding-right:0px">
+											<input type="text" class="form-control datepicker" name="original-start-upload" placeholder="10/24/1984" style="text-align:center;"/>
+										</div>
+										<div class="col-xs-2" style="text-align:center;padding-top:7px;padding-left:0px;padding-right:0px;">
+											and
+										</div>
+										<div class="col-xs-5" style="padding-left:0px">
+											<input type="text" class="form-control datepicker" name="original-end-upload" placeholder="10/24/1984" style="text-align:center;"/>
+										</div>
+									</div>
+								</fieldset>
+							</div>
+							<div class="col-xs-12 col-sm-6">
+								<fieldset class="form-group keep-margin">
+									<label for="formGroupExampleInput2">Revision published between:</label>
+									<div class="row">
+										<div class="col-xs-5" style="padding-right:0px">
+											<input type="text" class="form-control datepicker" name="revision-start-upload" placeholder="10/24/1984" style="text-align:center;"/>
+										</div>
+										<div class="col-xs-2" style="text-align:center;padding-top:7px;padding-left:0px;padding-right:0px;">
+											and
+										</div>
+										<div class="col-xs-5" style="padding-left:0px">
+											<input type="text" class="form-control datepicker" name="revision-end-upload" placeholder="10/24/1984" style="text-align:center;"/>
+										</div>
+									</div>
+								</fieldset>
+							</div>
+						</div>
+						<h3>Sort by:</h3>
+						<div class="row keep-margin">
+							<div class="col-xs-12 visible-xs" aria-label="Vertical Order">
+								<div id="mobile-order-group" class="btn-group btn-group-vertical" role="group" data-toggle="buttons" style="width:100%;">
+									<label class="btn btn-primary active">
+										<input type="radio" name="sort-order" value="sort-avg-rating" autocomplete="off" checked>Rating
+									</label>
+									<label class="btn btn-primary">
+										<input type="radio" name="sort-order" value="sort-title" autocomplete="off">Title
+									</label>
+									<label class="btn btn-primary">
+										<input type="radio" name="sort-order" value="sort-author" autocomplete="off">Author
+									</label>
+									<label class="btn btn-primary">
+										<input type="radio" name="sort-order" value="sort-revised-upload-date" autocomplete="off">Upload Date
+									</label>
+									<label class="btn btn-primary">
+										<input type="radio" name="sort-order" value="sort-original-upload-date" autocomplete="off">Branch Upload Date
+									</label>
+									<label class="btn btn-primary">
+										<input type="radio" name="sort-order" value="sort-num-ratings" autocomplete="off"># Ratings
+									</label>
+									<label class="btn btn-primary">
+										<input type="radio" name="sort-order" value="sort-num-steps" autocomplete="off"># Steps
+									</label>
+								</div>
+							</div>
+							<div class="col-xs-12 col-sm-3">
+								<div id="asc-des-group" class="btn-group btn-group-justified" data-toggle="buttons">
+									<label class="btn btn-primary active">
+										<input type="radio" value="asc" name="sort-asc-des" autocomplete="off">Asc <span class="glyphicon glyphicon-sort-by-attributes"></span>
+									</label>
+									<label class="btn btn-primary">
+										<input type="radio" value="des" name="sort-asc-des" autocomplete="off" checked>Des <span class="glyphicon glyphicon-sort-by-attributes-alt"></span>
+									</label>
+								</div>
+							</div>
+							{% csrf_token %}
+							<div class="col-xs-12 col-sm-8 col-sm-offset-2 filt_btn">
+								<button type="submit" class="btn btn-primary btn-block">Apply Filters (DO NOT CLICK)</button>
+							</div>
+						</div>
+					</form>
 				</div>
 			</div>
 		</div>

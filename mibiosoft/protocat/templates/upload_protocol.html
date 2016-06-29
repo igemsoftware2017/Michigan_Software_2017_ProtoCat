@@ -6,6 +6,8 @@
 tinymce.init({
 	selector: 'textarea',
 	height: 250,
+	convert_fonts_to_spans : true,
+	body_class: 'mce-class',
 	theme: 'modern',
 	plugins: [
 		'advlist autolink lists link image charmap print preview hr anchor pagebreak',
@@ -13,15 +15,14 @@ tinymce.init({
 		'insertdatetime media nonbreaking save table contextmenu directionality',
 		'emoticons template paste textcolor colorpicker textpattern imagetools'
 	],
-	toolbar1: 'undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image',
-	toolbar2: 'print preview media',
+	toolbar1: 'undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | print preview media',
 	image_advtab: true,
 	content_css: [
 		'//fast.fonts.net/cssapi/e6dc9b99-64fe-4292-ad98-6974f93cd2a2.css',
 		'//www.tinymce.com/css/codepen.min.css'
 	],
 	menubar:false,
-    statusbar: false,
+	statusbar: false,
 });
 </script>
 
@@ -45,26 +46,17 @@ tinymce.init({
 	max-height: 2.856em;
 }
 
-li a{
-	color: white;
-}
-
-.nav-tabs>li.active>a, .nav-pills>li.active>a:focus, .nav-pills>li.active>a:hover {
-	color: #337ab7;
-    background-color: #fff;
-}
-
 #pill-tab-heading {
 	padding-bottom: 0px;
 }
 
-h5{
-	color:inherit;
+.mce-class {
+	color:black;
 }
 </style>
 
 <div class="row protocol_title">
-	<div class="col-sm-8 col-sm-offset-2 col-xs-10 col-xs-offset-1 well well-sm">
+	<div class="col-sm-10 col-sm-offset-1 col-xs-10 col-xs-offset-1 well well-sm">
 		<div class="row">
 			<div class="col-sm-8 fix-margin-left">
 				<h1>Title</h1>
@@ -75,15 +67,13 @@ h5{
 </div>
 <br>
 
-<div class="col-md-8 col-md-offset-2">
+<div class="col-sm-10 col-sm-offset-1">
 	<div class="panel panel-primary">
-		<div id="pill-tab-heading" class="panel panel-heading">
-			<ul class="nav nav-tabs">
-				<li class="active"><a data-toggle="tab" href="#Description">Description</a></li>
-				<li><a data-toggle="tab" href="#Reagents">Reagents</a></li>
-				<li><a data-toggle="tab" href="#Changelog">Change log</a></li>
-			</ul>
-		</div>
+		<ul class="nav nav-tabs">
+			<li class="active"><a data-toggle="tab" href="#Description">Description</a></li>
+			<li><a data-toggle="tab" href="#Reagents">Reagents</a></li>
+			<li><a data-toggle="tab" href="#Changelog">Change log</a></li>
+		</ul>
 
 		<div class="panel-body">
 			<div class="tab-content">
@@ -96,12 +86,12 @@ h5{
 					{% endif %}
 				</div>
 				<div id="Changelog" class="tab-pane fade">
-					<p>{{ protocol.change_log }}</p><br>
+					{{ protocol.change_log }}<br><br>
 					{% if protocol.previous_revision %}
-					<p><a href="/protocol/{{ protocol.previous_revision.id }}">Previous Revision</a></p><br>
+					<a href="/protocol/{{ protocol.previous_revision.id }}">Previous Revision</a><br>
 					{% endif %}
 					{% for next_protocol in next_protocols %}
-					<p><a href="/protocol/{{ next_protocol.id }}">Next Revision</a></p><br>
+					<a href="/protocol/{{ next_protocol.id }}">Next Revision</a><br>
 					{% endfor %}
 				</div>
 			</div>
@@ -110,7 +100,7 @@ h5{
 </div>
 
 
-<div class="col-md-8 col-md-offset-2">
+<div class="col-sm-10 col-md-offset-1">
 	<div class="panel panel-primary">
 		<div class="panel-group">
 			<div class="panel panel-default">
