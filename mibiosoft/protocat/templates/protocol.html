@@ -339,10 +339,19 @@ h5{
 					<p>{{ protocol.description }}</p><br>
 				</div>
 				<div id="Reagents" class="tab-pane fade">
-					{% if text_reagents %}
-					<p>{{ text_reagents.reagents }}</p><br>
-					{% endif %}
+					<table class="table table-hover">
+								<thead>
+									<tr>
+										<th>Name</th>
+										<th>Amount</th>
+										<th>ID</th>
+									</tr>
+								</thead>
+								<tbody id="reactants">
+								</tbody>
+					</table>
 				</div>
+
 				<div id="Changelog" class="tab-pane fade">
 					{{ protocol.change_log }}<br><br>
 					{% if protocol.previous_revision %}
@@ -357,6 +366,7 @@ h5{
 	</div>
 </div>
 
+<!--
 <div class="col-sm-10 col-sm-offset-1">
 	<div class="panel panel-primary">
 		<div class="panel-heading">Reactants</div>
@@ -407,6 +417,7 @@ h5{
 		</table>
 	</div>
 </div>
+-->
 
 <div class="col-sm-10 col-sm-offset-1">
 	<div class="panel panel-primary">
