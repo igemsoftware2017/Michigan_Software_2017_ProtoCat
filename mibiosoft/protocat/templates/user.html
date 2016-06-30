@@ -2,6 +2,12 @@
 
 {% block content %}
 
+<style>
+	.padded{
+	padding-left:40px
+	}
+</style>
+
 <div class="row hidden-xs">
 	<div class="col-sm-2 col-sm-offset-1">
 		{% if profile_info.profile_image != "" %}
@@ -10,7 +16,7 @@
 		<img src="/static/images/basic_picture.png" width=200 height=200 alt="Image not found" class="img-responsive img-circle"/>
 		{% endif %}
 	</div>
-	<div class="col-sm-4">
+	<div class="col-sm-4 padded">
 		<h2>{{ profile_info.user }}<br/>
 		<small>{{ profile_info.about }}</small></h2>
 		{% if profile_info.contact_info != None %}
@@ -30,7 +36,7 @@
 		<img src="/static/images/basic_picture.jpg" width=200 height=200 alt="Image not found" class="center-block img-responsive img-circle"/>
 		{% endif %}
 	</div>
-	<div class="col-xs-12">
+	<div class="col-xs-12 padded">
 		<div class="center-block" style="text-align:center;">
 			<h2>{{ profile_info.user }}<br/>
 			<small>{{ profile_info.about }}</small></h2>
