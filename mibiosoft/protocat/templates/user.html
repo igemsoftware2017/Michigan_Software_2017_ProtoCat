@@ -13,7 +13,11 @@
 	<div class="col-sm-4">
 		<h2>{{ profile_info.user }}<br/>
 		<small>{{ profile_info.about }}</small></h2>
+		{% if profile_info.contact_info != None %}
 		<p>Website: <a href="http://{{ profile_info.contact_info }}">{{ profile_info.contact_info }}</a></p>
+		{% else %}
+		<p>Website: None</p>
+		{% endif %}
 		<p>Meows: {{ profile_info.meows }}</p>
 	</div>
 </div>
@@ -30,7 +34,11 @@
 		<div class="center-block" style="text-align:center;">
 			<h2>{{ profile_info.user }}<br/>
 			<small>{{ profile_info.about }}</small></h2>
+			{% if profile_info.contact_info != None %}
 			<p>Website: <a href="http://{{ profile_info.contact_info }}">{{ profile_info.contact_info }}</a></p>
+			{% else %}
+			<p>Website: None</p>
+			{% endif %}
 			<p>Meows: {{ profile_info.meows }}</p>
 		</div>
 	</div>
