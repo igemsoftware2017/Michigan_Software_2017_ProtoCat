@@ -235,6 +235,7 @@ def search(request):
 	results = Protocol.objects.filter(Q(title__icontains = text_filter) | Q(description__icontains = text_filter)).order_by(order)
 	context = {
 		'title': 'ProtoCat',
+		'text_filter': text_filter,
 		'results': results,
 		'current_profile_info': current_profile_info,
 	}
