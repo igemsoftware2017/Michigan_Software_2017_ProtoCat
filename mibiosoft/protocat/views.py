@@ -4,6 +4,8 @@ from .models import *
 from django.contrib.auth import *
 from django.db.models import Q
 from django.db import connection
+import datetime
+from django.utils import timezone
 
 # Create your views here.
 def index(request):
@@ -220,10 +222,92 @@ def about(request):
 
 def search(request):
 	text_filter = request.POST['text_filter']
+
+	# get the right way to order them
 	try:
-		order = request.POST['order']
+		order = request.POST['sort-order']
+		if (order == 'sort-revised-upload-date'):
+			order = 'upload_date'
+		elif (order == 'sort-title'):
+			order = 'title'
+		elif (order == 'sort-author'):
+			order = 'author'
+		elif (order == 'sort-num-ratings'):
+			order = 'num_ratings'
+		elif (order == 'sort-avg-rating'):
+			order = 'avg_rating'
+		elif (order == 'sort-num-steps'):
+			order = 'num_steps'
+		else:
+			order = 'title'
 	except:
 		order = 'title'
+
+	# get right direction to order results
+	sort_direction = ""
+	try:
+		sort_direction = request.POST['sort-asc-des']
+		if (sort_direction == 'asc'):
+			sort_direction = ''
+		else:
+			sort_direction = '-'
+	except:
+		sort_direction = ""
+
+	order = sort_direction + order
+
+	results = Protocol.objects.filter(Q(title__icontains = text_filter) | Q(description__icontains = text_filter))
+
+	# filter the results even more
+	try:
+		revision_start_date = request.POST['revision-start-upload']
+		revision_start_date = revision_start_date.split("/")
+		revision_start_date = map(int, revision_start_date)
+		my_datetime = datetime.date(revision_start_date[2], revision_start_date[0], revision_start_date[1])
+		print("worked")
+		# try to make timezone aware
+		results = results.exclude(upload_date__lt=my_datetime)
+	except:
+		print("Time/date error")
+		pass
+
+	try:
+		revision_end_date = request.POST['revision-end-upload']
+		revision_end_date = revision_end_date.split("/")
+		revision_end_date = map(int, revision_end_date)
+		my_datetime = datetime.date(revision_end_date[2], revision_end_date[0], revision_end_date[1])
+		print("worked")
+		# try to make timezone aware
+		results = results.exclude(upload_date__gt=my_datetime)
+	except:
+		print("Time/date error")
+		pass
+
+	try:
+		min_num_ratings = request.POST['min-num-ratings']
+		results = results.exclude(num_ratings__lt=min_num_ratings)
+	except:
+		pass
+
+	try:
+		max_num_ratings = request.POST['max-num-ratings']
+		results = results.exclude(num_ratings__gt=max_num_ratings)
+	except:
+		pass
+
+	try:
+		min_avg_ratings = request.POST['min-avg-ratings']
+		results = results.exclude(avg_rating__lt=min_avg_ratings)
+	except:
+		pass
+
+	try:
+		max_avg_ratings = request.POST['max-avg-ratings']
+		results = results.exclude(avg_rating__gt=max_avg_ratings)
+	except:
+		pass
+
+	# get user info
 	current_profile_info = request.user
 
 	if (not current_profile_info.is_anonymous()):
@@ -232,7 +316,9 @@ def search(request):
 	else:
 		current_profile_info = None
 
-	results = Protocol.objects.filter(Q(title__icontains = text_filter) | Q(description__icontains = text_filter)).order_by(order)
+	# order everything
+	results = results.order_by(order)
+
 	context = {
 		'title': 'ProtoCat',
 		'text_filter': text_filter,

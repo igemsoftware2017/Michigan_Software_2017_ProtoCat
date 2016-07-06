@@ -72,6 +72,12 @@ class Protocol(models.Model):
 
 	upload_date = models.DateTimeField(auto_now_add = True)
 
+	num_ratings = models.IntegerField(default = 0)
+
+	avg_rating = models.DecimalField(default = -1, max_digits = 50, decimal_places = 25)
+
+	num_steps = models.IntegerField(default = 3, validators=[MinValueValidator(1)])
+
 	# many branching protocols to one parent protocol
 	previous_revision = models.ForeignKey('self', related_name='previous_revision1', blank = True, null = True)
 	first_revision = models.ForeignKey('self', related_name='first_revision1', blank = True, null = True)
@@ -140,6 +146,7 @@ class ProtocolStep(models.Model):
 
 	step_number = models.IntegerField()
 	protocol = models.ForeignKey(Protocol)
+	warning = models.TextField(default = "")
 
 	def __str__(self):
 		result = "Step " + str(self.step_number)
