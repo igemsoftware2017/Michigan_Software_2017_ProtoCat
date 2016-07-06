@@ -3,28 +3,94 @@
 {% block content %}
 
 <script>
-tinymce.init({
-	selector: 'textarea',
-	height: 250,
-	convert_fonts_to_spans : true,
-	body_class: 'mce-class',
-	theme: 'modern',
-	plugins: [
-		'advlist autolink lists link image charmap print preview hr anchor pagebreak',
-		'searchreplace wordcount visualblocks visualchars code fullscreen',
-		'insertdatetime media nonbreaking save table contextmenu directionality',
-		'emoticons template paste textcolor colorpicker textpattern imagetools'
-	],
-	toolbar1: 'undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | print preview media',
-	image_advtab: true,
-	content_css: [
-		'/static/css/tinymce-styling.css',
-		'//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css'
-	],
-	menubar:false,
-	statusbar: false,
-});
+function tinymce_byname(name_of) {
+	name_of = '[name="' + name_of + '"]';
+	tinymce.init({
+		selector: name_of,
+		height: 250,
+		convert_fonts_to_spans : true,
+		body_class: 'mce-class',
+		theme: 'modern',
+		plugins: [
+			'advlist autolink lists link image charmap print preview hr anchor pagebreak',
+			'searchreplace wordcount visualblocks visualchars code fullscreen',
+			'insertdatetime media nonbreaking save table contextmenu directionality',
+			'emoticons template paste textcolor colorpicker textpattern imagetools'
+		],
+		toolbar1: 'undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | print preview media',
+		image_advtab: true,
+		content_css: [
+			'/static/css/tinymce-styling.css',
+			'//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css'
+		],
+		menubar:false,
+		statusbar: false,
+	});
+}
 
+
+function prep_everything(textbox_class) {
+	textbox_class = '.' + textbox_class;
+	tinymce.init({
+		selector: textbox_class,
+		height: 250,
+		convert_fonts_to_spans : true,
+		body_class: 'mce-class',
+		theme: 'modern',
+		plugins: [
+			'advlist autolink lists link image charmap print preview hr anchor pagebreak',
+			'searchreplace wordcount visualblocks visualchars code fullscreen',
+			'insertdatetime media nonbreaking save table contextmenu directionality',
+			'emoticons template paste textcolor colorpicker textpattern imagetools'
+		],
+		toolbar1: 'undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | print preview media',
+		image_advtab: true,
+		content_css: [
+			'/static/css/tinymce-styling.css',
+			'//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css'
+		],
+		menubar:false,
+		statusbar: false,
+	});
+}
+
+new_name = 0;
+
+function add_step(event) {
+	console.log('ran')
+	temp_name = 'step' + new_name;
+
+	temp_item = $('#original_step').clone();
+	temp_item.attr('id', temp_name);
+	temp_item.find('[name="step[warning]"]').attr('name', temp_name + '[warning]');
+	temp_item.find('[name="step[number]"]').attr('name', temp_name + '[number]').attr('value', new_name + 1);
+	temp_item.find('[name="step[title]"]').attr('name', temp_name + '[title]');
+	temp_item.find('[name="step[time]"]').attr('name', temp_name + '[time]');
+	temp_item.find('[name="step[description]"]').attr('name', temp_name + '[description]');
+	temp_item.find('.step').addClass(temp_name).removeClass('step');
+	identifier = '#' + temp_name;
+	temp_item.find('#add_step').on('click', {id: identifier}, add_step);
+	temp_item.find('#remove_step').on('click', function() {
+		$(this).parent().parent().parent().parent().remove();
+	});
+	if (event.id == null) {
+		$(temp_item).show().insertAfter(event.data.id);
+	}
+	else {
+		$(temp_item).show().insertAfter(event.id);
+	}
+	new_name++;
+	$('#number_to_check').attr('value', new_name);
+	console.log(temp_name)
+	prep_everything(temp_name);
+}
+
+window.onload = function() {
+	tinymce_byname('description');
+	tinymce_byname('text-reagents');
+	tinymce_byname('change-log');
+	add_step({id: '#original_step'});
+}
 </script>
 
 <style>
@@ -102,21 +168,21 @@ tinymce.init({
 	</div>
 
 
-	<div class="col-sm-10 col-sm-offset-1 individual-step">
+	<div class="col-sm-10 col-sm-offset-1 individual-step" style="display: none;" id="original_step">
 		<div class="row">
 			<div class="col-sm-2">
 				<div class="row">
 					<div class="col-sm-12">
 						<div class="form-group-lg">
 							<label class="control-label" for="exampleInputName2">Step #</label>
-							<input type="number" min="1" step="1" class="form-control input-sm step-number" name="step-number" value="1">
+							<input name="step[number]" type="number" min="1" step="1" class="form-control input-sm step-number" name="step-number" value="1">
 						</div>
 					</div>
 					<div class="col-xs-12" style="margin-top:15px;">
-						<input type="button" class="form-control" value="Add step">
+						<input type="button" class="form-control" value="Add step" id="add_step">
 					</div>
 					<div class="col-xs-12" style="margin-top:15px;margin-bottom:15px;">
-						<input type="button" class="form-control" value="Delete step">
+						<input type="button" class="form-control" value="Delete step" id="remove_step">
 					</div>
 				</div>
 			</div>
@@ -126,10 +192,10 @@ tinymce.init({
 						<div class="panel panel-default">
 							<div class="panel-heading make-padding-work">
 								<div class="form-group form-group-lg">
-									<input class="form-control" type="text" class="title" placeholder="Step Title">
+									<input class="form-control" name="step[title]" type="text" class="title" placeholder="Step Title">
 								</div>
 								<div class="form-group form-group-sm" style="margin-bottom:0px;">
-									<input class="form-control input-sm" min="0" step="1" type="number" class="time" placeholder="Amount of time in seconds (optional)">
+									<input class="form-control input-sm" name="step[time]" min="0" step="1" type="number" class="time" placeholder="Amount of time in seconds (optional)">
 								</div>
 							</div>
 							<div class="panel-body" style="padding-left:0px;padding-right:0px;">
@@ -139,7 +205,7 @@ tinymce.init({
 											<label for="inputEmail3" class="control-label" style="width:100%;">Additional Information</label>
 										</div>
 										<div class="col-sm-10 col-xs-12">
-											<textarea>Body info for step one</textarea>
+											<textarea class="step" name="step[description]">Body info for step one</textarea>
 										</div>
 									</div>
 								</div>
@@ -152,131 +218,7 @@ tinymce.init({
 											<label for="inputEmail3" class="control-label" style="width:100%;">Warning</label>
 										</div>
 										<div class="col-sm-10 col-xs-12">
-											<textarea name="warning" rows="5" placeholder="Warning"></textarea>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-
-	<div class="col-sm-10 col-sm-offset-1 individual-step">
-		<div class="row">
-			<div class="col-sm-2">
-				<div class="row">
-					<div class="col-sm-12">
-						<div class="form-group-lg">
-							<label class="control-label" for="exampleInputName2">Step #</label>
-							<input type="number" min="1" step="1" class="form-control input-sm step-number" name="step-number" value="1">
-						</div>
-					</div>
-					<div class="col-xs-12" style="margin-top:15px;">
-						<input type="button" class="form-control" value="Add step">
-					</div>
-					<div class="col-xs-12" style="margin-top:15px;margin-bottom:15px;">
-						<input type="button" class="form-control" value="Delete step">
-					</div>
-				</div>
-			</div>
-			<div class="col-sm-10">
-				<div class="panel">
-					<div class="panel-group">
-						<div class="panel panel-default">
-							<div class="panel-heading make-padding-work">
-								<div class="form-group form-group-lg">
-									<input class="form-control" type="text" class="title" placeholder="Step Title">
-								</div>
-								<div class="form-group form-group-sm" style="margin-bottom:0px;">
-									<input class="form-control input-sm" min="0" step="1" type="number" class="time" placeholder="Amount of time in seconds (optional)">
-								</div>
-							</div>
-							<div class="panel-body" style="padding-left:0px;padding-right:0px;">
-								<div class="panel-heading">
-									<div class="row">
-										<div class="col-sm-2">
-											<label for="inputEmail3" class="control-label" style="width:100%;">Additional Information</label>
-										</div>
-										<div class="col-sm-10 col-xs-12">
-											<textarea>Body info for step one</textarea>
-										</div>
-									</div>
-								</div>
-							</div>
-							<div class="panel-body panel-danger" style="padding-left:0px;padding-right:0px;background-color:#f2dede;">
-								<!-- Want to get rid of defualt border radius -->
-								<div class="panel-heading">
-									<div class="row">
-										<div class="col-sm-2">
-											<label for="inputEmail3" class="control-label" style="width:100%;">Warning</label>
-										</div>
-										<div class="col-sm-10 col-xs-12">
-											<textarea name="warning" rows="5" placeholder="Warning"></textarea>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-
-	<div class="col-sm-10 col-sm-offset-1 individual-step">
-		<div class="row">
-			<div class="col-sm-2">
-				<div class="row">
-					<div class="col-sm-12">
-						<div class="form-group-lg">
-							<label class="control-label" for="exampleInputName2">Step #</label>
-							<input type="number" min="1" step="1" class="form-control input-sm step-number" name="step-number" value="1">
-						</div>
-					</div>
-					<div class="col-xs-12" style="margin-top:15px;">
-						<input type="button" class="form-control" value="Add step">
-					</div>
-					<div class="col-xs-12" style="margin-top:15px;margin-bottom:15px;">
-						<input type="button" class="form-control" value="Delete step">
-					</div>
-				</div>
-			</div>
-			<div class="col-sm-10">
-				<div class="panel">
-					<div class="panel-group">
-						<div class="panel panel-default">
-							<div class="panel-heading make-padding-work">
-								<div class="form-group form-group-lg">
-									<input class="form-control" type="text" class="title" placeholder="Step Title">
-								</div>
-								<div class="form-group form-group-sm" style="margin-bottom:0px;">
-									<input class="form-control input-sm" min="0" step="1" type="number" class="time" placeholder="Amount of time in seconds (optional)">
-								</div>
-							</div>
-							<div class="panel-body" style="padding-left:0px;padding-right:0px;">
-								<div class="panel-heading">
-									<div class="row">
-										<div class="col-sm-2">
-											<label for="inputEmail3" class="control-label" style="width:100%;">Additional Information</label>
-										</div>
-										<div class="col-sm-10 col-xs-12">
-											<textarea>Body info for step one</textarea>
-										</div>
-									</div>
-								</div>
-							</div>
-							<div class="panel-body panel-danger" style="padding-left:0px;padding-right:0px;background-color:#f2dede;">
-								<!-- Want to get rid of defualt border radius -->
-								<div class="panel-heading">
-									<div class="row">
-										<div class="col-sm-2">
-											<label for="inputEmail3" class="control-label" style="width:100%;">Warning</label>
-										</div>
-										<div class="col-sm-10 col-xs-12">
-											<textarea name="warning" rows="5" placeholder="Warning"></textarea>
+											<textarea class="step" name="step[warning]" rows="5" placeholder="Warning"></textarea>
 										</div>
 									</div>
 								</div>
@@ -289,7 +231,9 @@ tinymce.init({
 	</div>
 
 	{% csrf_token %}
-	
+
+	<input type="hidden" name="number_to_check" id="number_to_check"/>
+
 	<div class="col-sm-10 col-sm-offset-1">
 		<button type="submit" class="btn btn-primary btn-block" style="margin-bottom:15px;">Submit Protocol</button>
 	</div>

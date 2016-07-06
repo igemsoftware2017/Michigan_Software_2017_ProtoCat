@@ -221,8 +221,11 @@ def about(request):
 	return render(request, 'about.html', context)
 
 def search(request):
-	text_filter = request.POST['text_filter']
-
+	text_filter = ""
+	try:
+		text_filter = request.POST['text_filter']
+	except:
+		pass
 	# get the right way to order them
 	try:
 		order = request.POST['sort-order']
@@ -332,7 +335,6 @@ def search(request):
 def submit_rating(request):
 	current_profile_info = request.user
 	if (not current_profile_info.is_anonymous()):
-
 		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
 		new_value = request.POST['NewValue']
 		protocol_id = request.POST['id']
@@ -375,3 +377,84 @@ def upload_page(request, current_data):
 	}
 	print(len(connection.queries))
 	return render(request, 'upload_protocol.html', context)
+
+def submit_upload(request):
+	current_profile_info = request.user
+	if (not current_profile_info.is_anonymous()):
+		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
+		print(current_profile_info)
+	else:
+		current_profile_info = None
+
+	try:
+		protocol_title = request.POST['title']
+		protocol_desc = request.POST['description']
+		protocol_changes = request.POST['change-log']
+
+		protocol_cat = ""
+		protocol_rea = ""
+
+		try:
+			protocol_cat = request.POST['category']
+		except:
+			protocol_cat = ""
+
+		try:
+			protocol_rea = request.POST['text-reagents']
+		except:
+			protocol_rea = ""
+			
+		protocol = Protocol(change_log = protocol_changes, title = protocol_title, description = protocol_desc, author = current_profile_info)
+		protocol.save()
+		reagents = TextReagent(reagents = protocol_rea, protocol = protocol)
+		reagents.save()
+
+		num_steps = 0
+		try:
+			number_to_check = int(request.POST['number_to_check'])
+			for x in range(0, number_to_check):
+				try:
+					prefix = 'step' + str(x)
+					number = int(request.POST[prefix + '[number]'])
+					description = request.POST[prefix + '[description]']
+
+					time = 0
+					warning = ""
+					title = ""
+
+					try:
+						warning = request.POST[prefix + '[warning]']
+						print('found warning')
+					except:
+						warning = ""
+					try:
+						title = request.POST[prefix + '[title]']
+					except:
+						title = ""
+					try:
+						time = int(request.POST[prefix + '[time]'])
+					except:
+						time = -1
+					print(warning)
+					ps = ProtocolStep(action = description, warning = warning, step_number = number, time = time, protocol = protocol)
+					ps.save()
+					num_steps = num_steps + 1
+				except:
+					print('error1')
+					pass
+		except:
+			print('error2')
+			pass
+		protocol.num_steps = num_steps
+		protocol.save()
+	except:
+		print('error3')
+		pass
+
+
+
+	context = {
+		'title': 'ProtoCat - Submit Upload',
+		'current_profile_info': current_profile_info,
+	}
+	return HttpResponseRedirect('/')

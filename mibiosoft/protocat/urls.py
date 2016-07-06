@@ -22,4 +22,5 @@ urlpatterns = [
 	url(r'^rating/$', views.submit_rating, name="ajax_rating"),
 	url(r'^upload/$', views.upload_default, name="default_upload_page"),
 	url(r'^upload/(?P<protocol_id>[0-9]+)/$', views.upload_branch, name="upload_page"),
+	url(r'^submitprotocol/$', views.submit_upload, name="submit_upload_page"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

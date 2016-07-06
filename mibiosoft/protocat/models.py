@@ -64,7 +64,7 @@ class Protocol(models.Model):
 	change_log = models.TextField()
 
 	# many protocols to one category
-	category = models.ForeignKey(Category)
+	category = models.ForeignKey(Category, default = 1)
 
 	# True if the author want dynamic scaling of products and reactants
 	scaleable = models.BooleanField(default = False)
@@ -123,10 +123,10 @@ class Protocol(models.Model):
 
 # just a text field for the reagents if they don't want to be fancy
 class TextReagent(models.Model):
-	reagents = models.TextField();
+	reagents = models.TextField(default = "");
 	protocol = models.OneToOneField(Protocol)
 	def __str__(self):
-		return reagents
+		return self.reagents
 
 # the data for each protocol step
 class ProtocolStep(models.Model):
