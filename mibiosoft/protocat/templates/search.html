@@ -397,7 +397,11 @@ $(function() {
 					<p class="text-muted max-lines">{{ protocol.description }}</p>
 				</div>
 				<div class="col-sm-2 hidden-xs protocol-author-picture fix-margin-top pull-right">
-					<img src="{{ protocol.author.profile_image.url }}" width=75 height=75 alt="Image not found" class="img-circle center-block"/>
+					{% if protocol.author.profile_image != "" %}
+						<img src="{{ protocol.author.profile_image.url }}" width=75 height=75 alt="Image not found" class="img-circle center-block"/>
+					{% else %}
+						<img src="http://2014.igem.org/wiki/images/thumb/0/04/ChrisP.jpg/330px-ChrisP.jpg.png" width=45 height=45 alt="Image not found" class="img-rounded"/>
+					{% endif %}
 					<h5 style="text-align:center;"><a href="/user/{{ protocol.author.id }}/">{{ protocol.author }}</a></h5>
 					{% if protocol.get_average_ratings == "N/A" %}
 					<h2 class="small" style="text-align:center;margin-top:0px;">Be the first to rate this protocol</h2>

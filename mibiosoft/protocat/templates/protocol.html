@@ -329,7 +329,7 @@ h5{
 				<h5>Category: <a href="/browse/{{ protocol.category.id }}/">{{ protocol.category }}</a></h5>
 			</div>
 			<div class="col-sm-2 hidden-xs protocol-author-picture fix-margin-top pull-right">
-				{% if comment.author.profile_image != "" %}
+				{% if protocol.author.profile_image != "" %}
 				<img src="{{ protocol.author.profile_image.url }}" width=75 height=75 alt="Image not found" class="img-circle center-block"/>
 				{% else %}
 				<img src="http://2014.igem.org/wiki/images/thumb/0/04/ChrisP.jpg/330px-ChrisP.jpg.png" width=45 height=45 alt="Image not found" class="img-rounded"/>
