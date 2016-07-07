@@ -329,7 +329,11 @@ h5{
 				<h5>Category: <a href="/browse/{{ protocol.category.id }}/">{{ protocol.category }}</a></h5>
 			</div>
 			<div class="col-sm-2 hidden-xs protocol-author-picture fix-margin-top pull-right">
+				{% if comment.author.profile_image != "" %}
 				<img src="{{ protocol.author.profile_image.url }}" width=75 height=75 alt="Image not found" class="img-circle center-block"/>
+				{% else %}
+				<img src="http://2014.igem.org/wiki/images/thumb/0/04/ChrisP.jpg/330px-ChrisP.jpg.png" width=45 height=45 alt="Image not found" class="img-rounded"/>
+				{% endif %}
 				<h5 style="text-align:center;"><a href="/user/{{ protocol.author.id }}/">{{ protocol.author }}</a></h5>
 				<form id="inline-form" method="POST" action="/ratings/" class="center-block" style="margin-top:-15px">
 					<input id="input-2" name="input-2" value="{%if protocol.get_average_ratings == "N/A"%}0{%else%}{{ protocol.get_average_ratings }}{%endif%}" class="rating-loading input-2" data-size="xs" data-step="1" data-show-caption="false" data-show-clear="false">
