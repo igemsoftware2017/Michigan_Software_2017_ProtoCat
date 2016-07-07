@@ -65,7 +65,7 @@ def protocol(request, protocol_id):
 	next_protocols = Protocol.objects.filter(previous_revision = protocol)
 	for next_protocol in next_protocols:
 		print(next_protocol)
-	step_notes = ProtocolStepNote.objects.filter(protocol = protocol)
+	comments = ProtocolComment.objects.filter(protocol = protocol).order_by('-upload_date')
 	try:
 		text_reagents = TextReagent.objects.get(protocol = protocol)
 	except TextReagent.DoesNotExist:
@@ -89,7 +89,7 @@ def protocol(request, protocol_id):
 		'protocol_steps': protocol_steps,
 		'protocol_reagents': protocol_reagents,
 		'next_protocols': next_protocols,
-		'step_notes': step_notes,
+		'comments': comments,
 		'text_reagents': text_reagents,
 		'aggregated_reagents': aggregated_reagents,
 		'current_profile_info': current_profile_info,
@@ -109,7 +109,7 @@ def user(request, user_id):
 		current_profile_info = None
 	user = ProfileInfo.objects.get(id = user_id)
 	user_created_protocols = Protocol.objects.filter(author = user).order_by('-upload_date')
-	user_created_notes = ProtocolStepNote.objects.filter(author = user).order_by('-upload_date')
+	user_created_notes = ProtocolComment.objects.filter(author = user).order_by('-upload_date')
 	user_rated_protocols = ProtocolRating.objects.filter(person = user).order_by('-score')
 
 	data = list(user_created_protocols) + list(user_created_notes)
@@ -403,7 +403,7 @@ def submit_upload(request):
 			protocol_rea = request.POST['text-reagents']
 		except:
 			protocol_rea = ""
-			
+
 		protocol = Protocol(change_log = protocol_changes, title = protocol_title, description = protocol_desc, author = current_profile_info)
 		protocol.save()
 		reagents = TextReagent(reagents = protocol_rea, protocol = protocol)
@@ -458,3 +458,22 @@ def submit_upload(request):
 		'current_profile_info': current_profile_info,
 	}
 	return HttpResponseRedirect('/')
+
+def submit_comment(request):
+	current_profile_info = request.user
+	if (not current_profile_info.is_anonymous() and request.POST['comment'] != ""):
+		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
+		comment = request.POST['comment']
+		protocol_id = request.POST['protocol_id']
+		protocol = Protocol.objects.get(id = protocol_id)
+
+		try:
+			proto_comment = ProtocolComment(author = current_profile_info, protocol = protocol, note = comment)
+			proto_comment.save()
+		except:
+			pass
+	context = {
+		'title': 'ProtoCat',
+		'current_profile_info': current_profile_info,
+	}
+	return render(request, 'index.html', context)

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import ProfileInfo, Reagent, Category, Protocol, ProtocolStep, ReagentForProtocol, ProtocolRating, TextReagent, ProtocolStepNote
+from .models import ProfileInfo, Reagent, Category, Protocol, ProtocolStep, ReagentForProtocol, ProtocolRating, TextReagent, ProtocolComment
 
 
 
@@ -45,9 +45,9 @@ class TextReagentAdmin(admin.ModelAdmin):
 	class Meta:
 		model = TextReagent
 
-class ProtocolStepNoteAdmin(admin.ModelAdmin):
+class ProtocolCommentAdmin(admin.ModelAdmin):
 	class Meta:
-		model = ProtocolStepNote
+		model = ProtocolComment
 
 
 
@@ -61,4 +61,4 @@ admin.site.register(ProtocolStep, ProtocolStepAdmin)
 admin.site.register(ReagentForProtocol, ReagentForProtocolAdmin)
 admin.site.register(ProtocolRating, ProtocolRatingAdmin)
 admin.site.register(TextReagent, TextReagentAdmin)
-admin.site.register(ProtocolStepNote, ProtocolStepNoteAdmin)
+admin.site.register(ProtocolComment, ProtocolCommentAdmin)

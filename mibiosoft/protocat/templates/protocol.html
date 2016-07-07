@@ -257,6 +257,21 @@ $(document).on('ready', function(){
 			}
 		});
 	});
+
+	$('#comment').submit(function(e) {
+		e.preventDefault();
+		$.ajax({
+			type: "POST",
+			url: "/submitcomment/",
+			data: $('#comment').serialize(),
+			success: function(){
+				console.log("it worked2")
+			},
+			failure: function(){
+				console.log("it failed")
+			}
+		});
+	});
 });
 
 
@@ -374,6 +389,12 @@ h5{
 								</tbody>
 							</table>
 						</div>
+						<div class="col-sm-12" style="margin-top:15px;">
+							{% if protocol_reagents.count != 0 %}
+							<button onclick="multiply_everything(0.5);">Halve me please!</button>
+							<button onclick="multiply_everything(2);">Double me please!</button>
+							{% endif %}
+						</div>
 					</div>
 					<!--h3>Intermediaries</h3>
 					<table class="table table-hover">
@@ -440,11 +461,49 @@ h5{
 	</div>
 </div>
 
-<div class="col-sm-10 col-md-offset-1">
-	{% if protocol_reagents.count != 0 %}
-	<button onclick="multiply_everything(0.5);">Halve me please!</button>
-	<button onclick="multiply_everything(2);">Double me please!</button>
-	{% endif %}
+
+<div class="col-sm-10 col-sm-offset-1" style="margin-bottom:7.5px;">
+	<div class="row">
+		{% if current_profile_info != None %}
+		<form action="/submitcomment/" method="POST" id="comment">
+			<div class="col-sm-1">
+				{% if current_profile_info.profile_image != "" %}
+				<img src="{{ current_profile_info.profile_image.url }}" width=75 height=75 alt="Image not found" class="img-rounded"/>
+				{% else %}
+				<img src="http://2014.igem.org/wiki/images/thumb/0/04/ChrisP.jpg/330px-ChrisP.jpg.png" width=45 height=45 alt="Image not found" class="img-rounded"/>
+				{% endif %}
+			</div>
+			<div class="col-sm-11">
+				<textarea name="comment" class="form-control" style="height:75px;" placeholder="Add a comment"></textarea>
+			</div>
+			<div class="col-sm-12" style="margin-top:15px;">
+				<input type="submit" class="form-control" value="Post">
+			</div>
+			<input name="protocol_id" type="hidden" value="{{protocol.id}}">
+			{% csrf_token %}
+		</form>
+		{% else %}
+		<p>Sign in to comment on any protocol!</p>
+		{% endif %}
+	</div>
 </div>
+
+{% for comment in comments %}
+<div class="col-sm-10 col-sm-offset-1" style="margin-top:7.5px;margin-bottom:7.5px;">
+	<div class="row">
+		<div class="col-sm-1">
+			{% if comment.author.profile_image != "" %}
+			<img src="{{ comment.author.profile_image.url }}" width=75 height=75 alt="Image not found" class="img-rounded"/>
+			{% else %}
+			<img src="http://2014.igem.org/wiki/images/thumb/0/04/ChrisP.jpg/330px-ChrisP.jpg.png" width=45 height=45 alt="Image not found" class="img-rounded"/>
+			{% endif %}
+		</div>
+		<div class="col-sm-11">
+			<p><a href="/user/{{comment.author.id}}/">{{comment.author}}</a> - posted on {{comment.upload_date}}</p>
+			<p>{{comment.note}}</p>
+		</div>
+	</div>
+</div>
+{% endfor %}
 
 {% endblock %}

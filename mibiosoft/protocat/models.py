@@ -239,12 +239,14 @@ class ProtocolRating(models.Model):
 	protocol = models.ForeignKey(Protocol)
 
 # allow for each user to write their own private notes on each protocol step
-class ProtocolStepNote(models.Model):
+class ProtocolComment(models.Model):
 	author = models.ForeignKey(ProfileInfo)
-	protocol_step = models.ForeignKey(ProtocolStep)
 	protocol = models.ForeignKey(Protocol)
 	upload_date = models.DateTimeField(auto_now_add = True)
 	note = models.TextField()
+
+	def __str__(self):
+		return self.note
 
 	def type(self):
 		return "Note"
