@@ -11,7 +11,7 @@ So things like, User, Protocol, Reagents, etc.
 
 # connected to built in user but allow a picture
 class ProfileInfo(models.Model):
-	user = models.OneToOneField(User, on_delete = models.CASCADE)
+	user = models.OneToOneField(User, related_name='profileinfo', on_delete = models.CASCADE)
 	profile_image = models.ImageField(blank = True, null = True)
 	about = models.TextField(blank = True, null = True)
 	contact_info = models.TextField(blank = True, null = True)
