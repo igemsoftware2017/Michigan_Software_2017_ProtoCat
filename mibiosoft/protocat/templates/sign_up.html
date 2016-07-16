@@ -2,13 +2,20 @@
 
 {% block content %}
 
-<form action="/submitsignup/" method="post">
-	{% csrf_token %}
-	Username:<br>
-	<input type="text" name="username" value="Username"><br>
-	Password:<br>
-	<input type="password" name="password" value="Password"><br><br>
-	<input type="submit" value="Submit">
-</form>
+<div class="row">
+	<div class="col-sm-8 col-sm-offset-2 col-xs-8 col-xs-offset-2 well well-sm">
+			<h1>Sign Up for ProtoCat</h1>
+			<form action="/submitsignup/" method="post">
+				{% csrf_token %}
+				<h3>Username:</h3>
+				<input type="text" name="username" value="Username"><br>
+				<h3>Password:</h3>
+				<input type="password" name="password" value="Password"><br><br>
+				<input type="submit" value="Submit">
+			</form>
+	</div>
+</div>
+
+
 
 {% endblock %}
