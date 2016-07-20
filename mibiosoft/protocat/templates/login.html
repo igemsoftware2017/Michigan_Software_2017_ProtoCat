@@ -1,14 +1,19 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<div class="row">
+	<div class="col-sm-8 col-sm-offset-2 col-xs-8 col-xs-offset-2 well well-sm">
+		<h1>Log in to ProtoCat</h1>
+		
+		<form action="/submitlogin/" method="post">
+			{% csrf_token %}
+			<h3>Username:</h3>
+			<input type="text" name="username" placeholder="Username"><br>
+			<h3>Password:</h3>
+			<input type="password" name="password" placeholder="Password"><br><br>
+			<input type="submit" value="Submit">
+		</form>
 
-<form action="/submitlogin/" method="post">
-	{% csrf_token %}
-	Username:<br>
-	<input type="text" name="username" placeholder="Username"><br>
-	Password:<br>
-	<input type="password" name="password" placeholder="Password"><br><br>
-	<input type="submit" value="Submit">
-</form>
-
+	</div>
+</div>
 {% endblock %}
