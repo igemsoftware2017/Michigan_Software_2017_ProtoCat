@@ -1,21 +1,50 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<style>
+#sign_up_title {
+	text-align: center;
+}
+#sign_up_page {
+	margin-top: 15vh;
+}
+#to_login {
+	text-align: center;
+}
+#image_holder {
+	text-align: center;
+}
+#sign_up_image {
+	display:block;
+	margin:auto;
+}
+#to_login > div {
+	margin-top: 15px;
+	padding-top: 15px;
+	border-top: 1px;
+	border-top-color: lightgray;
+	border-top-style: solid;
+}
+</style>
 
-<div class="row">
-	<div class="col-sm-8 col-sm-offset-2 col-xs-8 col-xs-offset-2 well well-sm">
-			<h1>Sign Up for ProtoCat</h1>
-			<form action="/submitsignup/" method="post">
-				{% csrf_token %}
-				<h3>Username:</h3>
-				<input type="text" name="username" value="Username"><br>
-				<h3>Password:</h3>
-				<input type="password" name="password" value="Password"><br><br>
-				<input type="submit" value="Submit">
-			</form>
+
+<div id="sign_up_page" class="row">
+	<div id="login_form" class="col-sm-4 col-sm-offset-2 col-xs-12">
+		<h2 id="sign_up_title">Sign up for ProtoCat</h2>
+		<form action="/submitsignup/" method="post">
+			{% csrf_token %}
+			<input type="text" name="username" class="form-control" placeholder="Username"><br>
+			<input type="password" name="password" class="form-control" placeholder="Password"><br>
+			<input type="submit" class="form-control" value="Sign up">
+		</form>
+	</div>
+	<div id="img_holder" class="col-sm-4 hidden-xs">
+		<img id="sign_up_image" src="/static/images/protocat.png" />
+	</div>
+	<div id="to_login" class="col-sm-8 col-sm-offset-2 col-xs-12">
+		<div>
+			<a id="login_link" href="/login/"> Log in if you already have an account</a>
+		</div>
 	</div>
 </div>
-
-
-
 {% endblock %}

@@ -3,36 +3,56 @@
 {% block content %}
 
 <style>
-	.centered {
-		text-align: center;
-	}
+.centered {
+	text-align: center;
+}
+#image_row {
+	padding-top: 45px;
+}
 </style>
 
-<div class="jumbotron">
-	<h1>Welcome to {{title}}!</h1>
-	<h3>The open source protocol catalog</h3>
-</div>
-	<!-- INTRO WRAP -->
-	<div id="intro">
-		<div class="container">
-			<div class="row centered">
-				<h1>Collaborating Towards Success</h1>
-				<br>
-				<br>
-				<div class="col-lg-4">
-					<img src="http://2015.igem.org/wiki/images/7/7f/Team_Michigan_Software_Collaboration.png" width="100%" alt="">
-					<h3>Share it</h3>
+<div class="col-sm-12">
+	<div class="row centered">
+		<div class="col-sm-12">
+			<h1>ProtoCat<br><small>Collaborating Towards Success</small></h1>
+		</div>
+
+		<div class="col-sm-8 col-sm-offset-2 col-xs-12 col-xs-offset-0">
+			<div class="row">
+				<div class="col-sm-12">
+					<form method="POST" class="form-horizontal" action="/search/">
+						<div class="input-group input-group-lg">
+							<input type="text" name="text_filter" class="form-control" placeholder="Search ProtoCat">
+							<span class="input-group-btn">
+								<button type="submit" class="btn btn-default">
+									<span class="glyphicon glyphicon-search"></span>
+								</button>
+							</span>
+						</div>
+						{% csrf_token %}
+					</form>
 				</div>
-				<div class="col-lg-4">
+			</div>
+		</div>
+
+		<div id="image_row" class="col-sm-12">
+			<div class="row">
+				<div class="col-sm-4">
 					<img src="http://2015.igem.org/wiki/images/5/5d/Team_Michigan_Software_banner.jpg" width="83%" alt="">
 					<h3>Try it</h3>
 				</div>
-				<div class="col-lg-4">
+				<div class="col-sm-4">
+					<img src="http://2015.igem.org/wiki/images/7/7f/Team_Michigan_Software_Collaboration.png" width="100%" alt="">
+					<h3>Share it</h3>
+				</div>
+				<div class="col-sm-4">
 					<img src="http://2015.igem.org/wiki/images/d/d0/Team_Michigan_Software_Celebration.png" width="60%" alt="">
-					<h3>Like it</h3>
+					<h3>Love it</h3>
 				</div>
 			</div>
-			<br>
-	    </div> <!--/ .container -->
-	</div><!--/ #introwrap -->
+		</div>
+
+		<!-- add buttons to quickly browse -->
+	</div>
+</div> <!--/ .container -->
 {% endblock %}
