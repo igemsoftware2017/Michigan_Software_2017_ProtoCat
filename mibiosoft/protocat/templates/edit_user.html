@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<script>
+
+function submit_xs() {
+	$('input[name="size"]').val(1);
+	$.ajax({
+		type: "POST",
+		url: "/updateprofile/",
+		data: $('#submit-form').serialize(),
+		success: function(){
+			console.log("it worked")
+		},
+		failure: function(){
+			console.log("it failed")
+		}
+	});
+}
+
+function submit_sm() {
+	$('input[name="size"]').val(2);
+	var form_data = new FormData();
+	form_data.append("Data", "tosend");
+	form_data.append("csrfmiddlewaretoken", $('input[name="csrfmiddlewaretoken"]').val());
+	form_data.append("picture", $('input[name="picture"]').get(0).files[0]);
+	form_data.append("user_id", $('input[name="user_id"]').val());
+	form_data.append("size", $('input[name="size"]').val());
+	form_data.append("about1", $('input[name="about1"]').val());
+	form_data.append("website1", $('input[name="website1"]').val());
+	form_data.append("about2", $('input[name="about2"]').val());
+	form_data.append("website2", $('input[name="website2"]').val());
+	$.ajax({
+		type: "POST",
+		url: "/updateprofile/",
+		contentType: false,
+		processData: false,
+		data: form_data,
+		success: function(){
+			console.log("it worked")
+		},
+		failure: function(){
+			console.log("it failed")
+		}
+	});
+}
+
+</script>
+
+<style>
+.padded{
+	padding-left:40px
+}
+</style>
+
+<div class="row">
+	<div class="col-xs-12 visible-xs">
+		<input type="button" class="form-control" onclick="submit_xs()" value="Save Changes">
+	</div>
+	<div class="col-sm-10 col-sm-offset-1 hidden-xs">
+		<input type="button" class="form-control" onclick="submit_sm()" value="Save Changes">
+	</div>
+</div>
+
+
+<form id="submit-form" method="POST" action="/updateprofile/" enctype="multipart/form-data" accept-charset="utf-8">
+	{% csrf_token %}
+	<input name="picture" id="file_picker" style="display:none;" type="file" accept="image/*" onchange="$('.profile_image').attr('src', window.URL.createObjectURL(this.files[0]))">
+	<input name="user_id" type="hidden" value={{profile_info.id}}>
+	<input name="size" type="hidden" value="2">
+
+	<div class="row visible-xs">
+		<div class="col-xs-12">
+			<img {% if profile_info.profile_image != "" %}src="{{ profile_info.profile_image.url }}"{% else %}src="/static/images/basic_picture.jpg"{% endif %} width=200 height=200 alt="Image not found" class="center-block img-responsive img-circle profile_image"/>
+		</div>
+		<div class="col-xs-12 padded">
+			<div class="center-block" style="text-align:center;">
+				<h2>{{ profile_info.user }}</h2><br/>
+				<p>About: </p><input name="about1" class="form-control" type="text" value="{{ profile_info.about }}">
+				<p>Website: </p><input name="website1" class="form-control" type="text" value="{{ profile_info.contact_info }}">
+				<p>Meows: {{ profile_info.meows }}</p>
+			</div>
+		</div>
+	</div>
+
+	<div class="row hidden-xs">
+		<div class="col-sm-2 col-sm-offset-1">
+			<img onclick="$('#file_picker').click();" {% if profile_info.profile_image != "" %}src="{{ profile_info.profile_image.url }}"{% else %}src="/static/images/basic_picture.jpg"{% endif %} width=200 height=200 alt="Image not found" class="center-block img-responsive img-circle profile_image"/>
+		</div>
+		<div class="col-sm-4 padded">
+			<h2>{{ profile_info.user }}</h2><br/>
+			<p>About: </p><input name="about2" class="form-control" type="text" value="{{ profile_info.about }}">
+			<p>Website: </p><input name="website2" class="form-control" type="text" value="{{ profile_info.contact_info }}">
+			<p>Meows: {{ profile_info.meows }}</p>
+		</div>
+	</div>
+
+
+</form>
+<br>
+<div class="col-sm-8 col-sm-offset-3">
+	<div class="panel panel-primary">
+		<ul class="nav nav-tabs">
+			<li class="active"><a data-toggle="tab" href="#Protocols">Protocols</a></li>
+			<li><a data-toggle="tab" href="#Notes">Notes</a></li>
+			<li><a data-toggle="tab" href="#Ratings">Ratings</a></li>
+		</ul>
+
+		<div class="panel-body">
+			<div class="tab-content">
+				<div id="Protocols" class="tab-pane fade in active">
+					{% for protocol in user_created_protocols %}
+					<a href="/protocol/{{ protocol.id }}">{{ protocol.title }}</a>, {{protocol.upload_date}} <br />
+					{% endfor %}
+				</div>
+				<div id="Notes" class="tab-pane fade">
+					{% for note in notes %}
+					<a href="/protocol/{{ note.protocol.id }}">{{ note.note }}</a>, {{note.upload_date}} <br />
+					{% endfor %}
+				</div>
+				<div id="Ratings" class="tab-pane fade">
+					{% for rating in user_rated_protocols %}
+					<a href="/protocol/{{ rating.protocol.id }}">{{ rating.protocol.title }}</a>, gave a {{ rating.score }} <br />
+					{% endfor %}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}

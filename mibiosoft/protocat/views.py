@@ -6,6 +6,8 @@ from django.db.models import Q
 from django.db import connection
 import datetime
 from django.utils import timezone
+from django.core.files import File
+from django.conf import settings
 
 # Create your views here.
 def index(request):
@@ -127,7 +129,10 @@ def user(request, user_id):
 	}
 	print(len(connection.queries))
 
-	return render(request, 'user.html', context)
+	if (current_profile_info != user):
+		return render(request, 'user.html', context)
+	else:
+		return render(request, 'edit_user.html', context)
 
 def sign_up(request):
 	current_profile_info = request.user
@@ -472,6 +477,53 @@ def submit_comment(request):
 			proto_comment.save()
 		except:
 			pass
+	context = {
+		'title': 'ProtoCat',
+		'current_profile_info': current_profile_info,
+	}
+	return render(request, 'index.html', context)
+
+
+
+def update_profile(request):
+	current_profile_info = request.user
+	if (not current_profile_info.is_anonymous()):
+		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
+		print(current_profile_info)
+	else:
+		current_profile_info = None
+
+	try:
+		user_id = request.POST['user_id']
+		user = ProfileInfo.objects.get(id = user_id)
+		if (current_profile_info == user):
+			about = ""
+			website = ""
+			size = int(request.POST['size'])
+			if (size == 1):
+				about = request.POST['about1']
+				website = request.POST['website1']
+			elif (size == 2):
+				about = request.POST['about2']
+				website = request.POST['website2']
+
+			user.about = about
+			user.website = website
+
+			try:
+				picture = request.FILES['picture']
+				destination = open(settings.MEDIA_ROOT + picture.name , 'wb+')
+				for chunk in picture.chunks():
+					destination.write(chunk)
+				destination.close()
+				user.profile_image.save(picture.name, File(open(settings.MEDIA_ROOT + picture.name, "rb")))
+			except:
+				user.save()
+			print("Done!")
+	except Exception as inst:
+		print(inst)
+		pass
+
 	context = {
 		'title': 'ProtoCat',
 		'current_profile_info': current_profile_info,

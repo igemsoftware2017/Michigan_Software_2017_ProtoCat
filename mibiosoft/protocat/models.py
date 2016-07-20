@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 # added
 from django.core.validators import MinValueValidator, MaxValueValidator
 from datetime import datetime
+from django.conf import settings
 
 '''
 This page is to create python classes, which are then converted in to tables for our database
@@ -12,7 +13,7 @@ So things like, User, Protocol, Reagents, etc.
 # connected to built in user but allow a picture
 class ProfileInfo(models.Model):
 	user = models.OneToOneField(User, related_name='profileinfo', on_delete = models.CASCADE)
-	profile_image = models.ImageField(blank = True, null = True)
+	profile_image = models.ImageField(blank = True, null = True, upload_to = "media")
 	about = models.TextField(blank = True, null = True)
 	contact_info = models.TextField(blank = True, null = True)
 	meows = models.IntegerField(default = 0)

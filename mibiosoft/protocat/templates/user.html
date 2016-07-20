@@ -10,11 +10,7 @@
 
 <div class="row hidden-xs">
 	<div class="col-sm-2 col-sm-offset-1">
-		{% if profile_info.profile_image != "" %}
-		<img src="{{ profile_info.profile_image.url }}" width=200 height=200 alt="Image not found" class="img-responsive img-circle"/>
-		{% else %}
-		<img src="/static/images/basic_picture.png" width=200 height=200 alt="Image not found" class="img-responsive img-circle"/>
-		{% endif %}
+		<img {% if profile_info.profile_image != "" %}src="{{ profile_info.profile_image.url }}"{% else %}src="/static/images/basic_picture.jpg"{% endif %} width=200 height=200 alt="Image not found" class="center-block img-responsive img-circle profile_image"/>
 	</div>
 	<div class="col-sm-4 padded">
 		<h2>{{ profile_info.user }}<br/>
@@ -30,11 +26,7 @@
 
 <div class="row visible-xs">
 	<div class="col-xs-12">
-		{% if profile_info.profile_image != "" %}
-		<img src="{{ profile_info.profile_image.url }}" width=200 height=200 alt="Image not found" class="center-block img-responsive img-circle"/>
-		{% else %}
-		<img src="/static/images/basic_picture.jpg" width=200 height=200 alt="Image not found" class="center-block img-responsive img-circle"/>
-		{% endif %}
+		<img {% if profile_info.profile_image != "" %}src="{{ profile_info.profile_image.url }}"{% else %}src="/static/images/basic_picture.jpg"{% endif %} width=200 height=200 alt="Image not found" class="center-block img-responsive img-circle profile_image"/>
 	</div>
 	<div class="col-xs-12 padded">
 		<div class="center-block" style="text-align:center;">
