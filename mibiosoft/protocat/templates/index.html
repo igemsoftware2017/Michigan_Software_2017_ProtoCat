@@ -3,56 +3,379 @@
 {% block content %}
 
 <style>
+input[name="text_filter"] {
+	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+body {
+	font-family: 'Comfortaa';
+}
 .centered {
 	text-align: center;
 }
 #image_row {
 	padding-top: 45px;
 }
+#index_title {
+	font-style: normal;
+	font-size: 400%;
+	text-align: center;
+	float: none;
+	color: #1A1A80;
+}
+.outside_page {
+	height:100vh;
+	position: relative;
+	text-align: center;
+}
+.inside_page {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 100%;
+	-webkit-transform: translate(-50%, -50%);
+	transform: translate(-50%, -50%);
+	/*padding-top:25vh;
+	padding-bottom:25vh;*/
+}
+body {
+	background-color: #fff;
+}
+.max-height {
+	height: 100%;
+}
+.block {
+	margin-top: 15px;
+}
+.bottom_link {
+	color: black;
+}
+.moving_arrow {
+	font-size: 36px;
+}
+.downward_arrow {
+	position: absolute;
+	top: 100%;
+	left: 50%;
+	z-index: -1;
+	-webkit-transform: translate(-50%, -100%);
+	transform: translate(-50%, -100%);
+	animation-name: tofront;
+	animation-duration: 1.5s;
+	animation-timing-function: ease-in-out;
+	animation-direction: normal;
+	animation-fill-mode: forwards;
+	animation-delay: 2s;
+}
+.downward_arrow > a > i {
+	color: black;
+}
+.image_height > img {
+	height: 12.5vh;
+	width: auto;
+}
+.not_page1 {
+	 margin-top:-102px;
+}
+a {
+	outline: none;
+}
+.arrow {
+	opacity: 0;
+	animation-name: fadein;
+	animation-duration: 1.5s;
+	animation-timing-function: ease-in-out;
+	animation-direction: normal;
+	animation-fill-mode: forwards;
+	animation-delay: 2s;
+}
+.arrow.rotate {
+	animation-name: half-rotate;
+	animation-duration: 1.5s;
+	animation-timing-function: ease-in-out;
+	animation-direction: normal;
+	animation-fill-mode: forwards;
+	animation-delay: 0s;
+}
+.skinny-btn {
+	padding-left: 0px;
+	padding-right: 0px;
+	min-width: 96px;
+	max-width: 146px;
+	background-color: transparent;
+}
+@keyframes tofront {
+	0% {
+		z-index: -1;
+	}
+	100% {
+		z-index: 10;
+	}
+}
+@keyframes fadein {
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
+}
+@keyframes half-rotate {
+	0% {
+	}
+	100% {
+		-webkit-transform: rotate(180deg);
+		transform:rotate(180deg);
+	}
+}
+
+.page3_images {
+	height: 12.5vh;
+	width: auto;
+}
+.page3_text {
+	color: black;
+	margin-bottom: 0px;
+	margin-top: 15px;
+}
+.fat-btn {
+	width: 100%;
+	height: 20vh;
+}
+.black-text {
+	color: black;
+}
+.page3-glyphicon {
+	font-size: 12.5vh;
+}
+#page3_row2 {
+	margin-top: 15px;
+}
 </style>
 
-<div class="col-sm-12">
+<script>
+/*
+function AnimateRotate(d, elem, direction) {
+	$({deg: 0}).animate({deg: d}, {
+		duration: 1000,
+		step: function(now){
+			$(elem).css({
+				transform: "rotate(" + now + "deg)"
+			});
+		},
+		complete: function(direction) {
+			console.log(direction)
+			if (direction == "down") {
+				$(this).removeClass('glyphicon-menu-down').addClass('glyphicon-menu-up').css({
+					transform: "rotate(0)"
+				});
+				$(this).parent().attr('href', '#page1');
+			}
+			else {
+				$(this).removeClass('glyphicon-menu-up').addClass('glyphicon-menu-down').css({
+					transform: "rotate(0)"
+				});
+				$(this).parent().attr('href', '#page2');
+			}
+		}
+	});
+}*/
+$(function() {
+	$('.arrow').each(function() {
+		$(this).waypoint(function(direction) {
+			if (direction == "down") {
+				$(this).removeClass('glyphicon-menu-down').addClass('glyphicon-menu-up');
+				var id_pointing_to = $(this).parent().attr('href');
+				var num_pointing_to = parseInt(id_pointing_to.substring(5));
+				var new_id_pointing_to = "#page" + (num_pointing_to - 1).toString();
+				$(this).parent().attr('href', new_id_pointing_to);
+			}
+			else {
+				$(this).removeClass('glyphicon-menu-up').addClass('glyphicon-menu-down');
+				var id_pointing_to = $(this).parent().attr('href');
+				var num_pointing_to = parseInt(id_pointing_to.substring(5));
+				var new_id_pointing_to = "#page" + (num_pointing_to + 1).toString();
+				$(this).parent().attr('href', new_id_pointing_to);
+			}
+		}, {
+			offset: '50%'
+		});
+	})
+});
+
+$(document).ready(function() {
+	$('.toggle_picture').on('click', function() {
+		if (!$(this).siblings('p').is(':visible')) {
+			$(this).fadeOut(600);
+			$(this).siblings('h3').fadeOut(600).fadeIn(600);
+			$(this).siblings('p').css({
+				'display': 'none'
+			}).removeClass('hidden-xs').delay(600).fadeIn(600);
+		}
+	});
+	$('.toggle-text').on('click', function() {
+		if (!$(this).siblings('img').is(':visible')) {
+			$(this).fadeOut(600).delay(600);
+			$(this).siblings('h3').fadeOut(600).fadeIn(600);
+			$(this).siblings('img').css({
+				'display': 'none'
+			}).delay(600).fadeIn(600);
+		}
+	});
+});
+
+</script>
+
+<div class="col-sm-12" style="margin-top:-70px;">
 	<div class="row centered">
-		<div class="col-sm-12">
-			<h1>ProtoCat<br><small>Collaborating Towards Success</small></h1>
-		</div>
-
-		<div class="col-sm-8 col-sm-offset-2 col-xs-12 col-xs-offset-0">
-			<div class="row">
-				<div class="col-sm-12">
-					<form method="POST" class="form-horizontal" action="/search/">
-						<div class="input-group input-group-lg">
-							<input type="text" name="text_filter" class="form-control" placeholder="Search ProtoCat">
-							<span class="input-group-btn">
-								<button type="submit" class="btn btn-default">
-									<span class="glyphicon glyphicon-search"></span>
-								</button>
-							</span>
+		<div id="page1" class="outside_page">
+			<div class="inside_page">
+				<div class="row">
+					<div class="col-sm-12">
+						<h1 id="index_title">ProtoCat<br><small style="font-size: 50%;">Collaborating Towards Success</small></h1>
+					</div>
+					<div class="col-sm-8 col-sm-offset-2 col-xs-12 col-xs-offset-0">
+						<div class="row">
+							<div class="col-sm-12">
+								<form method="POST" class="form-horizontal" action="/search/">
+									<div class="input-group input-group-lg">
+										<input type="text" name="text_filter" class="form-control" placeholder="Search ProtoCat">
+										<span class="input-group-btn">
+											<button type="submit" class="btn btn-default">
+												<span class="glyphicon glyphicon-search"></span>
+											</button>
+										</span>
+									</div>
+									{% csrf_token %}
+								</form>
+							</div>
+							<div id="sign_up_block" class="col-sm-4 col-xs-4 block">
+								<div class="row">
+									<a class="bottom_link" href="/signup/">
+										<button class="btn skinny-btn">
+											<div class="col-sm-12">
+												<i class="fa fa-user-plus fa-4x" aria-hidden="true"></i>
+											</div>
+											<div class="col-sm-12">
+												Sign up
+											</div>
+										</button>
+									</a>
+								</div>
+							</div>
+							<div id="login_block" class="col-sm-4 col-xs-4 block">
+								<div class="row">
+									<a class="bottom_link" href="/login/">
+										<button class="btn skinny-btn">
+											<div class="col-sm-12">
+												<i class="fa fa-sign-in fa-4x" aria-hidden="true"></i>
+											</div>
+											<div class="col-sm-12">
+												Login
+											</div>
+										</button>
+									</a>
+								</div>
+							</div>
+							<div id="browse_block" class="col-sm-4 col-xs-4 block">
+								<div class="row">
+									<a class="bottom_link" href="/browse/">
+										<button class="btn skinny-btn">
+											<div class="col-sm-12">
+												<i class="fa fa-flask fa-4x" aria-hidden="true"></i>
+											</div>
+											<div class="col-sm-12">
+												Browse
+											</div>
+										</button>
+									</a>
+								</div>
+							</div>
 						</div>
-						{% csrf_token %}
-					</form>
+					</div>
 				</div>
+			</div>
+			<div class="downward_arrow moving_arrow">
+				<a href="#page2" class="page-scroll">
+					<i class="glyphicon glyphicon-menu-down arrow"></i>
+				</a>
 			</div>
 		</div>
 
-		<div id="image_row" class="col-sm-12">
-			<div class="row">
-				<div class="col-sm-4">
-					<img src="http://2015.igem.org/wiki/images/5/5d/Team_Michigan_Software_banner.jpg" width="83%" alt="">
-					<h3>Try it</h3>
+		<div id="page2" class="outside_page not_page1">
+			<div class="inside_page">
+				<div id="image_row" class="col-sm-12">
+					<div class="row">
+						<div class="col-sm-4 col-xs-12 image_height">
+							<img class="toggle_picture" id="try_it_picture" src="http://2015.igem.org/wiki/images/5/5d/Team_Michigan_Software_banner.jpg" width="50%" alt="">
+							<h3>Try it</h3>
+							<p class="hidden-xs toggle-text">
+								Browse our collection of customizable protocols to get the exact right amount of product that you need. If you have an account, you can also rate protocols, comment, and upload your own through our easy-to-use interface.
+							</p>
+						</div>
+						<div class="col-sm-4 col-xs-12 image_height">
+							<img class="toggle_picture" id="share_it_picture" src="http://2015.igem.org/wiki/images/7/7f/Team_Michigan_Software_Collaboration.png" width="50%" alt="">
+							<h3>Share it</h3>
+							<p class="hidden-xs toggle-text">
+								When you upload your own protocols, they become available for everyone else to see. People can then iterate upon your initial protocol and give you feedback on it.
+							</p>
+						</div>
+						<div class="col-sm-4 col-xs-12 image_height">
+							<img class="toggle_picture" id="love_it_picture" src="http://2015.igem.org/wiki/images/d/d0/Team_Michigan_Software_Celebration.png" width="50%" alt="">
+							<h3>Love it</h3>
+							<p class="hidden-xs toggle-text">
+								Can you just not get enough of ProtoCat? Well, with your support, we will be able to expand ProtoCat even more by creating mobile apps and by enhancing the website even more.
+							</p>
+						</div>
+					</div>
 				</div>
-				<div class="col-sm-4">
-					<img src="http://2015.igem.org/wiki/images/7/7f/Team_Michigan_Software_Collaboration.png" width="100%" alt="">
-					<h3>Share it</h3>
-				</div>
-				<div class="col-sm-4">
-					<img src="http://2015.igem.org/wiki/images/d/d0/Team_Michigan_Software_Celebration.png" width="60%" alt="">
-					<h3>Love it</h3>
-				</div>
+			</div>
+			<div class="downward_arrow moving_arrow">
+				<a href="#page3" class="page-scroll">
+					<i class="glyphicon glyphicon-menu-down arrow"></i>
+				</a>
 			</div>
 		</div>
 
-		<!-- add buttons to quickly browse -->
+		<div id="page3" class="outside_page not_page1">
+			<div class="inside_page">
+				<div class="row page3_rows">
+					<div class="col-sm-4 col-sm-offset-2 col-xs-6">
+						<a href="/api/docs/">
+							<button class="btn fat-btn">
+								<i class="fa fa-code black-text page3-glyphicon"></i>
+								<h4 class="page3_text">API Docs</h4>
+							</button>
+						</a>
+					</div>
+					<div class="col-sm-4 col-xs-6">
+						<a href="http://2016.igem.org/Team:Michigan_Software">
+							<button class="btn fat-btn">
+								<i class="glyphicon glyphicon-globe black-text page3-glyphicon"></i>
+								<h4 class="page3_text">Wiki</h4>
+							</button>
+						</a>
+					</div>
+				</div>
+				<div id="page3_row2" class="row page3_rows">
+					<div class="col-sm-4 col-sm-offset-2 col-xs-6">
+						<a href="mailto:olivertc@umich.edu">
+							<button class="btn fat-btn">
+								<i class="fa fa-envelope-o black-text page3-glyphicon"></i>
+								<h4 class="page3_text">Feedback</h4>
+							</button>
+						</a>
+					</div>
+					<div class="col-sm-4 col-xs-6">
+						<a href="https://github.com/igemsoftware/Michigan16">
+							<button class="btn fat-btn">
+								<img class="page3_images" src="/static/images/github-logo-icon-new.png" alt="">
+								<h4 class="page3_text">Github</h4>
+							</button>
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
 </div> <!--/ .container -->
 {% endblock %}

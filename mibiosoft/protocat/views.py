@@ -381,7 +381,10 @@ def upload_page(request, current_data):
 		'current_profile_info': current_profile_info,
 	}
 	print(len(connection.queries))
-	return render(request, 'upload_protocol.html', context)
+	if (current_profile_info == None):
+		return HttpResponseRedirect('/')
+	else:
+		return render(request, 'upload_protocol.html', context)
 
 def submit_upload(request):
 	current_profile_info = request.user

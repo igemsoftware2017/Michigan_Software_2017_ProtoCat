@@ -362,7 +362,7 @@ h5{
 		<div class="panel-body">
 			<div class="tab-content">
 				<div id="Description" class="tab-pane fade in active">
-					<p>{{ protocol.description }}</p><br>
+					<p>{{ protocol.description|safe }}</p><br>
 				</div>
 				<div id="Reagents" class="tab-pane fade">
 					<div class="row">
@@ -416,7 +416,7 @@ h5{
 				</div>
 
 				<div id="Changelog" class="tab-pane fade">
-					{{ protocol.change_log }}<br><br>
+					{{ protocol.change_log|safe }}<br><br>
 					{% if protocol.previous_revision %}
 					<a href="/protocol/{{ protocol.previous_revision.id }}">Previous Revision</a><br>
 					{% endif %}
@@ -471,7 +471,7 @@ h5{
 	<div class="row">
 		{% if current_profile_info != None %}
 		<form action="/submitcomment/" method="POST" id="comment">
-			<div class="col-sm-1">
+			<div class="col-sm-1 col-xs-1">
 				{% if current_profile_info.profile_image != "" %}
 				<img src="{{ current_profile_info.profile_image.url }}" width=75 height=75 alt="Image not found" class="img-rounded"/>
 				{% else %}
