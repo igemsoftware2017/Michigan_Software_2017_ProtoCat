@@ -25,4 +25,5 @@ urlpatterns = [
 	url(r'^submitprotocol/$', views.submit_upload, name="submit_upload_page"),
 	url(r'^submitcomment/$', views.submit_comment, name="submit_comment_page"),
 	url(r'^updateprofile/$', views.update_profile, name="update_profile"),
+	url(r'^test/$', views.test, name="test"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
