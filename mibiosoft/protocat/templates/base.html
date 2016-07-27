@@ -29,6 +29,7 @@
 	</head>
 	<style>
 	#content {
+		min-height:100vh
 		padding-top: 70px;
 	}
 	#navbar-search-icon {
@@ -124,6 +125,7 @@
 	#footer-text {
 		margin-top: 5px;
 		margin-bottom: 5px;
+		text-align: center;
 	}
 	img {
 		image-orientation: from-image;
@@ -204,13 +206,13 @@
 				</div>
 			</div>
 		</nav>
-		<div id="content" class="container" style="min-height:100vh">
+		<div id="content" class="container">
 			{% block content %}{% endblock %}
 		</div>
 		<footer class="footer">
 			<!-- div class="container panel-footer footer-container"-->
 			<div class="container panel-footer">
-				<p class="text-muted" id="footer-text" style="text-align:center;">Made by Michigan Biological Software 2014-2016</p>
+				<p class="text-muted" id="footer-text">Made by Michigan Biological Software 2014-2016</p>
 			</div>
 		</footer>
 	</body>
