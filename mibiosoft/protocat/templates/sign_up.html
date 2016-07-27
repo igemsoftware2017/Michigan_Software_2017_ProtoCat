@@ -4,9 +4,21 @@
 <style>
 #sign_up_title {
 	text-align: center;
+	font-family: 'Comfortaa';
 }
 #sign_up_page {
-	margin-top: 15vh;
+	height: 100vh;
+	position: relative;
+	text-align: center;
+	margin-top: -70px;
+}
+#sign_up_form {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 100%;
+	-webkit-transform: translate(-50%, -50%);
+	transform: translate(-50%, -50%);
 }
 #to_login {
 	text-align: center;
@@ -29,21 +41,23 @@
 
 
 <div id="sign_up_page" class="row">
-	<div id="login_form" class="col-sm-4 col-sm-offset-2 col-xs-12">
-		<h2 id="sign_up_title">Sign up for ProtoCat</h2>
-		<form action="/submitsignup/" method="post">
-			{% csrf_token %}
-			<input type="text" name="username" class="form-control" placeholder="Username"><br>
-			<input type="password" name="password" class="form-control" placeholder="Password"><br>
-			<input type="submit" class="form-control" value="Sign up">
-		</form>
-	</div>
-	<div id="img_holder" class="col-sm-4 hidden-xs">
-		<img id="sign_up_image" src="/static/images/protocat.png" />
-	</div>
-	<div id="to_login" class="col-sm-8 col-sm-offset-2 col-xs-12">
-		<div>
-			<a id="login_link" href="/login/"> Log in if you already have an account</a>
+	<div id="sign_up_form">
+		<div class="col-sm-4 col-sm-offset-2 col-xs-12">
+			<h2 id="sign_up_title">Sign up for ProtoCat</h2>
+			<form action="/submitsignup/" method="post">
+				{% csrf_token %}
+				<input type="text" name="username" class="form-control" placeholder="Username"><br>
+				<input type="password" name="password" class="form-control" placeholder="Password"><br>
+				<input type="submit" class="form-control" value="Sign up">
+			</form>
+		</div>
+		<div id="img_holder" class="col-sm-4 hidden-xs">
+			<img id="sign_up_image" src="/static/images/protocat.png" />
+		</div>
+		<div id="to_login" class="col-sm-8 col-sm-offset-2 col-xs-12">
+			<div>
+				<a id="login_link" href="/login/"> Log in if you already have an account</a>
+			</div>
 		</div>
 	</div>
 </div>

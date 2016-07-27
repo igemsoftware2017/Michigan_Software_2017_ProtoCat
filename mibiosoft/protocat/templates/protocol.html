@@ -199,7 +199,6 @@ function timer(i) {
 	var delta = new_time - last_time[i]; // milliseconds elapsed since start
 	time_total[i] += delta;
 	last_time[i] = new_time;
-	console.log(Math.floor(time_total[i] / 100) / 10.0); // in seconds
 	if (time_total[i] >= 1000 * count_to[i]) {
 		clearInterval(timer_id[i]);
 		time_total[i] = count_to[i] * 1000;
@@ -234,13 +233,21 @@ function reset(i) {
 }
 
 function get_time_total(i) {
-	console.log(time_total[i]);
 	return moment().startOf('day')
 		.milliseconds(count_to[i] * 1000 - time_total[i])
 		.format('HH:mm:ss.S');
 }
 
 $(document).on('ready', function(){
+	var move_size = $('.navbar-default').height() + $('#title_bar').height();
+	$('#sidebar').affix({
+		offset: {
+			top: move_size - 50
+		}
+	});
+	var new_style = '<style>.affix { margin-top: -' + (move_size - 50).toString() + 'px; }</style>';
+	$(new_style).appendTo('body');
+
 	$('.input-2').rating({
 		{% if not user.is_authenticated%}
 		displayOnly: true,
@@ -274,8 +281,51 @@ $(document).on('ready', function(){
 		});
 		$('[name="comment"]').val('');
 	});
+
+	$('.step').hover(
+		function() {
+			$(this).animate({ 'zoom': 1.2 }, 400);
+		},
+		function() {
+			$(this).animate({ 'zoom': 1 }, 400);
+		}
+	);
 });
 
+$(function() {
+	$('.waypoint').each(function() {
+		$(this).waypoint(function(direction) {
+			NavbarActivator(this);
+		}, {
+			offset: $('.navbar-default').height() + 10
+		});
+	})
+	$('.waypoint').each(function() {
+		$(this).waypoint(function(direction) {
+			NavbarActivator(this);
+		}, {
+			offset: $('.navbar-default').height()
+		});
+	})
+});
+
+function NavbarActivator(moved_item) {
+	if ($('#sidebar').parent().is(':visible')) {
+		var first_id = $(moved_item).attr('id');
+		$('[data-id="' + first_id + '"]').addClass('active');
+		var parent_data = $('[data-id="' + first_id + '"]').attr('data-parent');
+		var list_parents = [];
+		while (parent_data != "") {
+			var parent = $('[data-id="' + parent_data + '"]');
+			list_parents.push(parent);
+			var parent_data = parent.attr('data-parent');
+		}
+		$('.left_navbar_li:not([data-id="' + first_id + '"])').removeClass('active');
+		for (var i = 0; i < list_parents.length; i++) {
+			list_parents[i].addClass('active');
+		}
+	}
+}
 
 </script>
 <style>
@@ -306,6 +356,10 @@ $(document).on('ready', function(){
 	overflow: hidden;
 	max-height: 2.856em;
 }
+.no-side-margins {
+	margin-left: 0px;
+	margin-right: 0px;
+}
 
 h5{
 	color:inherit;
@@ -313,10 +367,106 @@ h5{
 .panel-group {
 	margin-bottom: 0px;
 }
+.comment-picture {
+	width: 75px;
+	height: 75px;
+
+}
+.comment-picture-div {
+	padding-right: 15px;
+	float: left;
+}
+.comment-div {
+	margin-top: 15px;
+	padding-top: 15px;
+	border-style: none;
+	border-top-color: lightgray;
+	border-width: 1px;
+	border-top-style: solid;
+}
+#comments {
+	margin-bottom: 7.5px;
+}
+#all_comments {
+	margin-bottom: 15px;
+}
+
+.left_navbar>li.active>a, .left_navbar>li.active>a:focus, .left_navbar>li.active>a:hover {
+	font-weight: 700;
+	color: #563d7c;
+	background-color: transparent;
+	border-left: 2px solid #563d7c;
+	padding-left: 13px;
+}
+.left_navbar>li>a, .left_navbar>li>a:focus {
+	border-radius: 0px;
+	background-color: transparent;
+}
+.nav>li {
+	position: relative;
+	display: block;
+}
+.left_navbar>li>a:hover {
+	background-color: transparent;
+	border-left: 1px solid #563d7c;
+	padding-left: 14px;
+	color: #563d7c;
+}
+
+.nav>li>a {
+	color: #00274c;
+}
+
+.layer>li>a, .layer>li>a:focus {
+	padding-left: 28px;
+	font-size: 12px;
+	padding-top: 3px;
+	padding-bottom: 3px;
+	background: transparent;
+}
+.layer>li>a:hover {
+	background-color: transparent;
+	border-left: 1px solid #563d7c;
+	padding-left: 27px;
+}
+
+.layer>li.active>a, .layer>li.active>a:focus, .layer>li.active>a:hover {
+	font-weight: 700;
+	color: #563d7c;
+	border-left: 2px solid #563d7c;
+	padding-left: 26px;
+	background-color: transparent;
+}
+.nav-stacked>li+li {
+	margin-top: 0px;
+}
+
+.mouse-pointer {
+	cursor: pointer;
+}
+
+#comment-submit-div {
+	margin-top: 15px;
+}
+#comment-submit-picture-div {
+	float: left;
+	padding-right: 15px;
+}
+#description-content {
+	height:250px;
+	overflow-y:scroll;
+}
+textarea[name=comment] {
+	resize: none;
+	height: 75px;
+}
+#comment-submit-text-div {
+	margin-left: 95px;
+}
 </style>
 
-<div class="row protocol_title">
-	<div class="col-sm-10 col-sm-offset-1 col-xs-10 col-xs-offset-1 well well-sm">
+<div id="title_bar" class="row protocol_title">
+	<div class="col-sm-8 col-sm-offset-2 col-xs-12">
 		<div class="row">
 			<div class="col-sm-8 fix-margin-left">
 				<h1>{{ protocol.title }}</h1>
@@ -348,168 +498,192 @@ h5{
 	</div>
 </div>
 
-
-
-
-
-<div class="col-sm-10 col-sm-offset-1">
-	<div class="panel panel-primary">
-		<ul class="nav nav-tabs">
-			<li class="active"><a data-toggle="tab" href="#Description">Description</a></li>
-			<li><a data-toggle="tab" href="#Reagents">Reagents</a></li>
-			<li><a data-toggle="tab" href="#Changelog">Change log</a></li>
+<div class="col-sm-2 hidden-xs">
+	<div class="bs-sidebar affix" id="sidebar">
+		<ul class="nav nav-pills nav-stacked left_navbar">
+			<li class="left_navbar_li" data-id="description-tabs" data-parent=""><a href="#description-tabs" class="page-scroll-protocol">Description</a></li>
+			<li class="left_navbar_li" data-id="Procedure" data-parent="">
+				<a href="#Procedure" class="page-scroll-protocol">Procedure</a>
+				<ul class="left_navbar_li nav layer">
+					{% for protocol_step in protocol_steps%}
+					<li class="left_navbar_li" data-id="step{{ protocol_step.step_number }}" data-parent="Procedure"><a href="#step{{ protocol_step.step_number }}" class="page-scroll-protocol">Step {{ protocol_step.step_number }}</a></li>
+					{% endfor %}
+				</ul>
+			</li>
+			<li class="left_navbar_li" data-id="comments" data-parent=""><a href="#comments" class="page-scroll-protocol">Comment</a></li>
 		</ul>
+	</div>
+</div>
 
-		<div class="panel-body">
-			<div class="tab-content">
-				<div id="Description" class="tab-pane fade in active">
-					<p>{{ protocol.description }}</p><br>
-				</div>
-				<div id="Reagents" class="tab-pane fade">
-					<div class="row">
-						<div class="col-sm-6 col-xs-12">
-							<h3>Reactants</h3>
-							<table class="table table-hover">
-								<thead>
-									<tr>
-										<th>Name</th>
-										<th>Amount</th>
-										<th>Reagent ID</th>
-									</tr>
-								</thead>
-								<tbody id="reactants">
-								</tbody>
-							</table>
+
+
+<div class="col-sm-8 col-xs-12">
+	<div class="row">
+		<div id="description-tabs" class="col-sm-12 waypoint">
+			<div class="panel panel-primary">
+				<ul class="nav nav-tabs">
+					<li class="active"><a data-toggle="tab" href="#Description">Description</a></li>
+					<li><a data-toggle="tab" href="#Reagents">Reagents</a></li>
+					<li><a data-toggle="tab" href="#Changelog">Change log</a></li>
+				</ul>
+
+				<!-- TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO  -->
+				<!-- TODO TODO TODO TODO maybe destroy waypoints and remake them on button click TODO TODO TODO TODO -->
+				<div class="panel-body" id="description-content">
+					<div class="tab-content">
+						<div id="Description" class="tab-pane fade in active">
+							<p>{{ protocol.description|safe }}</p><br>
 						</div>
-						<div class="col-sm-6 col-xs-12">
-							<h3>Products</h3>
-							<table class="table table-hover">
-								<thead>
-									<tr>
-										<th>Name</th>
-										<th>Amount</th>
-										<th>Reagent ID</th>
-									</tr>
-								</thead>
-								<tbody id="products">
-								</tbody>
-							</table>
+						<div id="Reagents" class="tab-pane fade">
+							<div class="row">
+								<div class="col-sm-6 col-xs-12">
+									<h3>Reactants</h3>
+									<table class="table table-hover">
+										<thead>
+											<tr>
+												<th>Name</th>
+												<th>Amount</th>
+												<th>Reagent ID</th>
+											</tr>
+										</thead>
+										<tbody id="reactants">
+										</tbody>
+									</table>
+								</div>
+								<div class="col-sm-6 col-xs-12">
+									<h3>Products</h3>
+									<table class="table table-hover">
+										<thead>
+											<tr>
+												<th>Name</th>
+												<th>Amount</th>
+												<th>Reagent ID</th>
+											</tr>
+										</thead>
+										<tbody id="products">
+										</tbody>
+									</table>
+								</div>
+								<div class="col-sm-12" style="margin-top:15px;">
+									{% if protocol_reagents.count != 0 %}
+									<button onclick="multiply_everything(0.5);">Halve me please!</button>
+									<button onclick="multiply_everything(2);">Double me please!</button>
+									{% endif %}
+								</div>
+							</div>
+							<!--h3>Intermediaries</h3><table class="table table-hover"><thead><tr><th>Name</th><th>Amount</th><th>Reagent ID</th></tr></thead><tbody id="intermediaries"></tbody></table-->
 						</div>
-						<div class="col-sm-12" style="margin-top:15px;">
-							{% if protocol_reagents.count != 0 %}
-							<button onclick="multiply_everything(0.5);">Halve me please!</button>
-							<button onclick="multiply_everything(2);">Double me please!</button>
+
+						<div id="Changelog" class="tab-pane fade">
+							{{ protocol.change_log|safe }}<br><br>
+							{% if protocol.previous_revision %}
+							<a href="/protocol/{{ protocol.previous_revision.id }}">Previous Revision</a><br>
 							{% endif %}
+							{% for next_protocol in next_protocols %}
+							<a href="/protocol/{{ next_protocol.id }}">Next Revision</a><br>
+							{% endfor %}
 						</div>
 					</div>
-					<!--h3>Intermediaries</h3>
-					<table class="table table-hover">
-						<thead>
-							<tr>
-								<th>Name</th>
-								<th>Amount</th>
-								<th>Reagent ID</th>
-							</tr>
-						</thead>
-						<tbody id="intermediaries">
-						</tbody>
-					</table-->
 				</div>
+			</div>
+		</div>
+	</div>
 
-				<div id="Changelog" class="tab-pane fade">
-					{{ protocol.change_log }}<br><br>
-					{% if protocol.previous_revision %}
-					<a href="/protocol/{{ protocol.previous_revision.id }}">Previous Revision</a><br>
-					{% endif %}
-					{% for next_protocol in next_protocols %}
-					<a href="/protocol/{{ next_protocol.id }}">Next Revision</a><br>
+	<div class="row">
+		<div class="col-sm-12">
+			<div class="panel panel-primary">
+				<div class="panel-heading waypoint" id="Procedure">Procedure</div>
+				<div class="panel-group">
+					{% for protocol_step in protocol_steps %}
+					<div id="step{{ protocol_step.step_number }}" class="panel panel-default waypoint step">
+						<!-- Modified margin to get rid of negative margin inherent to row -->
+						<div class="row panel-heading no-side-margins">
+							<h3 class="panel-title col-xs-6" style="padding-left:0px;">Step {{ protocol_step.step_number }}</h3>
+							<div class="col-xs-6" align="right">
+								<span class="timer"></span>
+								{% if protocol_step.time != -1 %}
+								<!-- Need to modify javascript to display actual time -->
+								<span onclick="pause({{ protocol_step.step_number }});" style="display:none;" class="glyphicon glyphicon-pause mouse-pointer"></span>
+								<span onclick="resume({{ protocol_step.step_number }});" class="glyphicon glyphicon-play mouse-pointer"></span>
+								<span onclick="reset({{ protocol_step.step_number }});" class="glyphicon glyphicon-fast-backward mouse-pointer"></span>
+								{% endif %}
+							</div>
+						</div>
+						<!-- Modify Javascript to include reagents with each step -->
+						<div class="panel-body action" data-step-num="{{ protocol_step.step_number }}">{{ protocol_step.action|safe }}</div>
+						{% if protocol_step.warning != "" %}
+						<div class="panel panel-danger">
+							<!-- Want to get rid of defualt border radius -->
+							<div class="panel-heading">
+								<h3 class="panel-title">Warning!</h3>
+								{{ protocol_step.warning|safe }}
+								<!-- Include Warning data field with each step -->
+							</div>
+						</div>
+						{% endif %}
+					</div>
 					{% endfor %}
 				</div>
 			</div>
 		</div>
 	</div>
-</div>
 
-<div class="col-sm-10 col-sm-offset-1">
-	<div class="panel panel-primary">
-		<div class="panel-heading">Procedure</div>
-			<div class="panel-group">
-				{% for protocol_step in protocol_steps %}
-				<div class="panel panel-default">
-					<!-- Modified margin to get rid of negative margin inherent to row -->
-					<div class="row panel-heading" style="margin:0">
-						<h3 class="panel-title col-xs-6" style="padding-left:0px;">Step {{ protocol_step.step_number }}</h3>
-						<div class="col-xs-6" align="right">
-							<span class="timer"></span>
-							{% if protocol_step.time != -1 %}
-							<!-- Need to modify javascript to display actual time -->
-							<span onclick="pause({{ protocol_step.step_number }});" style="display:none;" class="glyphicon glyphicon-pause"></span>
-							<span onclick="resume({{ protocol_step.step_number }});" class="glyphicon glyphicon-play"></span>
-							<span onclick="reset({{ protocol_step.step_number }});" class="glyphicon glyphicon-fast-backward"></span>
+
+	<div class="row">
+		<div id="comments" class="col-sm-12 waypoint">
+			<div class="row">
+				{% if current_profile_info != None %}
+				<form action="/submitcomment/" method="POST" id="comment">
+					<div class="col-sm-12">
+						<div id="comment-submit-picture-div">
+							{% if current_profile_info.profile_image != "" %}
+							<img id="comment-submit-picture" src="{{ current_profile_info.profile_image.url }}" width=75 height=75 alt="Image not found" class="img-rounded"/>
+							{% else %}
+							<img id="comment-submit-picture" src="http://2014.igem.org/wiki/images/thumb/0/04/ChrisP.jpg/330px-ChrisP.jpg.png" width=45 height=45 alt="Image not found" class="img-rounded"/>
 							{% endif %}
 						</div>
-					</div>
-					<!-- Modify Javascript to include reagents with each step -->
-					<div class="panel-body action" data-step-num="{{ protocol_step.step_number }}">{{ protocol_step.action|safe }}</div>
-					{% if protocol_step.warning != "" %}
-					<div class="panel panel-danger">
-						<!-- Want to get rid of defualt border radius -->
-						<div class="panel-heading">
-							<h3 class="panel-title">Warning!</h3>
-							{{ protocol_step.warning|safe }}
-							<!-- Include Warning data field with each step -->
+						<div id="comment-submit-text-div">
+							<textarea name="comment" class="form-control" placeholder="Add a comment"></textarea>
 						</div>
 					</div>
-					{% endif %}
-				</div>
-				{% endfor %}
-			</div>
-	</div>
-</div>
-
-
-<div class="col-sm-10 col-sm-offset-1" style="margin-bottom:7.5px;">
-	<div class="row">
-		{% if current_profile_info != None %}
-		<form action="/submitcomment/" method="POST" id="comment">
-			<div class="col-sm-1">
-				{% if current_profile_info.profile_image != "" %}
-				<img src="{{ current_profile_info.profile_image.url }}" width=75 height=75 alt="Image not found" class="img-rounded"/>
+					<div class="col-sm-12" id="comment-submit-div" style="margin-top:15px;">
+						<input type="submit" class="form-control" value="Post">
+					</div>
+					<input name="protocol_id" type="hidden" value="{{protocol.id}}">
+					{% csrf_token %}
+				</form>
 				{% else %}
-				<img src="http://2014.igem.org/wiki/images/thumb/0/04/ChrisP.jpg/330px-ChrisP.jpg.png" width=45 height=45 alt="Image not found" class="img-rounded"/>
+				<p>Sign in to comment on any protocol!</p>
 				{% endif %}
 			</div>
-			<div class="col-sm-11">
-				<textarea name="comment" class="form-control" style="height:75px;" placeholder="Add a comment"></textarea>
-			</div>
-			<div class="col-sm-12" style="margin-top:15px;">
-				<input type="submit" class="form-control" value="Post">
-			</div>
-			<input name="protocol_id" type="hidden" value="{{protocol.id}}">
-			{% csrf_token %}
-		</form>
-		{% else %}
-		<p>Sign in to comment on any protocol!</p>
-		{% endif %}
+		</div>
 	</div>
-</div>
 
-{% for comment in comments %}
-<div class="col-sm-10 col-sm-offset-1" style="margin-top:7.5px;margin-bottom:7.5px;">
-	<div class="row">
-		<div class="col-sm-1">
-			{% if comment.author.profile_image != "" %}
-			<img src="{{ comment.author.profile_image.url }}" width=75 height=75 alt="Image not found" class="img-rounded"/>
-			{% else %}
-			<img src="http://2014.igem.org/wiki/images/thumb/0/04/ChrisP.jpg/330px-ChrisP.jpg.png" width=45 height=45 alt="Image not found" class="img-rounded"/>
-			{% endif %}
-		</div>
-		<div class="col-sm-11">
-			<p><a href="/user/{{comment.author.id}}/">{{comment.author}}</a> - posted on {{comment.upload_date}}</p>
-			<p>{{comment.note}}</p>
+	<div class="row" id="all_comments">
+		<div>
+			{% for comment in comments %}
+			<div class="col-sm-12 comment-div">
+				<div class="row">
+					<div class="col-sm-12">
+						<div class="comment-picture-div">
+							<a href="/user/{{comment.author.id}}/">
+								{% if comment.author.profile_image != "" %}
+								<img src="{{ comment.author.profile_image.url }}" alt="Image not found" class="img-rounded comment-picture"/>
+								{% else %}
+								<img src="http://2014.igem.org/wiki/images/thumb/0/04/ChrisP.jpg/330px-ChrisP.jpg.png" alt="Image not found" class="img-rounded comment-picture"/>
+								{% endif %}
+							</a>
+						</div>
+						<div class="comment-text">
+							<p><a href="/user/{{comment.author.id}}/">{{comment.author}}</a> - {{comment.upload_date}}</p>
+							<p>{{comment.note}}</p>
+						</div>
+					</div>
+				</div>
+			</div>
+			{% endfor %}
 		</div>
 	</div>
 </div>
-{% endfor %}
 
 {% endblock %}

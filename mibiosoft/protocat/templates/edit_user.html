@@ -49,12 +49,19 @@ function submit_sm() {
 </script>
 
 <style>
-.padded{
+.padded {
 	padding-left:40px
+}
+.profile_image {
+	height: 165px;
+	width: 165px;
+}
+#submit_div {
+	margin-bottom: 15px;
 }
 </style>
 
-<div class="row">
+<div id="submit_div" class="row">
 	<div class="col-xs-12 visible-xs">
 		<input type="button" class="form-control" onclick="submit_xs()" value="Save Changes">
 	</div>
@@ -72,7 +79,7 @@ function submit_sm() {
 
 	<div class="row visible-xs">
 		<div class="col-xs-12">
-			<img {% if profile_info.profile_image != "" %}src="{{ profile_info.profile_image.url }}"{% else %}src="/static/images/basic_picture.jpg"{% endif %} width=200 height=200 alt="Image not found" class="center-block img-responsive img-circle profile_image"/>
+			<img {% if profile_info.profile_image != "" %}src="{{ profile_info.profile_image.url }}"{% else %}src="/static/images/basic_picture.png"{% endif %} width=200 height=200 alt="Image not found" class="center-block img-responsive img-circle profile_image"/>
 		</div>
 		<div class="col-xs-12 padded">
 			<div class="center-block" style="text-align:center;">
@@ -86,7 +93,7 @@ function submit_sm() {
 
 	<div class="row hidden-xs">
 		<div class="col-sm-2 col-sm-offset-1">
-			<img onclick="$('#file_picker').click();" {% if profile_info.profile_image != "" %}src="{{ profile_info.profile_image.url }}"{% else %}src="/static/images/basic_picture.jpg"{% endif %} width=200 height=200 alt="Image not found" class="center-block img-responsive img-circle profile_image"/>
+			<img onclick="$('#file_picker').click();" {% if profile_info.profile_image != "" %}src="{{ profile_info.profile_image.url }}"{% else %}src="/static/images/basic_picture.png"{% endif %} width=200 height=200 alt="Image not found" class="center-block img-responsive img-circle profile_image"/>
 		</div>
 		<div class="col-sm-4 padded">
 			<h2>{{ profile_info.user }}</h2><br/>
