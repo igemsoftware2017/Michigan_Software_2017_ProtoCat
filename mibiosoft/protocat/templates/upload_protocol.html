@@ -3,6 +3,11 @@
 {% block content %}
 
 <script>
+jQuery.fn.cssNumber = function(prop){
+	var v = parseInt(this.css(prop),10);
+	return isNaN(v) ? 0 : v;
+};
+
 function tinymce_byname(name_of) {
 	name_of = '[name="' + name_of + '"]';
 	tinymce.init({
@@ -56,41 +61,185 @@ function prep_everything(textbox_class) {
 
 new_name = 0;
 
-function add_step(event) {
-	console.log('ran')
+function add_step() {
+	var last_element = null;
+	var max = -1;
+	$('#form').children('.individual-step:visible').each(function() {
+		this_value = parseInt($(this).find('.step-number').val());
+		console.log("This val: " + this_value)
+		if (this_value > max) {
+			max = this_value;
+			last_element = $(this);
+		}
+	});
+
+	var clicking_div = $(this).parent().parent().parent().parent().parent();
+	//console.log(clicking_div);
+
+	if (max == -1) {
+		max = 0;
+		last_element = $('#original_step');
+	}
+	if (!clicking_div.hasClass('individual-step')) {
+		clicking_div = last_element;
+	}
+
+	//console.log(clicking_div);
+
+	var new_number = parseInt($(clicking_div).find('.step-number').val()) + 1;
+	console.log(new_number)
 	temp_name = 'step' + new_name;
 
 	temp_item = $('#original_step').clone();
 	temp_item.attr('id', temp_name);
 	temp_item.find('[name="step[warning]"]').attr('name', temp_name + '[warning]');
-	temp_item.find('[name="step[number]"]').attr('name', temp_name + '[number]').attr('value', new_name + 1);
+	temp_item.find('[name="step[number]"]').attr('name', temp_name + '[number]').attr('value', new_number);
+	temp_item.find('.previous-number').attr('value', new_name + 1);
 	temp_item.find('[name="step[title]"]').attr('name', temp_name + '[title]');
 	temp_item.find('[name="step[time]"]').attr('name', temp_name + '[time]');
 	temp_item.find('[name="step[description]"]').attr('name', temp_name + '[description]');
 	temp_item.find('.step').addClass(temp_name).removeClass('step');
-	identifier = '#' + temp_name;
-	temp_item.find('#add_step').on('click', {id: identifier}, add_step);
-	temp_item.find('#remove_step').on('click', function() {
-		$(this).parent().parent().parent().parent().remove();
+	temp_item.find('.add_step').on('click', add_step);
+
+
+	// Add onclick handler for removing a step
+	temp_item.find('.remove_step').on('click', function() {
+		deleting_element = $(this).parent().parent().parent().parent().parent();
+		deleting_val = parseInt($(deleting_element).find('.step-number').val());
+
+		$('#form').children('.individual-step:visible').each(function() {
+			this_value = parseInt($(this).find('.step-number').val());
+			console.log($(deleting_element))
+			var is_before = $(deleting_element).prevAll().filter($(this)).length !== 0 && $(this).is(':visible');
+			console.log(is_before)
+			console.log(this_value)
+			console.log(deleting_val)
+			if (is_before && this_value > deleting_val) {
+				$(this).find('.step-number').val(this_value - 1);
+				$(this).find('.previous-number').val(this_value - 1);
+				$(this).animate({ top: "-=" + $(deleting_element).outerHeight().toString() + "px" }, 0);
+			}
+			else if (!is_before && this_value < deleting_val) {
+				$(this).animate({ top: "+=" + $(deleting_element).outerHeight().toString() + "px" }, 0);
+			}
+			else if (this_value > deleting_val) {
+				$(this).find('.step-number').val(this_value - 1);
+				$(this).find('.previous-number').val(this_value - 1);
+			}
+			disable_buttons();
+		});
+		$(this).parent().parent().parent().parent().parent().remove();
 	});
-	if (event.id == null) {
-		$(temp_item).show().insertAfter(event.data.id);
-	}
-	else {
-		$(temp_item).show().insertAfter(event.id);
-	}
+
+	// Put new step at the very end
+	$(temp_item).insertAfter($('#form').children('.individual-step').last()).show();
+
+	// increase total number of steps to check in server
 	new_name++;
 	$('#number_to_check').attr('value', new_name);
-	console.log(temp_name)
+
 	prep_everything(temp_name);
+
+	// Add event handler for when the user wants to change the step order
+	$(temp_item).find('.step-number').on("focusout", function() {
+		rearrange(parseInt($(this).siblings('input').val()), parseInt($(this).val()), $(this).parent().parent().parent().parent().parent().parent());
+	});
+	disable_buttons();
+
+	// After putting the item at the very end, change its position to the correct one
+	rearrange(parseInt(temp_item.find('.previous-number').val()), parseInt(temp_item.find('.step-number').val()), temp_item);
+}
+
+//
+function disable_buttons() {
+	$('.remove_step').addClass('disabled').delay(2000).queue(function(next){
+		if ($('.remove_step').length != 2) {
+			$('.remove_step').removeClass("disabled");
+			next();
+		}
+	});
+	if ($('.add_step').length != 2) {
+		$('.add_step').addClass('disabled').delay(2000).queue(function(next){
+			$('.add_step').removeClass("disabled");
+			next();
+		});
+	}
+}
+
+
+
+function rearrange(num_from, num_to, moving) {
+	if (num_from != num_to) {
+		var total_height = 0;
+
+		// Determine which direction the single object is going and how the others
+		// are going to move around it
+		if (num_from < num_to) {
+			var other_direction = "-";
+			var direction = "+";
+		}
+		else {
+			var other_direction = "+";
+			var direction = "-";
+		}
+
+		// Get every object that will need to move, change the number position of them,
+		// and animate their movement
+		moving_objects = $('.individual-step:visible')
+		.filter(function(index) {
+			var step_number = parseInt($(this).find('.previous-number').val());
+			var boolean = (((step_number > num_from && step_number <= num_to) || (step_number < num_from && step_number >= num_to)) && $(this) != moving);
+			return boolean;
+		})
+		.each(function() {
+			var input = $(this).find('.step-number');
+			var step_number = parseInt($(input).val());
+			var new_step_number;
+			if (num_from < num_to) {
+				new_step_number = step_number - 1;
+			}
+			else {
+				new_step_number = step_number + 1;
+			}
+			$(this).find('.step-number').val(new_step_number);
+			$(this).find('.previous-number').val(new_step_number);
+
+			total_height += $(this).outerHeight();
+		})
+		.animate({ top: other_direction + "=" + $(moving).outerHeight().toString() + "px" }, 0);
+
+		// Move the single object however far it needs to be placed in the right position
+		var how_far_down = total_height;
+		$(moving)
+		.animate({ top: direction + "=" + how_far_down.toString() + "px" }, 0)
+		.find('.previous-number').val($(moving).find('.step-number').val());
+
+		add_movement_effects($(moving));
+		add_movement_effects(moving_objects);
+	}
 }
 
 window.onload = function() {
 	tinymce_byname('description');
 	tinymce_byname('text-reagents');
 	tinymce_byname('change-log');
-	add_step({id: '#original_step'});
+	add_step();
 }
+
+// Add transparency for a total of 2 seconds (1 going in, 1 going out)
+// Make the element unclickable during the move
+function add_movement_effects(object) {
+	$(object).addClass('translucent').addClass('cannot-click').delay(1000).queue(function(next){
+		$(this).removeClass('translucent');
+		next();
+	})
+	.delay(1000).queue(function(next){
+		$(this).removeClass('cannot-click');
+		next();
+	});
+}
+
+
 </script>
 
 <style>
@@ -128,6 +277,17 @@ window.onload = function() {
 .make-padding-work {
 	padding-left: 30px;
 	padding-right: 30px;
+}
+.individual-step {
+	position: relative;
+	transition: top 2s, opacity 1s;
+	top: 0px;
+}
+.translucent {
+	opacity: 0.25;
+}
+.cannot-click {
+	pointer-events: none;
 }
 </style>
 <form method="POST" action="/submitprotocol/" class="form-horizontal" id="form">
@@ -175,14 +335,15 @@ window.onload = function() {
 					<div class="col-sm-12">
 						<div class="form-group-lg">
 							<label class="control-label" for="exampleInputName2">Step #</label>
-							<input name="step[number]" type="number" min="1" step="1" class="form-control input-sm step-number" name="step-number" value="1">
+							<input name="step[number]" type="number" min="1" step="1" class="form-control input-sm step-number" name="step-number" value="0">
+							<input class="previous-number" type="hidden">
 						</div>
 					</div>
 					<div class="col-xs-12" style="margin-top:15px;">
-						<input type="button" class="form-control" value="Add step" id="add_step">
+						<button type="button" class="btn add_step">Add step</button>
 					</div>
 					<div class="col-xs-12" style="margin-top:15px;margin-bottom:15px;">
-						<input type="button" class="form-control" value="Delete step" id="remove_step">
+						<button type="button" class="btn remove_step">Delete step</button>
 					</div>
 				</div>
 			</div>
@@ -237,6 +398,6 @@ window.onload = function() {
 	<div class="col-sm-10 col-sm-offset-1">
 		<button type="submit" class="btn btn-primary btn-block" style="margin-bottom:15px;">Submit Protocol</button>
 	</div>
-</form>
 
+</form>
 {% endblock %}
