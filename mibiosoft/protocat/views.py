@@ -8,6 +8,7 @@ import datetime
 from django.utils import timezone
 from django.core.files import File
 from django.conf import settings
+from django.views.decorators.cache import never_cache
 
 # Create your views here.
 def index(request):
@@ -354,7 +355,6 @@ def submit_rating(request):
 	}
 	return render(request, 'index.html', context)
 
-
 def upload_default(request):
 	current_data = None
 	return upload_page(request, current_data)
@@ -362,7 +362,7 @@ def upload_default(request):
 def upload_branch(request, protocol_id):
 	categories = Category.objects.all()
 	protocol = Protocol.objects.get(id = protocol_id)
-	print(protocol)
+
 	protocol_steps = ProtocolStep.objects.filter(protocol = protocol).order_by('step_number')
 	protocol_reagents = ReagentForProtocol.objects.filter(protocol = protocol)
 
