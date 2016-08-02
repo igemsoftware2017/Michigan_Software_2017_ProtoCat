@@ -465,16 +465,7 @@ def submit_upload(request):
 					protocol.first_revision = prev_protocol
 		except:
 			pass
-
-		# get any written-in reagents and save them
-		protocol_rea = ""
-		try:
-			protocol_rea = request.POST['text-reagents']
-		except:
-			pass
-
-		reagents = TextReagent(reagents = protocol_rea, protocol = protocol)
-		reagents.save()
+		protocol.save()
 
 
 		# save the steps now
@@ -482,7 +473,7 @@ def submit_upload(request):
 
 		# go over each available step
 		number_to_check = int(request.POST['number_to_check'])
-		for x in range(0, number_to_check):
+		for x in range(0, number_to_check + 1):
 			try:
 				prefix = 'step' + str(x)
 				number = int(request.POST[prefix + '[number]'])
@@ -521,6 +512,16 @@ def submit_upload(request):
 		protocol.num_steps = num_steps
 
 		protocol.save()
+
+		# get any written-in reagents and save them
+		protocol_rea = ""
+		try:
+			protocol_rea = request.POST['text-reagents']
+		except:
+			pass
+
+		reagents = TextReagent(reagents = protocol_rea, protocol = protocol)
+		reagents.save()
 
 	except Exception as e:
 		print('error2')

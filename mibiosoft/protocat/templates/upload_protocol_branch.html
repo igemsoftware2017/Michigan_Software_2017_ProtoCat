@@ -208,6 +208,7 @@ $(document).ready(function() {
 
 	// Add onclick handler for removing a step
 	$('.individual-step:visible').find('.remove_step').on('click', delete_step);
+	$('#number_to_check').attr('value', new_name);
 });
 
 // Add transparency for a total of 2 seconds (1 going in, 1 going out)
