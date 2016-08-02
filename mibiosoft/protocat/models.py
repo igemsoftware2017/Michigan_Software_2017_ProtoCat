@@ -131,6 +131,7 @@ class TextReagent(models.Model):
 
 # the data for each protocol step
 class ProtocolStep(models.Model):
+	title = models.TextField(default = "")
 	action = models.TextField()
 
 	# 2 denotes isConstant, and 3 denotes isLinear for

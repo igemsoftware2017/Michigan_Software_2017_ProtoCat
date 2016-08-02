@@ -3,7 +3,7 @@
 {% block content %}
 
 <style>
-input[name="text_filter"] {
+input[name="text_filter"], .navbar-right {
 	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
 }
 body {
@@ -238,7 +238,7 @@ $(document).ready(function() {
 							<div class="col-sm-12">
 								<form method="POST" class="form-horizontal" action="/search/">
 									<div class="input-group input-group-lg">
-										<input type="text" name="text_filter" class="form-control" placeholder="Search ProtoCat">
+										<input type="text" name="text_filter" class="form-control" placeholder="Search ProtoCat" autocomplete="off">
 										<span class="input-group-btn">
 											<button type="submit" class="btn btn-default">
 												<span class="glyphicon glyphicon-search"></span>
@@ -368,7 +368,7 @@ $(document).ready(function() {
 					<div class="col-sm-4 col-xs-6">
 						<a href="https://github.com/igemsoftware/Michigan16">
 							<button class="btn fat-btn">
-								<img class="page3_images" src="/static/images/github-logo-icon-new.png" alt="">
+								<i class="fa fa-github black-text page3-glyphicon" aria-hidden="true"></i>
 								<h4 class="page3_text">Github</h4>
 							</button>
 						</a>
