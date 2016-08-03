@@ -16,8 +16,19 @@ Including another URLconf
 from django.conf.urls import include, url
 from django.contrib import admin
 from django.conf.urls.static import static
+from rest_framework.routers import DefaultRouter
+from protocat import apiviews
+
+router = DefaultRouter()
+router.register(r'protocol', apiviews.ProtocolViewSet)
+router.register(r'profile', apiviews.ProfileViewSet)
+router.register(r'protocolstep', apiviews.ProtocolStepViewSet)
+router.register(r'category', apiviews.CategoryViewSet)
+router.register(r'reagent', apiviews.ReagentViewSet)
 
 urlpatterns = [
-	url(r'', include('protocat.urls')),
+    url(r'^api/', include(router.urls)),
+    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    url(r'', include('protocat.urls')),
     url(r'^admin/', include(admin.site.urls)),
 ]

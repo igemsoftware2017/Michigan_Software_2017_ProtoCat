@@ -46,7 +46,7 @@ class Category(models.Model):
 class Reagent(models.Model):
 	name = models.TextField()
 	smiles_format = models.TextField(blank = True, null = True)
-	picture = models.FileField(blank = True, null = True)
+	picture = models.ImageField(blank = True, null = True, upload_to = "media")
 	website = models.URLField(blank = True, null = True)
 
 	def __str__(self):
@@ -58,7 +58,7 @@ class Reagent(models.Model):
 # has links to all the important parts of the protocol
 class Protocol(models.Model):
 	title = models.TextField()
-	author = models.ForeignKey(ProfileInfo)
+	author = models.ForeignKey(ProfileInfo, related_name="protocols")
 	description = models.TextField()
 
 	# Allow the revisionist to describe changes made
@@ -125,7 +125,7 @@ class Protocol(models.Model):
 # just a text field for the reagents if they don't want to be fancy
 class TextReagent(models.Model):
 	reagents = models.TextField(default = "");
-	protocol = models.OneToOneField(Protocol)
+	protocol = models.OneToOneField(Protocol, related_name="textreagent")
 	def __str__(self):
 		return self.reagents
 
@@ -147,7 +147,7 @@ class ProtocolStep(models.Model):
 	time = models.IntegerField(default = -1)
 
 	step_number = models.IntegerField()
-	protocol = models.ForeignKey(Protocol)
+	protocol = models.ForeignKey(Protocol, related_name="protocol_step")
 	warning = models.TextField(default = "")
 
 	def __str__(self):
@@ -238,12 +238,12 @@ class ProtocolRating(models.Model):
 	# need validator for only one rating for each person-protocol pairs
 	person = models.ForeignKey(ProfileInfo)
 	score = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
-	protocol = models.ForeignKey(Protocol)
+	protocol = models.ForeignKey(Protocol, related_name="ratings_for_protocol")
 
 # allow for each user to write their own private notes on each protocol step
 class ProtocolComment(models.Model):
 	author = models.ForeignKey(ProfileInfo)
-	protocol = models.ForeignKey(Protocol)
+	protocol = models.ForeignKey(Protocol, related_name="comments_for_protocol")
 	upload_date = models.DateTimeField(auto_now_add = True)
 	note = models.TextField()
 

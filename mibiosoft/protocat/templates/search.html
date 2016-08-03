@@ -379,46 +379,7 @@ $(function() {
 
 	<div class="row" style="margin-left:-30px;margin-right:-30px;">
 		{% for protocol in results %}
-		<div class="col-sm-6">
-			<div class="well well-sm protocol_div" onclick="location.href='/protocol/{{ protocol.id }}/'">
-				<div class="row">
-					<div class="col-sm-8 fix-margin-left">
-						<h3>{{ protocol.title }}</h3>
-						<h5 class="visible-xs">Uploaded by <a href="/user/{{ protocol.author.id }}/">{{ protocol.author }}</a></h5>
-						<h5>Uploaded on {{ protocol.upload_date }}</h5>
-						{% if protocol.get_average_ratings == "N/A" %}
-						<h5 class="visible-xs">Be the first to rate this protocol</h5>
-						{% else %}
-						<form role="search" method="POST" action="/ratings/" class="center-block left-side-ratings form-inline visible-xs">
-							<input id="input-2" name="input-2" value="{{ protocol.get_average_ratings }}" class="rating-loading input-2"data-size="xs" data-display-only="true">
-							<input id="id" name='id' type="hidden" value="{{protocol.id}}">
-							<label style="position:relative;top:-27px;left:87px"> - {{ protocol.get_number_ratings }} ratings</label>
-						</form>
-						{% endif %}
-						<h5>Category: <a href="/browse/{{ protocol.category.id }}/">{{ protocol.category }}</a></h5>
-						<p class="text-muted max-lines">{{ protocol.description }}</p>
-					</div>
-					<div class="col-sm-2 hidden-xs protocol-author-picture fix-margin-top pull-right">
-						{% if protocol.author.profile_image != "" %}
-						<img src="{{ protocol.author.profile_image.url }}" width=75 height=75 alt="Image not found" class="img-circle center-block"/>
-						{% else %}
-						<img src="http://2014.igem.org/wiki/images/thumb/0/04/ChrisP.jpg/330px-ChrisP.jpg.png" width=45 height=45 alt="Image not found" class="img-rounded"/>
-						{% endif %}
-						<h5 style="text-align:center;"><a href="/user/{{ protocol.author.id }}/">{{ protocol.author }}</a></h5>
-						{% if protocol.get_average_ratings == "N/A" %}
-						<h2 class="small" style="text-align:center;margin-top:0px;height:40px;">Be the first to rate this protocol</h2>
-						{% else %}
-						<form role="search" method="POST" action="/ratings/" class="center-block" style="margin-top:-15px">
-							<input id="input-2" name="input-2" value="{{ protocol.get_average_ratings }}" class="rating-loading input-2" data-size="xs" data-step="1" data-show-caption="false" data-show-clear="false">
-							<input id="id" name='id' type="hidden" value="{{protocol.id}}">
-							{% csrf_token %}
-						</form>
-						<h2 class="small" style="text-align:center;margin-top:0px;">{{ protocol.get_number_ratings }} ratings</h2>
-						{% endif %}
-					</div>
-				</div>
-			</div>
-		</div>
+		{% include 'repeated_parts/col_sm_6_protocol_info.html'%}
 		{% endfor %}
 	</div>
 </div>
