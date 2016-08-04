@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import ProfileInfo, Reagent, Category, Protocol, ProtocolStep, ReagentForProtocol, ProtocolRating, TextReagent, ProtocolComment
+from .models import *
 
 
 

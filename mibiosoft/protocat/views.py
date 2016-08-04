@@ -154,6 +154,7 @@ def submit_sign_up(request):
 	username = request.POST['username']
 	password = request.POST['password']
 	user = User.objects.create_user(username, 'lennon@thebeatles.com', password)
+	user = authenticate(username = username, password = password)
 	profile_info = ProfileInfo(user = user)
 	profile_info.save()
 	print(profile_info.id)

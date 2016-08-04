@@ -65,7 +65,7 @@ class Protocol(models.Model):
 	change_log = models.TextField()
 
 	# many protocols to one category
-	category = models.ForeignKey(Category, default = 1)
+	category = models.ForeignKey(Category, default = 1, related_name="protocol_for_category")
 
 	# True if the author want dynamic scaling of products and reactants
 	scaleable = models.BooleanField(default = False)
@@ -77,7 +77,7 @@ class Protocol(models.Model):
 
 	avg_rating = models.DecimalField(default = -1, max_digits = 50, decimal_places = 25)
 
-	num_steps = models.IntegerField(default = 3, validators=[MinValueValidator(1)])
+	num_steps = models.IntegerField(default = 0, validators=[MinValueValidator(1)])
 
 	# many branching protocols to one parent protocol
 	previous_revision = models.ForeignKey('self', related_name='previous_revision1', blank = True, null = True)
