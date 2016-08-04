@@ -74,4 +74,45 @@ tr:hover{
 	</div>
 </div>
 
+<table class="table table-hover">
+	<thead></thead>
+	<tbody>
+		<td>
+			{% for category in categories %}
+			<div class="panel panel-primary col-md-4">
+				<div onclick="location.href='/browse/{{ category.id }}'">
+				<td><a href="/browse/{{ category.id }}/">{{ category.title }}</a></td>
+				<td>{{ category.author }}</td>
+				<td>{{ category.description }}</td>
+				</div>
+			</div>
+		</td>
+	</tbody>
+</table>
+
+<table class="table table-hover">
+	<thead></thead>
+	<tbody>
+		<td>
+			<div class="panel panel-primary col-md-2">
+			How does this look?
+			</div>
+			<div class="panel panel-primary col-md-2">
+			How does this look?
+			</div>
+			<div class="panel panel-primary col-md-2">
+			How does this look?
+			</div>
+			<div class="panel panel-primary col-md-2">
+			How does this look?
+			</div>
+			<div class="panel panel-primary col-md-2">
+			How does this look?
+			</div>
+			<div class="panel panel-primary col-md-2">
+			How does this look?
+			</div>
+		</td>
+	</tbody>
+</table>
 {% endblock %}
