@@ -573,18 +573,35 @@ def update_profile(request):
 			email = ""
 			size = int(request.POST['size'])
 			if (size == 1):
-				about = request.POST['about1']
-				website = request.POST['website1']
-				email = request.POST['email1']
+				try:
+					about = request.POST['about1']
+				except:
+					pass
+				try:
+					website = request.POST['website1']
+				except:
+					pass
+				try:
+					email = request.POST['email1']
+				except:
+					pass
 			elif (size == 2):
-				about = request.POST['about2']
-				website = request.POST['website2']
-				email = request.POST['email2']
+				try:
+					about = request.POST['about2']
+				except:
+					pass
+				try:
+					website = request.POST['website2']
+				except:
+					pass
+				try:
+					email = request.POST['email2']
+				except:
+					pass
 
 			user.about = about
 			user.website = website
 			user.user.email = email
-			print(user.user.email)
 
 			try:
 				picture = request.FILES['picture']
@@ -600,6 +617,7 @@ def update_profile(request):
 			print("Done!")
 	except Exception as inst:
 		print(inst)
+		print("Update didn't work")
 		pass
 
 	context = {

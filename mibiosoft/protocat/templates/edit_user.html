@@ -29,8 +29,10 @@ function submit_sm() {
 	form_data.append("size", $('input[name="size"]').val());
 	form_data.append("about1", $('input[name="about1"]').val());
 	form_data.append("website1", $('input[name="website1"]').val());
+	form_data.append("email1", $('input[name="email1"]').val());
 	form_data.append("about2", $('input[name="about2"]').val());
 	form_data.append("website2", $('input[name="website2"]').val());
+	form_data.append("email2", $('input[name="email2"]').val());
 	$.ajax({
 		type: "POST",
 		url: "/updateprofile/",
@@ -80,7 +82,7 @@ function submit_sm() {
 <form id="submit-form" method="POST" action="/updateprofile/" enctype="multipart/form-data" accept-charset="utf-8">
 	{% csrf_token %}
 	<input name="picture" id="file_picker" style="display:none;" type="file" accept="image/*" onchange="$('.profile_image').attr('src', window.URL.createObjectURL(this.files[0]))">
-	<input name="user_id" type="hidden" value={{profile_info.id}}>
+	<input name="user_id" type="hidden" value="{{ profile_info.id }}">
 	<input name="size" type="hidden" value="2">
 
 	<div class="row visible-xs">
