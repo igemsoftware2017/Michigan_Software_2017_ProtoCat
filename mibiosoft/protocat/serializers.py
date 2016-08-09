@@ -27,7 +27,7 @@ class ProfileSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('url', 'user', 'protocols', 'about', 'contact_info')
         read_only_fields = ('profile_image', 'meows')
 
-class CategorySerializer(serializers.HyperlinkedModelSerializer):
+class CategorySerializer(serializers.ModelSerializer):
     protocol_for_category = serializers.HyperlinkedRelatedField(
         view_name='protocol-detail',
         many=True,
@@ -35,7 +35,8 @@ class CategorySerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Category
-        fields = ('url', 'title', 'author', 'description', 'upload_date', 'id', 'protocol_for_category', 'parent_category')
+        fields = ('url', 'title', 'description', 'upload_date', 'id', 'protocol_for_category', 'parent_category')
+        read_only_fields = ('author',)
 
 class TextReagentSerializer(serializers.ModelSerializer):
     class Meta:
@@ -70,8 +71,8 @@ class ProtocolSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Protocol
-        fields = ('author', 'protocol_step', 'title', 'category', 'upload_date', 'description', 'textreagent', 'change_log', 'previous_revision', 'first_revision', 'comments_for_protocol', 'ratings_for_protocol', 'id')
-        read_only_fields = ('num_ratings', 'avg_rating')
+        fields = ('protocol_step', 'title', 'category', 'upload_date', 'description', 'textreagent', 'change_log', 'previous_revision', 'comments_for_protocol', 'ratings_for_protocol', 'id')
+        read_only_fields = ('author', 'num_ratings', 'avg_rating', 'first_revision')
 
 
 
@@ -84,17 +85,36 @@ class ReagentSerializer(serializers.HyperlinkedModelSerializer):
 
 '''
 {
-    "author": 1,
-    "protocol_step": [],
-    "title": "",
-    "category": 1,
-    "description": "",
-    "protocol_step": [],
-    "change_log": "",
-    "previous_revision": 1,
+    "protocol_step": [
+        {
+            "step_number": 1,
+            "time": -1,
+            "action": "Original first step",
+            "warning": "",
+            "time_scaling": 2
+        },
+        {
+            "step_number": 2,
+            "time": 50,
+            "action": "Original step 2",
+            "warning": "",
+            "time_scaling": 1
+        },
+        {
+            "step_number": 3,
+            "time": 40,
+            "action": "Original step 3",
+            "warning": "",
+            "time_scaling": 2
+        }
+    ],
+    "title": "First Protocol",
+    "category": "1",
+    "description": "This is a protocol",
     "textreagent": {
-        "reagents": ""
+        "reagents": "Thing"
     },
-    "first_revision": 1
+    "change_log": "Initial commit",
+    "previous_revision": null
 }
 '''

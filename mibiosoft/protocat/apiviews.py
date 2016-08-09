@@ -29,19 +29,33 @@ class ProtocolViewSet(viewsets.ModelViewSet):
     serializer_class = ProtocolSerializer
 
     def create(self, request):
-        print(request.data['textreagent']['reagents'])
-        serializer = ProtocolSerializer(data = request.data, context={'request': request})
-        print(request.data)
-        if serializer.is_valid():
-            title = serializer.data['title']
-            author = serializer.data['author']
-            category = serializer.data['category']
-            description = serializer.data['description']
-            change_log = serializer.data['change_log']
-            protocol = Protocol(title = title, author = author, category = category, description = description, change_log = change_log)
+        try:
+            protocol = Protocol()
+            protocol.title = request.data['title']
+            protocol.category = Category.objects.get(id = request.data['category'])
+            protocol.description = request.data['description']
+            protocol.change_log = request.data['change_log']
+            if (request.data['previous_revision'] != None):
+                protocol.previous_revision = Protocol.objects.get(id = request.data['previous_revision'])
+            protocol.author = request.user.profileinfo
+            step_list = []
+            print('Main protocol finished')
+            for step in request.data['protocol_step']:
+                protocol_step = ProtocolStep()
+                protocol_step.step_number = step['step_number']
+                protocol_step.time = int(step['time'])
+                protocol_step.action = step['action']
+                protocol_step.warning = step['warning']
+                protocol_step.time_scaling = int(step['time_scaling'])
+                step_list.append(protocol_step)
             protocol.save()
+            for step in step_list:
+                step.protocol = protocol
+                step.save()
+            print(request.data['textreagent']['reagents'])
             return Response({'status': 'saved_protocol'})
-        else:
+        except Exception as inst:
+            print(inst)
             return Response({'status': 'failed'})
 
 
@@ -53,7 +67,7 @@ class ProfileViewSet(viewsets.ModelViewSet):
     serialized using a hyperlinked representation.
     """
     permission_classes = (IsUserOrReadOnly,)
-
+    http_method_names = ['get', 'options', 'head', 'put']
     queryset = ProfileInfo.objects.all()
     serializer_class = ProfileSerializer
 
@@ -65,7 +79,8 @@ class ProtocolStepViewSet(viewsets.ModelViewSet):
     serialized using a hyperlinked representation.
     """
 
-    permission_classes = (IsAuthenticatedOrReadOnlyPUTDisallowed)
+    permission_classes = (IsReadOnly,)
+    http_method_names = ['get', 'options', 'head']
     queryset = ProtocolStep.objects.all()
     serializer_class = ProtocolStepSerializer
 
@@ -78,21 +93,21 @@ class CategoryViewSet(viewsets.ModelViewSet):
     """
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
+    permission_classes = (permissions.IsAuthenticated,)
 
     def create(self, request):
-        print(request.data)
-        print(request.data['title'])
-        serializer = CategorySerializer(data = request.data, context={'request': request})
-        if serializer.is_valid():
-            print(serializer.data)
-            title = serializer.data['title']
-            author = serializer.data['author']
-            category = serializer.data['category']
-            description = serializer.data['description']
-            category = Category(title = title, author = author, parent_category = category, description = description)
+        try:
+            print(request.data)
+            category = Category()
+            category.title = request.data['title']
+            category.description = request.data['description']
+            if (request.data['parent_category'] != None):
+                category.parent_category = Category.objects.get(id = request.data['parent_category'])
+            category.author = request.user.profileinfo
             category.save()
-            return Response({'status': 'saved_protocol'})
-        else:
+            return Response({'status': 'Saved category'})
+        except Exception as inst:
+            print(inst)
             return Response({'status': 'failed'})
 
 class ReagentViewSet(viewsets.ModelViewSet):
@@ -101,5 +116,6 @@ class ReagentViewSet(viewsets.ModelViewSet):
 
     The collection of every reagent we have in the database.
     """
+    permission_classes = (permissions.IsAuthenticated,)
     queryset = Reagent.objects.all()
     serializer_class = ReagentSerializer
