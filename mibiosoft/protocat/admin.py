@@ -21,7 +21,7 @@ class ReagentAdmin(admin.ModelAdmin):
 		model = Reagent
 
 class ProtocolAdmin(admin.ModelAdmin):
-	list_display = ["__str__", "get_total_ratings", "get_number_ratings", "scaleable", "searchable", "category", "get_reagents", "author", "previous_revision", "upload_date"]
+	list_display = ["__str__", "get_total_ratings", "get_number_ratings", "scaleable", "searchable", "category", "get_reagents", "author", "previous_revision", "upload_date", "materials"]
 	class Meta:
 		model = Protocol
 
@@ -40,11 +40,6 @@ class ProtocolRatingAdmin(admin.ModelAdmin):
 	class Meta:
 		model = ProtocolRating
 
-class TextReagentAdmin(admin.ModelAdmin):
-	list_display = ["__str__", "protocol"]
-	class Meta:
-		model = TextReagent
-
 class ProtocolCommentAdmin(admin.ModelAdmin):
 	class Meta:
 		model = ProtocolComment
@@ -60,5 +55,4 @@ admin.site.register(Protocol, ProtocolAdmin)
 admin.site.register(ProtocolStep, ProtocolStepAdmin)
 admin.site.register(ReagentForProtocol, ReagentForProtocolAdmin)
 admin.site.register(ProtocolRating, ProtocolRatingAdmin)
-admin.site.register(TextReagent, TextReagentAdmin)
 admin.site.register(ProtocolComment, ProtocolCommentAdmin)

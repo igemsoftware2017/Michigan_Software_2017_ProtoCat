@@ -12,19 +12,28 @@ from .serializers import *
 
 class ProtocolViewSet(viewsets.ModelViewSet):
     """
-    This endpoint presents code snippets.
+    This endpoint presents the stored protocols.
 
-    The `highlight` field presents a hyperlink to the highlighted HTML
-    representation of the code snippet.
+    Here you can only POST new protocols if you are logged in. Otherwise,
+    you can GET the information for all protocols by doing a GET request
+    to /api/protocol/ or for a specific protocol by doing a GET request to
+    /api/protocol/{id}. The GET requests return the main information posted by
+    the original poster as well as the individual ratings and comments to show
+    alongside the protocol.
 
-    The **owner** of the code snippet may update or delete instances
-    of the code snippet.
+    When you POST a new protocol, you only need to submit the title, description,
+    change log, materials, protocol steps, and the id of the previous revision
+    (null if it is not a revision) in the JSON format to /api/protocol/. The way
+    to format the protocol steps is to have the protocol_steps be an array of
+    steps, each with their own step number, time (in seconds) to complete the step,
+    (-1 if untimed), the action, any warnings, and if the time scales (1 means no
+    scaling, 2 means linear scaling).
 
-    Try it yourself by logging in as one of these four users: **amy**, **max**,
-    **jose** or **aziz**.  The passwords are the same as the usernames.
+    To authenticate the user, you must first submit a POST to /api/token/ with
+    the username and password. This will send you a token in the header which
+    you can send with every request that needs authentication.
     """
     permission_classes = (IsAuthenticatedOrReadOnlyPUTDisallowed,)
-
     queryset = Protocol.objects.all()
     serializer_class = ProtocolSerializer
 
@@ -52,48 +61,46 @@ class ProtocolViewSet(viewsets.ModelViewSet):
             for step in step_list:
                 step.protocol = protocol
                 step.save()
-            print(request.data['textreagent']['reagents'])
+            print(request.data['materials'])
             return Response({'status': 'saved_protocol'})
         except Exception as inst:
             print(inst)
             return Response({'status': 'failed'})
 
-
 class ProfileViewSet(viewsets.ModelViewSet):
     """
-    This endpoint presents the users in the system.
+    This endpoint presents our user system.
 
-    As you can see, the collection of snippet instances owned by a user are
-    serialized using a hyperlinked representation.
+    Here you can view the public information of any user, such as the username,
+    list of protocols they made, and other basic info. You can only PUT
+    information to the account you are logged in with, but you can always GET
+    others' basic information.
+
+    To authenticate the user, you must first submit a POST to /api/token/ with
+    the username and password. This will send you a token in the header which
+    you can send with every request that needs authentication.
     """
     permission_classes = (IsUserOrReadOnly,)
     http_method_names = ['get', 'options', 'head', 'put']
     queryset = ProfileInfo.objects.all()
     serializer_class = ProfileSerializer
 
-class ProtocolStepViewSet(viewsets.ModelViewSet):
-    """
-    This endpoint presents the steps in the system.
-
-    As you can see, the collection of snippet instances owned by a user are
-    serialized using a hyperlinked representation.
-    """
-
-    permission_classes = (IsReadOnly,)
-    http_method_names = ['get', 'options', 'head']
-    queryset = ProtocolStep.objects.all()
-    serializer_class = ProtocolStepSerializer
-
 class CategoryViewSet(viewsets.ModelViewSet):
     """
-    This endpoint presents the steps in the system.
+    This endpoint shows our category system.
 
-    As you can see, the collection of snippet instances owned by a user are
-    serialized using a hyperlinked representation.
+    Here, you can POST new categories if you are logged in, otherwise you can
+    view the current categories and infomation about them. If you are POSTing a
+    new category, be sure to link it to a parent category by id or keep the
+    value as null if you do not want a parent category.
+
+    To authenticate the user, you must first submit a POST to /api/token/ with
+    the username and password. This will send you a token in the header which
+    you can send with every request that needs authentication.
     """
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = (IsReadOnlyOrAuthenticated,)
 
     def create(self, request):
         try:
@@ -114,8 +121,13 @@ class ReagentViewSet(viewsets.ModelViewSet):
     """
     This endpoint presents the available reagents in the system.
 
-    The collection of every reagent we have in the database.
+    Here, you can POST new reagents if you are logged in, otherwise you can
+    view our current catalog and infomation about them.
+
+    To authenticate the user, you must first submit a POST to /api/token/ with
+    the username and password. This will send you a token in the header which
+    you can send with every request that needs authentication.
     """
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = (IsReadOnlyOrAuthenticated,)
     queryset = Reagent.objects.all()
     serializer_class = ReagentSerializer

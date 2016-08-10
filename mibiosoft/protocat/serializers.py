@@ -9,10 +9,10 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         model = User
         fields = ('username', )
 
-class ProtocolStepSerializer(serializers.HyperlinkedModelSerializer):
+class ProtocolStepSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProtocolStep
-        fields = ('url', 'step_number', 'time', 'action', 'warning', 'time_scaling')
+        fields = ('step_number', 'time', 'action', 'warning', 'time_scaling')
 
 
 class ProfileSerializer(serializers.HyperlinkedModelSerializer):
@@ -38,11 +38,6 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = ('url', 'title', 'description', 'upload_date', 'id', 'protocol_for_category', 'parent_category')
         read_only_fields = ('author',)
 
-class TextReagentSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = TextReagent
-        fields = ('reagents', )
-
 class ProtocolCommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProtocolComment
@@ -54,12 +49,10 @@ class ProtocolRatingSerializer(serializers.ModelSerializer):
         read_only_fields = ('person', 'score', 'protocol')
 
 class ProtocolSerializer(serializers.HyperlinkedModelSerializer):
-    protocol_step = ProtocolStepSerializer(
+    protocol_steps = ProtocolStepSerializer(
         many = True,
-        required = False)
-    textreagent = TextReagentSerializer(
-        required = False
-    )
+        required = False,
+        source = 'protocol_step')
     comments_for_protocol = ProtocolCommentSerializer(
         many = True,
         read_only=True,
@@ -71,7 +64,7 @@ class ProtocolSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Protocol
-        fields = ('protocol_step', 'title', 'category', 'upload_date', 'description', 'textreagent', 'change_log', 'previous_revision', 'comments_for_protocol', 'ratings_for_protocol', 'id')
+        fields = ('url', 'protocol_steps', 'title', 'category', 'upload_date', 'description', 'materials', 'change_log', 'previous_revision', 'comments_for_protocol', 'ratings_for_protocol', 'id')
         read_only_fields = ('author', 'num_ratings', 'avg_rating', 'first_revision')
 
 
@@ -111,9 +104,7 @@ class ReagentSerializer(serializers.HyperlinkedModelSerializer):
     "title": "First Protocol",
     "category": "1",
     "description": "This is a protocol",
-    "textreagent": {
-        "reagents": "Thing"
-    },
+    "materials": "Thing",
     "change_log": "Initial commit",
     "previous_revision": null
 }

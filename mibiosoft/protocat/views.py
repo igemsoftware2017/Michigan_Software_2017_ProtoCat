@@ -69,10 +69,6 @@ def protocol(request, protocol_id):
 	for next_protocol in next_protocols:
 		print(next_protocol)
 	comments = ProtocolComment.objects.filter(protocol = protocol).order_by('-upload_date')
-	try:
-		text_reagents = TextReagent.objects.get(protocol = protocol)
-	except TextReagent.DoesNotExist:
-		text_reagents = None
 
 	aggregated_reagents = None
 	if (protocol_reagents != None):
@@ -92,7 +88,6 @@ def protocol(request, protocol_id):
 		'protocol_reagents': protocol_reagents,
 		'next_protocols': next_protocols,
 		'comments': comments,
-		'text_reagents': text_reagents,
 		'aggregated_reagents': aggregated_reagents,
 		'current_profile_info': current_profile_info,
 	}
@@ -367,12 +362,6 @@ def upload_branch(request, protocol_id):
 	protocol_steps = ProtocolStep.objects.filter(protocol = protocol).order_by('step_number')
 	protocol_reagents = ReagentForProtocol.objects.filter(protocol = protocol)
 
-	# Get the text-only reagents
-	try:
-		text_reagents = TextReagent.objects.get(protocol = protocol)
-	except TextReagent.DoesNotExist:
-		text_reagents = None
-
 	# Reduce copies of the same reagent into a single one
 	aggregated_reagents = None
 	if (protocol_reagents != None):
@@ -512,7 +501,6 @@ def submit_upload(request):
 
 		protocol.num_steps = num_steps
 
-		protocol.save()
 
 		# get any written-in reagents and save them
 		protocol_rea = ""
@@ -521,8 +509,9 @@ def submit_upload(request):
 		except:
 			pass
 
-		reagents = TextReagent(reagents = protocol_rea, protocol = protocol)
-		reagents.save()
+		protocol.materials = protocol_rea
+
+		protocol.save()
 
 	except Exception as e:
 		print('error2')
