@@ -12,7 +12,7 @@ var single_reagent = {
 	"amount": {{ reagent.amount }},
 	"unit": "{{ reagent.unit }}",
 	"significant_figures": {{ reagent.significant_figures }},
-	"reagent": "{{ reagent.reagent }}",
+	"reagent": "{% if reagent.display_name == None %}{{ reagent.reagent }}{% else %}{{ reagent.display_name }}{% endif %}",
 	"reagent_type": {{ reagent.reagent_type }},
 	"protocol_step_number": {{ reagent.protocol_step_number }},
 	"reagent_id": {{ reagent.reagent.id }},
@@ -34,6 +34,9 @@ steps.push(single_step);
 var reactants;
 var intermediaries;
 var products;
+var display_reactants;
+var display_intermediaries;
+var display_products;
 
 var timer_id = [];
 var last_time = [];
@@ -73,6 +76,11 @@ function get_display_reagent_type(reagents, given_list, type) {
 				if (reagents[j].reagent_id == given_list[i].reagent_id) {
 					if (reagents[j].unit == given_list[i].unit) {
 						given_list[i].amount += reagents[j].amount;
+						if (reagents[j].significant_figures >
+							given_list[i].significant_figures) {
+
+							given_list[i].significant_figures = reagents[j].significant_figures;
+						}
 					}
 				}
 			}
@@ -127,72 +135,46 @@ function update_visual_data() {
 
 
 	reactants = get_list_of_reagent_type(reagents, "1");
-	reactants = get_display_reagent_type(reagents, reactants, "1");
+	display_reactants = get_display_reagent_type(reagents, reactants, "1");
 	intermediaries = get_list_of_reagent_type(reagents, "2");
-	intermediaries = get_display_reagent_type(reagents, intermediaries, "2");
+	display_intermediaries = get_display_reagent_type(reagents, intermediaries, "2");
 	products = get_list_of_reagent_type(reagents, "3");
-	products = get_display_reagent_type(reagents, products, "3");
+	display_products = get_display_reagent_type(reagents, products, "3");
 
 
 	var main_str = "";
-	for (var i in reactants) {
+	for (var i in display_reactants) {
 		var str = ["<tr>"
-		,"<td>",reactants[i].reagent,"</td>"
-		,"<td>",reactants[i].amount," ",reactants[i].unit,"</td>"
-		,"<td>",reactants[i].reagent_id,"</td>"
+		,"<td><div class='input-group'><input type='number' class='form-control reagent_control' value=",display_reactants[i].amount.toPrecision(display_reactants[i].significant_figures),"><div class='input-group-addon'>",reactants[i].unit,"</div>","</div></td>"
+		,"<td><div class='fix-top-margin'>",display_reactants[i].reagent,"</div></td>"
 		,"</tr>"].join("");
 		main_str += str;
 	}
 
-	$('#reactants').children('tr').each(function() {
-		$(this).remove();
-	});
-	$('#reactants').append(main_str);
+	$('#reactants').html(main_str);
 
 	main_str = "";
-	for (var i in intermediaries) {
+	for (var i in display_intermediaries) {
 		var str = ["<tr>"
-		,"<td>",intermediaries[i].reagent,"</td>"
-		,"<td>",intermediaries[i].amount," ",intermediaries[i].unit,"</td>"
-		,"<td>",intermediaries[i].reagent_id,"</td>"
+		,"<td><div class='input-group'><input type='number' class='form-control' value=",display_intermediaries[i].amount.toPrecision(display_intermediaries[i].significant_figures),"><div class='input-group-addon'>",intermediaries[i].unit,"</div>","</div></td>"
+		,"<td class='fix-top-margin'>",display_intermediaries[i].reagent,"</div></td>"
 		,"</tr>"].join("");
 		main_str += str;
 	}
 
-	$('#intermediaries').children('tr').each(function() {
-		$(this).remove();
-	});
-	$('#intermediaries').append(main_str);
+	$('#intermediaries').html(main_str);
 
 	main_str = "";
-	for (var i in products) {
+	for (var i in display_products) {
 		var str = ["<tr>"
-		,"<td>",products[i].reagent,"</td>"
-		,"<td>",products[i].amount," ",products[i].unit,"</td>"
-		,"<td>",products[i].reagent_id,"</td>"
+		,"<td><div class='input-group'><input type='number' class='form-control product_control' value=",display_products[i].amount.toPrecision(display_products[i].significant_figures),"><div class='input-group-addon'>",products[i].unit,"</div>","</div></td>"
+		,"<td><div class='fix-top-margin'>",display_products[i].reagent,"</div></td>"
 		,"</tr>"].join("");
 		main_str += str;
 	}
 
-	$('#products').children('tr').each(function() {
-		$(this).remove();
-	});
-	$('#products').append(main_str);
+	$('#products').html(main_str);
 }
-
-window.onload = function() {
-	update_visual_data();
-	$('.timer').each(function(index) {
-		if (steps[index].time_scaling != 0) {
-			count_to[index + 1] = steps[index].time;
-			time_total[index + 1] = 0;
-			update_element[index + 1] = this;
-			if (count_to[index + 1] != -1) {
-				this.innerHTML = get_time_total(index + 1);
-			}
-		}
-	});
-};
 
 function timer(i) {
 	var new_time = Date.now();
@@ -239,6 +221,18 @@ function get_time_total(i) {
 }
 
 $(document).on('ready', function(){
+	update_visual_data();
+	$('.timer').each(function(index) {
+		if (steps[index].time_scaling != 0) {
+			count_to[index + 1] = steps[index].time;
+			time_total[index + 1] = 0;
+			update_element[index + 1] = this;
+			if (count_to[index + 1] != -1) {
+				this.innerHTML = get_time_total(index + 1);
+			}
+		}
+	});
+
 	var move_size = $('.navbar-default').height() + $('#title_bar').height();
 	$('#sidebar').affix({
 		offset: {
@@ -251,6 +245,8 @@ $(document).on('ready', function(){
 	$('.input-2').rating({
 		{% if not user.is_authenticated%}
 		displayOnly: true,
+		{% elif user_rating != None %}
+		value: {{ user_rating.score }},
 		{% endif %}
 	}).on('rating.change', function(event, value, caption) {
 		$.ajax({
@@ -278,9 +274,16 @@ $(document).on('ready', function(){
 			failure: function(){
 				console.log("it failed")
 			}
-		});
-		$('[name="comment"]').val('');
-	});
+		})
+		.success(function(data) {
+			$('#all_comments>div').prepend(data);
+			$('[name="comment"]').val('');
+		})
+		.fail(function() {
+			alert("An error occured when submitting your comment");
+		});;
+	})
+
 
 	$('.step').hover(
 		function() {
@@ -290,6 +293,62 @@ $(document).on('ready', function(){
 			$(this).animate({ 'zoom': 1 }, 400);
 		}
 	);
+
+	$('#recalc_reactants').on('click', function() {
+		// limiting reagent calc
+	});
+	$('#recalc_products').on('click', function() {
+		// batch calc
+		display_products = JSON.parse(JSON.stringify(display_products))
+
+		$('.product_control').each(function(index) {
+			display_products[index].amount = parseFloat($(this).val());
+		});
+		var variable_list = [];
+		for (var i = 0; i < products.length; i++) {
+			if (products[i].scaling_type < 3) {
+				// when it is constant, subtract the amount
+				for (var j = 0; j < display_products.length; j++) {
+					if (products[j].reagent_id == display_products[i].reagent_id
+						&& products[j].unit == display_products[i].unit) {
+
+						display_products[i].amount -= products[i].amount;
+					}
+				}
+				var copy_of = JSON.parse(JSON.stringify(products[i]));
+				copy_of.amount = 0;
+				variable_list.push(copy_of);
+			}
+			else {
+				variable_list.push(products[i]);
+				console.log(products[i])
+			}
+		}
+		temp_list = get_list_of_reagent_type(variable_list, "3");
+		variable_list = get_display_reagent_type(temp_list, variable_list, "3");
+		console.log(display_products)
+		console.log("----------------")
+		console.log(variable_list)
+		var max_batch = -1;
+		var limiter = -1;
+		var all_constant = true;
+		for (var i = 0; i < variable_list.length; i++) {
+			if (variable_list[i].amount != 0) {
+				all_constant = false;
+				var current_batch = display_products[i].amount / variable_list[i].amount;
+				if (current_batch > max_batch) {
+					max_batch = current_batch;
+					limiter = i;
+				}
+			}
+		}
+		if (max_batch > 0 && !all_constant) {
+			multiply_everything(max_batch);
+		}
+		else {
+			alert("Everything is constant or you don't have enough materials")
+		}
+	});
 });
 
 $(function() {
@@ -327,6 +386,12 @@ function NavbarActivator(moved_item) {
 	}
 }
 
+{% if user_rating != None %}
+$(document).on('ready', function() {
+	$('div.rating').find('.filled-stars').find('.glyphicon').addClass('user-rated');
+	console.log('ran')
+});
+{% endif %}
 </script>
 <style>
 .protocol_title{
@@ -466,10 +531,23 @@ textarea[name=comment] {
 #fork {
 	color: black;
 }
+.fix-top-margin {
+	margin-top: 6px;
+}
+.reagent_header {
+	display: inline-block;
+}
+.apply_changes_btn {
+	margin-top: 2.5px;
+}
+.user-rated {
+	color: red;
+}
+
 </style>
 
 <div id="title_bar" class="row protocol_title">
-	<div class="col-sm-8 col-sm-offset-2 col-xs-12">
+	<div class="col-sm-offset-2 col-sm-10 col-xs-12 col-md-offset-2 col-md-8">
 		<div class="row">
 			<div class="col-sm-8 fix-margin-left">
 				<h1>{{ protocol.title }}</h1>
@@ -496,7 +574,7 @@ textarea[name=comment] {
 				</a>
 				<h5 style="text-align:center;"><a href="/user/{{ protocol.author.id }}/">{{ protocol.author }}</a></h5>
 				<form id="inline-form" method="POST" action="/ratings/" class="center-block" style="margin-top:-15px">
-					<input id="input-2" name="input-2" value="{%if protocol.get_average_ratings == "N/A"%}0{%else%}{{ protocol.get_average_ratings }}{%endif%}" class="rating-loading input-2" data-size="xs" data-step="1" data-show-caption="false" data-show-clear="false">
+					<input id="input-2" name="input-2" value="{% if user_rating == None %}{%if protocol.get_average_ratings == "N/A"%}0{%else%}{{ protocol.get_average_ratings }}{% endif %}{% else %}{{ user_rating.score }}{% endif %}" class="rating-loading input-2" data-size="xs" data-step="1" data-show-caption="false" data-show-clear="false">
 					<input id="id" name='id' type="hidden" value="{{protocol.id}}">
 					{% csrf_token %}
 				</form>
@@ -525,7 +603,7 @@ textarea[name=comment] {
 
 
 
-<div class="col-sm-8 col-xs-12">
+<div class="col-xs-12 col-sm-10 col-md-8">
 	<div class="row">
 		<div id="description-tabs" class="col-sm-12 waypoint">
 			<div class="panel panel-primary">
@@ -545,28 +623,24 @@ textarea[name=comment] {
 						<div id="Reagents" class="tab-pane fade">
 							<div class="row">
 								<div class="col-sm-6 col-xs-12">
-									<h3>Reactants</h3>
+									<h4 class="reagent_header">Reactants</h4>
+									<div class="btn-group inline pull-right apply_changes_btn">
+										<button class="btn" id="recalc_reactants">Apply Reactants</button>
+									</div>
 									<table class="table table-hover">
 										<thead>
-											<tr>
-												<th>Name</th>
-												<th>Amount</th>
-												<th>Reagent ID</th>
-											</tr>
 										</thead>
 										<tbody id="reactants">
 										</tbody>
 									</table>
 								</div>
 								<div class="col-sm-6 col-xs-12">
-									<h3>Products</h3>
+									<h4 class="reagent_header">Products</h4>
+									<div class="btn-group inline pull-right apply_changes_btn">
+										<button class="btn" id="recalc_products">Apply Products</button>
+									</div>
 									<table class="table table-hover">
 										<thead>
-											<tr>
-												<th>Name</th>
-												<th>Amount</th>
-												<th>Reagent ID</th>
-											</tr>
 										</thead>
 										<tbody id="products">
 										</tbody>
@@ -670,25 +744,7 @@ textarea[name=comment] {
 	<div class="row" id="all_comments">
 		<div>
 			{% for comment in comments %}
-			<div class="col-sm-12 comment-div">
-				<div class="row">
-					<div class="col-sm-12">
-						<div class="comment-picture-div">
-							<a href="/user/{{comment.author.id}}/">
-								{% if comment.author.profile_image != "" %}
-								<img src="{{ comment.author.profile_image.url }}" alt="Image not found" class="img-rounded comment-picture"/>
-								{% else %}
-								<img src="http://2014.igem.org/wiki/images/thumb/0/04/ChrisP.jpg/330px-ChrisP.jpg.png" alt="Image not found" class="img-rounded comment-picture"/>
-								{% endif %}
-							</a>
-						</div>
-						<div class="comment-text">
-							<p><a href="/user/{{comment.author.id}}/">{{comment.author}}</a> - {{comment.upload_date}}</p>
-							<p>{{comment.note}}</p>
-						</div>
-					</div>
-				</div>
-			</div>
+			{% include 'repeated_parts/comment.html'%}
 			{% endfor %}
 		</div>
 	</div>

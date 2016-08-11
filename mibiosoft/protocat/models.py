@@ -209,6 +209,7 @@ class ReagentForProtocol(models.Model):
 	number_in_step = models.IntegerField()
 
 	significant_figures = models.IntegerField();
+	display_name = models.TextField(blank = True, null = True)
 
 	# link it to the correct generic reagent
 	reagent = models.ForeignKey(Reagent)
