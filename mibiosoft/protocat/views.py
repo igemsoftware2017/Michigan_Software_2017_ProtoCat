@@ -81,6 +81,12 @@ def protocol(request, protocol_id):
 			if (to_add):
 				aggregated_reagents.append(protocol_reagent)
 
+	try:
+		rating = ProtocolRating.objects.get(person = current_profile_info, protocol = protocol)
+	except:
+		rating = None
+
+
 	context = {
 		'title': protocol.title,
 		'protocol': protocol,
@@ -89,6 +95,7 @@ def protocol(request, protocol_id):
 		'next_protocols': next_protocols,
 		'comments': comments,
 		'aggregated_reagents': aggregated_reagents,
+		'user_rating': rating,
 		'current_profile_info': current_profile_info,
 	}
 	print (len(connection.queries))
@@ -540,8 +547,9 @@ def submit_comment(request):
 	context = {
 		'title': 'ProtoCat',
 		'current_profile_info': current_profile_info,
+		'comment': proto_comment,
 	}
-	return render(request, 'index.html', context)
+	return render(request, 'repeated_parts/comment.html', context)
 
 
 

@@ -245,6 +245,8 @@ $(document).on('ready', function(){
 	$('.input-2').rating({
 		{% if not user.is_authenticated%}
 		displayOnly: true,
+		{% elif user_rating != None %}
+		value: {{ user_rating.score }},
 		{% endif %}
 	}).on('rating.change', function(event, value, caption) {
 		$.ajax({
@@ -272,9 +274,16 @@ $(document).on('ready', function(){
 			failure: function(){
 				console.log("it failed")
 			}
-		});
-		$('[name="comment"]').val('');
-	});
+		})
+		.success(function(data) {
+			$('#all_comments>div').prepend(data);
+			$('[name="comment"]').val('');
+		})
+		.fail(function() {
+			alert("An error occured when submitting your comment");
+		});;
+	})
+
 
 	$('.step').hover(
 		function() {
@@ -377,6 +386,12 @@ function NavbarActivator(moved_item) {
 	}
 }
 
+{% if user_rating != None %}
+$(document).on('ready', function() {
+	$('div.rating').find('.filled-stars').find('.glyphicon').addClass('user-rated');
+	console.log('ran')
+});
+{% endif %}
 </script>
 <style>
 .protocol_title{
@@ -525,6 +540,10 @@ textarea[name=comment] {
 .apply_changes_btn {
 	margin-top: 2.5px;
 }
+.user-rated {
+	color: red;
+}
+
 </style>
 
 <div id="title_bar" class="row protocol_title">
@@ -555,7 +574,7 @@ textarea[name=comment] {
 				</a>
 				<h5 style="text-align:center;"><a href="/user/{{ protocol.author.id }}/">{{ protocol.author }}</a></h5>
 				<form id="inline-form" method="POST" action="/ratings/" class="center-block" style="margin-top:-15px">
-					<input id="input-2" name="input-2" value="{%if protocol.get_average_ratings == "N/A"%}0{%else%}{{ protocol.get_average_ratings }}{%endif%}" class="rating-loading input-2" data-size="xs" data-step="1" data-show-caption="false" data-show-clear="false">
+					<input id="input-2" name="input-2" value="{% if user_rating == None %}{%if protocol.get_average_ratings == "N/A"%}0{%else%}{{ protocol.get_average_ratings }}{% endif %}{% else %}{{ user_rating.score }}{% endif %}" class="rating-loading input-2" data-size="xs" data-step="1" data-show-caption="false" data-show-clear="false">
 					<input id="id" name='id' type="hidden" value="{{protocol.id}}">
 					{% csrf_token %}
 				</form>
@@ -725,25 +744,7 @@ textarea[name=comment] {
 	<div class="row" id="all_comments">
 		<div>
 			{% for comment in comments %}
-			<div class="col-sm-12 comment-div">
-				<div class="row">
-					<div class="col-sm-12">
-						<div class="comment-picture-div">
-							<a href="/user/{{comment.author.id}}/">
-								{% if comment.author.profile_image != "" %}
-								<img src="{{ comment.author.profile_image.url }}" alt="Image not found" class="img-rounded comment-picture"/>
-								{% else %}
-								<img src="http://2014.igem.org/wiki/images/thumb/0/04/ChrisP.jpg/330px-ChrisP.jpg.png" alt="Image not found" class="img-rounded comment-picture"/>
-								{% endif %}
-							</a>
-						</div>
-						<div class="comment-text">
-							<p><a href="/user/{{comment.author.id}}/">{{comment.author}}</a> - {{comment.upload_date}}</p>
-							<p>{{comment.note}}</p>
-						</div>
-					</div>
-				</div>
-			</div>
+			{% include 'repeated_parts/comment.html'%}
 			{% endfor %}
 		</div>
 	</div>
