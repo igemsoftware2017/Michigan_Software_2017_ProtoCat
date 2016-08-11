@@ -4,11 +4,19 @@ from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator
 from datetime import datetime
 from django.conf import settings
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from rest_framework.authtoken.models import Token
 
 '''
 This page is to create python classes, which are then converted in to tables for our database
 So things like, User, Protocol, Reagents, etc.
 '''
+
+@receiver(post_save, sender=settings.AUTH_USER_MODEL)
+def create_auth_token(sender, instance=None, created=False, **kwargs):
+    if created:
+        Token.objects.create(user=instance)
 
 # connected to built in user but allow a picture
 class ProfileInfo(models.Model):
@@ -60,6 +68,7 @@ class Protocol(models.Model):
 	title = models.TextField()
 	author = models.ForeignKey(ProfileInfo, related_name="protocols")
 	description = models.TextField()
+	materials = models.TextField(default = "")
 
 	# Allow the revisionist to describe changes made
 	change_log = models.TextField()
@@ -121,13 +130,6 @@ class Protocol(models.Model):
 			total = total + rating.score
 		count = all_ratings.count()
 		return float(total) / count
-
-# just a text field for the reagents if they don't want to be fancy
-class TextReagent(models.Model):
-	reagents = models.TextField(default = "");
-	protocol = models.OneToOneField(Protocol, related_name="textreagent")
-	def __str__(self):
-		return self.reagents
 
 # the data for each protocol step
 class ProtocolStep(models.Model):
@@ -207,6 +209,7 @@ class ReagentForProtocol(models.Model):
 	number_in_step = models.IntegerField()
 
 	significant_figures = models.IntegerField();
+	display_name = models.TextField(blank = True, null = True)
 
 	# link it to the correct generic reagent
 	reagent = models.ForeignKey(Reagent)

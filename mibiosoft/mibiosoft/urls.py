@@ -18,17 +18,19 @@ from django.contrib import admin
 from django.conf.urls.static import static
 from rest_framework.routers import DefaultRouter
 from protocat import apiviews
+from rest_framework.authtoken import views
 
 router = DefaultRouter()
 router.register(r'protocol', apiviews.ProtocolViewSet)
 router.register(r'profile', apiviews.ProfileViewSet)
-router.register(r'protocolstep', apiviews.ProtocolStepViewSet)
 router.register(r'category', apiviews.CategoryViewSet)
 router.register(r'reagent', apiviews.ReagentViewSet)
 
 urlpatterns = [
     url(r'^api/', include(router.urls)),
+    url(r'^api/token/', views.obtain_auth_token),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    url(r'^docs/', include('rest_framework_docs.urls')),
     url(r'', include('protocat.urls')),
     url(r'^admin/', include(admin.site.urls)),
 ]

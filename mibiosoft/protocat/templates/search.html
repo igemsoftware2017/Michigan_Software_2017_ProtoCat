@@ -78,10 +78,8 @@
 
 $(document).on('ready', function(){
 	$('.input-2').rating({
-		{% if not user.is_authenticated%}
 		displayOnly: true,
-		{% endif %}
-	}).on('rating.change', function(event, value, caption) {
+	});/*.on('rating.change', function(event, value, caption) {
 		console.log($(this).parent().parent().serialize());
 		$.ajax({
 			type: "POST",
@@ -94,7 +92,7 @@ $(document).on('ready', function(){
 				console.log("it failed")
 			}
 		});
-	});
+	});*/
 
 	$('#collapse1').on('shown.bs.collapse', function () {
 		console.log("noticed");
