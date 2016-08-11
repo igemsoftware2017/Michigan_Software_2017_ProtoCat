@@ -195,7 +195,7 @@ function timer(i) {
 			var audio = new Audio('/static/audio/buzz.wav');
 			audio.play();
 		}
-		
+
 	}
 	update_element[i].innerHTML = get_time_total(i);
 }
@@ -291,21 +291,8 @@ $(document).on('ready', function(){
 		})
 		.fail(function() {
 			alert("An error occured when submitting your comment");
-		});;
-	})
-
-
-	/*$('.step').hover(
-		function() {
-			$(this).animate({ 'zoom': 1.2 }, 400);
-		},
-		function() {
-			$(this).animate({ 'zoom': 1 }, 400);
-		}
-<<<<<<< HEAD
-	);*/
-=======
-	);
+		});
+	});
 
 	$('#recalc_reactants').on('click', function() {
 		// limiting reagent calc
@@ -362,7 +349,6 @@ $(document).on('ready', function(){
 			alert("Everything is constant or you don't have enough materials")
 		}
 	});
->>>>>>> 75550d827dd70ef7204f00ce8fa32c31864832f5
 });
 
 $(function() {
