@@ -52,7 +52,7 @@ function prep_everything(textbox_class) {
 	});
 }
 
-new_name = 0;
+new_name = {{ protocol.num_steps }};
 
 function add_step() {
 	var last_element = null;
@@ -192,7 +192,16 @@ $(document).ready(function() {
 	tinymce_byname('description');
 	tinymce_byname('text-reagents');
 	tinymce_byname('change-log');
-	add_step();
+	prep_everything('step');
+	$('.individual-step:visible').find('.step-number').on("focusout", function() {
+		rearrange(parseInt($(this).siblings('input').val()), parseInt($(this).val()), $(this).parent().parent().parent().parent().parent().parent());
+	});
+
+	$('.individual-step:visible').find('.add_step').on('click', add_step);
+
+	// Add onclick handler for removing a step
+	$('.individual-step:visible').find('.remove_step').on('click', delete_step);
+	$('#number_to_check').attr('value', new_name);
 });
 
 // Add transparency for a total of 2 seconds (1 going in, 1 going out)
@@ -247,6 +256,7 @@ $( function() {
 </script>
 
 <style>
+
 .star {
 	margin-left: 1.5px !important;
 	margin-right: 1.5px !important;
@@ -298,6 +308,7 @@ $( function() {
 }
 </style>
 
+<!-- MOVED TO TOP TO AVOID CHROME ERROR WHEN SUBMITTING EMPTY FORM -->
 <div class="col-sm-10 col-sm-offset-1 individual-step" style="display: none;" id="original_step">
 	<div class="row">
 		<div class="col-sm-2">
@@ -305,7 +316,7 @@ $( function() {
 				<div class="col-sm-12">
 					<div class="form-group-lg">
 						<label class="control-label" for="exampleInputName2">Step #</label>
-						<input name="step[number]" type="number" min="1" step="1" class="form-control input-sm step-number" name="step-number" value="0">
+						<input name="step[number]" type="number" min="1" step="1" class="form-control input-sm step-number" value="0" required="no">
 						<input class="previous-number" type="hidden">
 					</div>
 				</div>
@@ -366,9 +377,9 @@ $( function() {
 		<div class="well well-sm">
 			<div class="row">
 				<div class="col-sm-12">
-					<input type="text" class="form-control main-title input-lg" name="title" placeholder="Title"/>
-					<input type="text" class="form-control" name="category" placeholder="Category"/>
-					<input type="hidden" name="BranchFrom" value="-1">
+					<input type="text" class="form-control main-title input-lg" name="title" placeholder="Title" value="{{ protocol.title }}"/>
+					<input type="text" class="form-control" name="category" placeholder="Category" value="{{ protocol.category }}"/>
+					<input type="hidden" name="BranchFrom" value="{{ protocol.id }}">
 				</div>
 			</div>
 		</div>
@@ -386,7 +397,7 @@ $( function() {
 			<div class="panel-body">
 				<div class="tab-content">
 					<div id="Description" class="tab-pane fade in active">
-						<textarea name="description"></textarea>
+						<textarea name="description">{{ protocol.description }}</textarea>
 					</div>
 					<div id="Reagents" class="tab-pane fade">
 						<textarea name="text-reagents"></textarea>
@@ -399,8 +410,73 @@ $( function() {
 		</div>
 	</div>
 
+
 	<div id="step_holder">
 		<div class="individual-step"></div>
+		{% for protocol_step in protocol_steps %}
+		<div class="col-sm-10 col-sm-offset-1 individual-step" id="step{{ protocol_step.step_number|add:"-1"}}">
+			<div class="row">
+				<div class="col-sm-2">
+					<div class="row">
+						<div class="col-sm-12">
+							<div class="form-group-lg">
+								<label class="control-label" for="exampleInputName2">Step #</label>
+								<input name="step{{protocol_step.step_number}}[number]" type="number" min="1" step="1" class="form-control input-sm step-number" value="{{ protocol_step.step_number }}">
+								<input class="previous-number" type="hidden" value="{{ protocol_step.step_number }}">
+							</div>
+						</div>
+						<div class="col-xs-12" style="margin-top:15px;">
+							<button type="button" class="btn btn-primary btn-block add_step">Add step</button>
+						</div>
+						<div class="col-xs-12" style="margin-top:15px;margin-bottom:15px;">
+							<button type="button" class="btn btn-warning btn-block remove_step">Delete step</button>
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-10">
+					<div class="panel">
+						<div class="panel-group">
+							<div class="panel panel-default">
+								<div class="panel-heading make-padding-work">
+									<div class="form-group form-group-lg">
+										<input class="form-control" name="step{{protocol_step.step_number}}[title]" type="text" class="title" placeholder="Step Title">
+									</div>
+									<div class="form-group form-group-sm" style="margin-bottom:0px;">
+										<input class="form-control input-sm" name="step{{protocol_step.step_number}}[time]" min="0" step="1" type="number" class="time" placeholder="Amount of time in seconds (optional)" {% if protocol_step.time != -1%}value="{{protocol_step.time}}"{% endif %}>
+									</div>
+								</div>
+								<div class="panel-body" style="padding-left:0px;padding-right:0px;">
+									<div class="panel-heading">
+										<div class="row">
+											<div class="col-sm-2">
+												<label for="inputEmail3" class="control-label" style="width:100%;">Additional Information</label>
+											</div>
+											<div class="col-sm-10 col-xs-12">
+												<textarea class="step" name="step{{protocol_step.step_number}}[description]">{{ protocol_step.action|safe }}</textarea>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="panel-body panel-danger" style="padding-left:0px;padding-right:0px;background-color:#f2dede;">
+									<!-- Want to get rid of defualt border radius -->
+									<div class="panel-heading">
+										<div class="row">
+											<div class="col-sm-2">
+												<label for="inputEmail3" class="control-label" style="width:100%;">Warning</label>
+											</div>
+											<div class="col-sm-10 col-xs-12">
+												<textarea class="step" name="step{{protocol_step.step_number}}[warning]" rows="5" placeholder="Warning">{{ protocol_step.warning|safe }}</textarea>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		{% endfor %}
 	</div>
 
 	{% csrf_token %}

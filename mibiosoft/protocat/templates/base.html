@@ -10,8 +10,11 @@
 
 		<!-- for the favicon -->
 		<link rel="shortcut icon" href="/static/images/protocat.ico" />
-		<script src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
+		<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
 		<script src="https://code.jquery.com/jquery-migrate-1.4.1.min.js"></script>
+		<script src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js" integrity="sha256-eGE6blurk5sHj+rmkfsGYeKyZx3M4bG+ZlFyA7Kns7E=" crossorigin="anonymous"></script>
+		<link rel="stylesheet" href="//code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+
 		<script src="//cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 		<script src="https://cdn.tinymce.com/4/tinymce.min.js"></script>
 		<link rel="stylesheet" type="text/css" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
@@ -130,10 +133,6 @@
 	#logo {
 		margin: 10px;
 	}
-	.no-left-margin {
-		margin-left: 0px;
-		padding-left: 0px;
-	}
 	.footer-container {
 		margin-top: 15px;
 		margin-bottom: 15px;
@@ -158,11 +157,8 @@
 					<a href="/" class="pull-left"><img src="/static/images/protocat.png" height=30 width=30 id="logo"/></a>
 					<!-- TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO -->
 					<!--                                                      See if I can get rid of double logo                                                         -->
-					<span class="hidden-xs">
+					<span>
 						<a class="navbar-brand" href="/"><b id="title">ProtoCat</b></a>
-					</span>
-					<span class="visible-xs">
-						<a class="navbar-brand no-left-margin" href="/"><b id="title">ProtoCat</b></a>
 					</span>
 				</div>
 				<div id="navbar" class="navbar-collapse collapse">
@@ -171,7 +167,7 @@
 							<!-- add search form -->
 							<form class="navbar-form navbar-right zero-side-margins" role="search" method="POST" action="/search/">
 								<div class="input-group">
-									<input type="text" name="text_filter" class="form-control" placeholder="Search ProtoCat">
+									<input type="text" name="text_filter" class="form-control" placeholder="Search ProtoCat" autocomplete="off">
 									<span class="input-group-btn">
 										<button type="submit" class="btn btn-default">
 											<span class="glyphicon glyphicon-search"></span>

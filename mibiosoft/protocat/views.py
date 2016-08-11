@@ -8,6 +8,7 @@ import datetime
 from django.utils import timezone
 from django.core.files import File
 from django.conf import settings
+from django.views.decorators.cache import never_cache
 
 # Create your views here.
 def index(request):
@@ -68,10 +69,6 @@ def protocol(request, protocol_id):
 	for next_protocol in next_protocols:
 		print(next_protocol)
 	comments = ProtocolComment.objects.filter(protocol = protocol).order_by('-upload_date')
-	try:
-		text_reagents = TextReagent.objects.get(protocol = protocol)
-	except TextReagent.DoesNotExist:
-		text_reagents = None
 
 	aggregated_reagents = None
 	if (protocol_reagents != None):
@@ -81,9 +78,14 @@ def protocol(request, protocol_id):
 			for aggregated_reagent in aggregated_reagents:
 				if (protocol_reagent.reagent_type == 1 and aggregated_reagent.reagent == protocol_reagent.reagent and aggregated_reagent.unit == protocol_reagent.unit):
 					to_add = False
-
 			if (to_add):
 				aggregated_reagents.append(protocol_reagent)
+
+	try:
+		rating = ProtocolRating.objects.get(person = current_profile_info, protocol = protocol)
+	except:
+		rating = None
+
 
 	context = {
 		'title': protocol.title,
@@ -92,8 +94,8 @@ def protocol(request, protocol_id):
 		'protocol_reagents': protocol_reagents,
 		'next_protocols': next_protocols,
 		'comments': comments,
-		'text_reagents': text_reagents,
 		'aggregated_reagents': aggregated_reagents,
+		'user_rating': rating,
 		'current_profile_info': current_profile_info,
 	}
 	print (len(connection.queries))
@@ -113,9 +115,6 @@ def user(request, user_id):
 	user_created_protocols = Protocol.objects.filter(author = user).order_by('-upload_date')
 	user_created_notes = ProtocolComment.objects.filter(author = user).order_by('-upload_date')
 	user_rated_protocols = ProtocolRating.objects.filter(person = user).order_by('-score')
-
-	data = list(user_created_protocols) + list(user_created_notes)
-	sorted_data = sorted(data, key=lambda obj: obj.upload_date, reverse=True)
 
 	title = 'ProtoCat - ' + str(user.user)
 
@@ -156,7 +155,9 @@ def submit_sign_up(request):
 		current_profile_info = None
 	username = request.POST['username']
 	password = request.POST['password']
-	user = User.objects.create_user(username, 'lennon@thebeatles.com', password)
+	email = request.POST['email']
+	user = User.objects.create_user(username, email, password)
+	user = authenticate(username = username, password = password)
 	profile_info = ProfileInfo(user = user)
 	profile_info.save()
 	print(profile_info.id)
@@ -276,7 +277,7 @@ def search(request):
 		# try to make timezone aware
 		results = results.exclude(upload_date__lt=my_datetime)
 	except:
-		print("Time/date error")
+		print("Time/date ")
 		pass
 
 	try:
@@ -358,17 +359,30 @@ def submit_rating(request):
 	}
 	return render(request, 'index.html', context)
 
-
 def upload_default(request):
 	current_data = None
 	return upload_page(request, current_data)
 
 def upload_branch(request, protocol_id):
-	#current_parent = Category.objects.get(id = category_id)
-	current_data = None
-	return upload_page(request, current_data)
+	categories = Category.objects.all()
+	protocol = Protocol.objects.get(id = protocol_id)
 
-def upload_page(request, current_data):
+	protocol_steps = ProtocolStep.objects.filter(protocol = protocol).order_by('step_number')
+	protocol_reagents = ReagentForProtocol.objects.filter(protocol = protocol)
+
+	# Reduce copies of the same reagent into a single one
+	aggregated_reagents = None
+	if (protocol_reagents != None):
+		aggregated_reagents = list(protocol_reagents[:1])
+		for protocol_reagent in protocol_reagents:
+			to_add = True
+			for aggregated_reagent in aggregated_reagents:
+				if (protocol_reagent.reagent_type == 1 and aggregated_reagent.reagent == protocol_reagent.reagent and aggregated_reagent.unit == protocol_reagent.unit):
+					to_add = False
+			if (to_add):
+				aggregated_reagents.append(protocol_reagent)
+
+
 	current_profile_info = request.user
 	if (not current_profile_info.is_anonymous()):
 		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
@@ -379,6 +393,30 @@ def upload_page(request, current_data):
 	context = {
 		'title': 'ProtoCat - Browse Categories',
 		'current_profile_info': current_profile_info,
+		'protocol': protocol,
+		'protocol_steps': protocol_steps,
+		'categories': categories,
+	}
+	print(len(connection.queries))
+	if (current_profile_info == None):
+		return HttpResponseRedirect('/')
+	else:
+		return render(request, 'upload_protocol_branch.html', context)
+
+def upload_page(request, current_data):
+	current_profile_info = request.user
+	if (not current_profile_info.is_anonymous()):
+		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
+		print(current_profile_info)
+	else:
+		current_profile_info = None
+
+	categories = Category.objects.all()
+
+	context = {
+		'title': 'ProtoCat - Browse Categories',
+		'current_profile_info': current_profile_info,
+		'categories': categories,
 	}
 	print(len(connection.queries))
 	if (current_profile_info == None):
@@ -395,71 +433,98 @@ def submit_upload(request):
 		current_profile_info = None
 
 	try:
+		# get main data for the Protocol model
 		protocol_title = request.POST['title']
 		protocol_desc = request.POST['description']
 		protocol_changes = request.POST['change-log']
 
+		protocol = Protocol(change_log = protocol_changes, title = protocol_title, description = protocol_desc, author = current_profile_info)
+
 		protocol_cat = ""
-		protocol_rea = ""
-
 		try:
+			# get category and associate it with protocol
 			protocol_cat = request.POST['category']
+			cat = Category.objects.get(title = protocol_cat)
+			protocol.category = cat
 		except:
-			protocol_cat = ""
+			pass
 
+		# associate new protocol with previous revision if necessary
+		try:
+			previous_protocol_id = request.POST['BranchFrom']
+
+			if (previous_protocol_id != -1):
+				# set up previous revisions and first revision for new protocol
+				prev_protocol = Protocol.objects.get(id = previous_protocol_id)
+				protocol.previous_revision = prev_protocol
+				if (prev_protocol.first_revision != None):
+					protocol.first_revision = prev_protocol.first_revision
+				else:
+					protocol.first_revision = prev_protocol
+		except:
+			pass
+		protocol.save()
+
+
+		# save the steps now
+		num_steps = 0
+
+		# go over each available step
+		number_to_check = int(request.POST['number_to_check'])
+		for x in range(0, number_to_check + 1):
+			try:
+				prefix = 'step' + str(x)
+				number = int(request.POST[prefix + '[number]'])
+				description = request.POST[prefix + '[description]']
+
+				time = 0
+				warning = ""
+				title = ""
+
+				# try to pick up each individual part of each step
+				try:
+					warning = request.POST[prefix + '[warning]']
+					print('found warning')
+				except:
+					warning = ""
+
+				try:
+					time = int(request.POST[prefix + '[time]'])
+				except:
+					time = -1
+				print(warning)
+				ps = ProtocolStep(action = description, warning = warning, step_number = number, time = time, protocol = protocol)
+				try:
+					title = request.POST[prefix + '[title]']
+					ps.title = title
+				except:
+					pass
+
+				ps.save()
+				num_steps = num_steps + 1
+			except:
+				# Means that the name doesn't exist
+				print('error1')
+				pass
+
+		protocol.num_steps = num_steps
+
+
+		# get any written-in reagents and save them
+		protocol_rea = ""
 		try:
 			protocol_rea = request.POST['text-reagents']
 		except:
-			protocol_rea = ""
-
-		protocol = Protocol(change_log = protocol_changes, title = protocol_title, description = protocol_desc, author = current_profile_info)
-		protocol.save()
-		reagents = TextReagent(reagents = protocol_rea, protocol = protocol)
-		reagents.save()
-
-		num_steps = 0
-		try:
-			number_to_check = int(request.POST['number_to_check'])
-			for x in range(0, number_to_check):
-				try:
-					prefix = 'step' + str(x)
-					number = int(request.POST[prefix + '[number]'])
-					description = request.POST[prefix + '[description]']
-
-					time = 0
-					warning = ""
-					title = ""
-
-					try:
-						warning = request.POST[prefix + '[warning]']
-						print('found warning')
-					except:
-						warning = ""
-					try:
-						title = request.POST[prefix + '[title]']
-					except:
-						title = ""
-					try:
-						time = int(request.POST[prefix + '[time]'])
-					except:
-						time = -1
-					print(warning)
-					ps = ProtocolStep(action = description, warning = warning, step_number = number, time = time, protocol = protocol)
-					ps.save()
-					num_steps = num_steps + 1
-				except:
-					print('error1')
-					pass
-		except:
-			print('error2')
 			pass
-		protocol.num_steps = num_steps
+
+		protocol.materials = protocol_rea
+
 		protocol.save()
-	except:
-		print('error3')
+
+	except Exception as e:
+		print('error2')
+		print(e)
 		pass
-
-
 
 	context = {
 		'title': 'ProtoCat - Submit Upload',
@@ -483,8 +548,9 @@ def submit_comment(request):
 	context = {
 		'title': 'ProtoCat',
 		'current_profile_info': current_profile_info,
+		'comment': proto_comment,
 	}
-	return render(request, 'index.html', context)
+	return render(request, 'repeated_parts/comment.html', context)
 
 
 
@@ -502,16 +568,38 @@ def update_profile(request):
 		if (current_profile_info == user):
 			about = ""
 			website = ""
+			email = ""
 			size = int(request.POST['size'])
 			if (size == 1):
-				about = request.POST['about1']
-				website = request.POST['website1']
+				try:
+					about = request.POST['about1']
+				except:
+					pass
+				try:
+					website = request.POST['website1']
+				except:
+					pass
+				try:
+					email = request.POST['email1']
+				except:
+					pass
 			elif (size == 2):
-				about = request.POST['about2']
-				website = request.POST['website2']
+				try:
+					about = request.POST['about2']
+				except:
+					pass
+				try:
+					website = request.POST['website2']
+				except:
+					pass
+				try:
+					email = request.POST['email2']
+				except:
+					pass
 
 			user.about = about
 			user.website = website
+			user.user.email = email
 
 			try:
 				picture = request.FILES['picture']
@@ -521,10 +609,13 @@ def update_profile(request):
 				destination.close()
 				user.profile_image.save(picture.name, File(open(settings.MEDIA_ROOT + picture.name, "rb")))
 			except:
-				user.save()
+				pass
+			user.save()
+			user.user.save()
 			print("Done!")
 	except Exception as inst:
 		print(inst)
+		print("Update didn't work")
 		pass
 
 	context = {

@@ -4,11 +4,19 @@ from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator
 from datetime import datetime
 from django.conf import settings
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from rest_framework.authtoken.models import Token
 
 '''
 This page is to create python classes, which are then converted in to tables for our database
 So things like, User, Protocol, Reagents, etc.
 '''
+
+@receiver(post_save, sender=settings.AUTH_USER_MODEL)
+def create_auth_token(sender, instance=None, created=False, **kwargs):
+    if created:
+        Token.objects.create(user=instance)
 
 # connected to built in user but allow a picture
 class ProfileInfo(models.Model):
@@ -46,7 +54,7 @@ class Category(models.Model):
 class Reagent(models.Model):
 	name = models.TextField()
 	smiles_format = models.TextField(blank = True, null = True)
-	picture = models.FileField(blank = True, null = True)
+	picture = models.ImageField(blank = True, null = True, upload_to = "media")
 	website = models.URLField(blank = True, null = True)
 
 	def __str__(self):
@@ -58,14 +66,15 @@ class Reagent(models.Model):
 # has links to all the important parts of the protocol
 class Protocol(models.Model):
 	title = models.TextField()
-	author = models.ForeignKey(ProfileInfo)
+	author = models.ForeignKey(ProfileInfo, related_name="protocols")
 	description = models.TextField()
+	materials = models.TextField(default = "")
 
 	# Allow the revisionist to describe changes made
 	change_log = models.TextField()
 
 	# many protocols to one category
-	category = models.ForeignKey(Category, default = 1)
+	category = models.ForeignKey(Category, default = 1, related_name="protocol_for_category")
 
 	# True if the author want dynamic scaling of products and reactants
 	scaleable = models.BooleanField(default = False)
@@ -77,7 +86,7 @@ class Protocol(models.Model):
 
 	avg_rating = models.DecimalField(default = -1, max_digits = 50, decimal_places = 25)
 
-	num_steps = models.IntegerField(default = 3, validators=[MinValueValidator(1)])
+	num_steps = models.IntegerField(default = 0, validators=[MinValueValidator(1)])
 
 	# many branching protocols to one parent protocol
 	previous_revision = models.ForeignKey('self', related_name='previous_revision1', blank = True, null = True)
@@ -122,15 +131,9 @@ class Protocol(models.Model):
 		count = all_ratings.count()
 		return float(total) / count
 
-# just a text field for the reagents if they don't want to be fancy
-class TextReagent(models.Model):
-	reagents = models.TextField(default = "");
-	protocol = models.OneToOneField(Protocol)
-	def __str__(self):
-		return self.reagents
-
 # the data for each protocol step
 class ProtocolStep(models.Model):
+	title = models.TextField(default = "")
 	action = models.TextField()
 
 	# 2 denotes isConstant, and 3 denotes isLinear for
@@ -146,7 +149,7 @@ class ProtocolStep(models.Model):
 	time = models.IntegerField(default = -1)
 
 	step_number = models.IntegerField()
-	protocol = models.ForeignKey(Protocol)
+	protocol = models.ForeignKey(Protocol, related_name="protocol_step")
 	warning = models.TextField(default = "")
 
 	def __str__(self):
@@ -206,6 +209,7 @@ class ReagentForProtocol(models.Model):
 	number_in_step = models.IntegerField()
 
 	significant_figures = models.IntegerField();
+	display_name = models.TextField(blank = True, null = True)
 
 	# link it to the correct generic reagent
 	reagent = models.ForeignKey(Reagent)
@@ -237,12 +241,12 @@ class ProtocolRating(models.Model):
 	# need validator for only one rating for each person-protocol pairs
 	person = models.ForeignKey(ProfileInfo)
 	score = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
-	protocol = models.ForeignKey(Protocol)
+	protocol = models.ForeignKey(Protocol, related_name="ratings_for_protocol")
 
 # allow for each user to write their own private notes on each protocol step
 class ProtocolComment(models.Model):
 	author = models.ForeignKey(ProfileInfo)
-	protocol = models.ForeignKey(Protocol)
+	protocol = models.ForeignKey(Protocol, related_name="comments_for_protocol")
 	upload_date = models.DateTimeField(auto_now_add = True)
 	note = models.TextField()
 
