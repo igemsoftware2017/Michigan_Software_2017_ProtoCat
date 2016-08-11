@@ -204,6 +204,16 @@ function timer(i) {
 		time_total[i] = count_to[i] * 1000;
 		running[i] = false;
 		// SOUND ALARM HERE
+		var isIE = /*@cc_on!@*/false || !!document.documentMode;
+		var isEdge = !isIE && !!window.StyleMedia;
+		if(isIE || isEdge){
+			var audio = new Audio('/static/audio/buzz.aac');
+			audio.play();
+		} else {
+			var audio = new Audio('/static/audio/buzz.wav');
+			audio.play();
+		}
+		
 	}
 	update_element[i].innerHTML = get_time_total(i);
 }
@@ -282,14 +292,14 @@ $(document).on('ready', function(){
 		$('[name="comment"]').val('');
 	});
 
-	$('.step').hover(
+	/*$('.step').hover(
 		function() {
 			$(this).animate({ 'zoom': 1.2 }, 400);
 		},
 		function() {
 			$(this).animate({ 'zoom': 1 }, 400);
 		}
-	);
+	);*/
 });
 
 $(function() {
@@ -531,7 +541,7 @@ textarea[name=comment] {
 			<div class="panel panel-primary">
 				<ul class="nav nav-tabs">
 					<li class="active"><a data-toggle="tab" href="#Description">Description</a></li>
-					<li><a data-toggle="tab" href="#Reagents">Reagents</a></li>
+					<li><a data-toggle="tab" href="#Reagents">Materials</a></li>
 					<li><a data-toggle="tab" href="#Changelog">Change log</a></li>
 				</ul>
 
