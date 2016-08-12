@@ -26,22 +26,46 @@ tr:hover{
 </div>
 
 <div class="container">	
-		<div class="row">
-			{% for category in categories %}
+	<div class="row">
+		{% for category in categories %}
 			<div onclick="location.href='/browse/{{ category.id }}/'" class="col-xs-4">
 				<div class="panel panel-default">
 					<div class="panel-heading">
 					<center><strong>
 					<a href="/browse/{{ category.id }}/">{{ category.title }}</a>
 					</center></strong>
-					</div>
-					<div class="panel-body">
-						{{ category.description }}
+							{{ category.description }}
 					</div>
 				</div>
 			</div>
 			{% endfor %}
 		</div>
+</div>
+
+<div class="col-md-12">
+	{% for protocol in protocols %}
+		<div onclick="location.href='/protocol/{{ protocol.id }}/'">
+			<div class="panel panel-default">
+				<div class-"panel-heading">
+					<h3><center><strong>{{ protocol.title }}</strong></center></h3>
+					<h5><center>{{ protocol.author }}</center></h5>
+					<div class="panel-body">
+						<div class="container-fluid">
+							<div class="row">
+							<!-- I need these to stack next to eachother! -->
+								<div class="col-xs-12 col-sm-6 col-md-8">
+									{{ protocol.description }}
+								</div>
+								<div class="col-xs-6 col-md-4">
+									{{ protocol.upload_date }}
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	{% endfor %}
 </div>
 
 <div class="col-md-12" >
@@ -58,7 +82,7 @@ tr:hover{
 				</tr>
 			</thead>
 			<tbody>
-				{% for protocol in protocols %}
+					{% for protocol in protocols %}
 				<tr onclick="location.href='/protocol/{{ protocol.id }}/'">
 					<td><a href="/protocol/{{ protocol.id }}/">{{ protocol.title }}</a></td>
 					<td>{{ protocol.author }} but does it work?</td>
