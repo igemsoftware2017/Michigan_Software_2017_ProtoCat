@@ -25,20 +25,20 @@ tr:hover{
     <div class="panel"><strong><center>Categories</center></strong></div>
 </div>
 
-<div class="container">	
-    <div class="row">
-        {% for category in categories %}
-            <div onclick="location.href='/browse/{{ category.id }}/'" class="col-xs-4">
-                <div class="panel panel-default">
-	            <div class="panel-heading">
-		        <center><strong>
-                            <a href="/browse/{{ category.id }}/">{{ category.title }}</a>
-                        </center></strong>
-		        {{ category.description }}
-		    </div>
-                </div>
+<div class="col-md-12">
+    <div class="container">
+    {% for category in categories %}
+        <div onclick="location.href='/browse/{{ category.id }}/'" class="col-xs-4">
+            <div class="panel panel-default">
+	        <div class="panel-heading">
+		    <center><strong>
+                        <a href="/browse/{{ category.id }}/">{{ category.title }}</a>
+                    </center></strong>
+		    {{ category.description }}
+		</div>
             </div>
-	{% endfor %}
+        </div>
+    {% endfor %}
     </div>
 </div>
 
