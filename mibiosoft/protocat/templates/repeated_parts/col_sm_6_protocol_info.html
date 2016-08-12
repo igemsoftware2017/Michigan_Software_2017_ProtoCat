@@ -2,17 +2,34 @@
 .description {
 	color: #777!important;
 }
+
+.description > p{
+	<!-- white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis; -->	
+	overflow: hidden;
+	text-overflow: ellipsis;
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2; <!-- number of lines to show -->
+}
+
+.title{
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
 </style>
 
 <div class="col-sm-6">
 	<div class="well well-sm protocol_div" onclick="location.href='/protocol/{{ protocol.id }}/'">
 		<div class="row">
 			<div class="col-sm-7 fix-margin-left">
-				<h3>{{ protocol.title }}</h3>
-				<h5 class="visible-xs">Uploaded by <a href="/user/{{ protocol.author.id }}/">{{ protocol.author }}</a></h5>
+				<h3 class = "title">{{ protocol.title }}</h3>
+				<h5 class="visible-xs"> Uploaded by <a href="/user/{{ protocol.author.id }}/">{{ protocol.author }}</a></h5>
 				<h5>Uploaded on {{ protocol.upload_date|date:'m/d/Y P' }}</h5>
 				{% if protocol.get_average_ratings == "N/A" %}
-				<h5 class="visible-xs">Be the first to rate this protocol</h5>
+				<h5 class="visible-xs">Be the first to rate this protocol </h5>
 				{% else %}
 				<form role="search" method="POST" action="/ratings/" class="center-block left-side-ratings form-inline visible-xs">
 					<input id="input-2" name="input-2" value="{{ protocol.get_average_ratings }}" class="rating-loading input-2"data-size="xs" data-display-only="true">
@@ -21,13 +38,13 @@
 				</form>
 				{% endif %}
 				<h5>Category: <a href="/browse/{{ protocol.category.id }}/">{{ protocol.category }}</a></h5>
-				<div class="text-muted max-lines description">{{ protocol.description|safe }}</div>
+				<div class="text-muted max-lines description"> {{ protocol.description|safe }} </div>
 			</div>
 			<div class="col-sm-4 hidden-xs protocol-author-picture fix-margin-top pull-right">
 				{% if protocol.author.profile_image != "" %}
 				<img src="{{ protocol.author.profile_image.url }}" width=75 height=75 alt="Image not found" class="img-circle center-block"/>
 				{% else %}
-				<img src="http://2014.igem.org/wiki/images/thumb/0/04/ChrisP.jpg/330px-ChrisP.jpg.png" width=45 height=45 alt="Image not found" class="img-rounded"/>
+				<img src="http://2014.igem.org/wiki/images/thumb/0/04/ChrisP.jpg/330px-ChrisP.jpg.png" width=75 height=75 alt="Image not found" class="img-circle center-block"/>
 				{% endif %}
 				<h5 style="text-align:center;"><a href="/user/{{ protocol.author.id }}/">{{ protocol.author }}</a></h5>
 				{% if protocol.get_average_ratings == "N/A" %}

@@ -149,13 +149,13 @@ $(function() {
 										<label for="formGroupExampleInput">Number of ratings between:</label>
 										<div class="row">
 											<div class="col-xs-5" style="padding-right:0px">
-												<input type="number" class="form-control" name="min-num-ratings" placeholder="0" style="text-align:center;">
+												<input type="number" class="form-control" name="min-num-ratings" min="0" placeholder="0" style="text-align:center;">
 											</div>
 											<div class="col-xs-2" style="text-align:center;padding-top:7px;padding-left:0px;padding-right:0px;">
 												and
 											</div>
 											<div class="col-xs-5" style="padding-left:0px">
-												<input type="number" class="form-control" name="max-num-ratings" placeholder="10" style="text-align:center;">
+												<input type="number" class="form-control" name="max-num-ratings" min="0"  placeholder="10" style="text-align:center;">
 											</div>
 										</div>
 									</fieldset>
@@ -165,13 +165,13 @@ $(function() {
 										<label for="formGroupExampleInput2">Average rating between:</label>
 										<div class="row">
 											<div class="col-xs-5" style="padding-right:0px">
-												<input type="number" class="form-control" name="min-avg-ratings" placeholder="1" style="text-align:center;">
+												<input type="number" class="form-control" name="min-avg-ratings" min="0" placeholder="1" style="text-align:center;">
 											</div>
 											<div class="col-xs-2" style="text-align:center;padding-top:7px;padding-left:0px;padding-right:0px;">
 												and
 											</div>
 											<div class="col-xs-5" style="padding-left:0px">
-												<input type="number" class="form-control" name="max-avg-ratings" placeholder="5" style="text-align:center;">
+												<input type="number" class="form-control" name="max-avg-ratings" min="0" placeholder="5" style="text-align:center;">
 											</div>
 										</div>
 									</fieldset>
@@ -248,7 +248,7 @@ $(function() {
 								</div>
 								{% csrf_token %}
 								<div class="col-xs-12 col-sm-8 col-sm-offset-2 filt_btn">
-									<button type="submit" class="btn btn-primary btn-block">Apply Filters (DO NOT CLICK)</button>
+									<button type="submit" class="btn btn-primary btn-block">Apply Filters </button>
 								</div>
 							</div>
 						</form>
