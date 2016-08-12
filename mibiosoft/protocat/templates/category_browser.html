@@ -22,28 +22,26 @@ tr:hover{
 </div>
 
 <div class="col-md-12">
-	<div class="panel panel-primary">
-		<div class="panel-heading">Category List</div>
-		<table class="table table-hover">
-			<thead>
-				<tr>
-					<th>Title</th>
-					<th>Author</th>
-					<th>Description</th>
-				</tr>
-			</thead>
-			<tbody>
-				{% for category in categories %}
-				<!-- make the rows of data all clickable -->
-				<tr onclick="location.href='/browse/{{ category.id }}/'">
-					<td><a href="/browse/{{ category.id }}/">{{ category.title }}</a></td>
-					<td>{{ category.author }}</td>
-					<td>{{ category.description }}</td>
-				</tr>
-				{% endfor %}
-			</tbody>
-		</table>
-	</div>
+	<div class="panel"><strong><center>Categories</center></strong></div>
+</div>
+
+<div class="container">	
+		<div class="row">
+			{% for category in categories %}
+			<div onclick="location.href='/browse/{{ category.id }}/'" class="col-xs-4">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+					<center><strong>
+					<a href="/browse/{{ category.id }}/">{{ category.title }}</a>
+					</center></strong>
+					</div>
+					<div class="panel-body">
+						{{ category.description }}
+					</div>
+				</div>
+			</div>
+			{% endfor %}
+		</div>
 </div>
 
 <div class="col-md-12" >
@@ -63,7 +61,7 @@ tr:hover{
 				{% for protocol in protocols %}
 				<tr onclick="location.href='/protocol/{{ protocol.id }}/'">
 					<td><a href="/protocol/{{ protocol.id }}/">{{ protocol.title }}</a></td>
-					<td>{{ protocol.author }}</td>
+					<td>{{ protocol.author }} but does it work?</td>
 					<td>{{ protocol.description }}</td>
 					<td>{{ protocol.upload_date }}</td>
 					<td>{{ protocol.get_average_ratings }}</td>
@@ -73,47 +71,4 @@ tr:hover{
 		</table>
 	</div>
 </div>
-
-<table class="table table-hover">
-	<thead></thead>
-	<tbody>
-		<td>
-			{% for category in categories %}
-			<div class="panel panel-primary col-md-4">
-				<div onclick="location.href='/browse/{{ category.id }}'">
-				<td><a href="/browse/{{ category.id }}/">{{ category.title }}</a></td>
-				<td>{{ category.author }}</td>
-				<td>{{ category.description }}</td>
-				</div>
-			</div>
-			{% endfor %}
-		</td>
-	</tbody>
-</table>
-
-<table class="table table-hover">
-	<thead></thead>
-	<tbody>
-		<td>
-			<div class="panel panel-primary col-md-2">
-			How does this look?
-			</div>
-			<div class="panel panel-primary col-md-2">
-			How does this look?
-			</div>
-			<div class="panel panel-primary col-md-2">
-			How does this look?
-			</div>
-			<div class="panel panel-primary col-md-2">
-			How does this look?
-			</div>
-			<div class="panel panel-primary col-md-2">
-			How does this look?
-			</div>
-			<div class="panel panel-primary col-md-2">
-			How does this look?
-			</div>
-		</td>
-	</tbody>
-</table>
 {% endblock %}
