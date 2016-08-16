@@ -9,6 +9,7 @@ from django.utils import timezone
 from django.core.files import File
 from django.conf import settings
 from django.views.decorators.cache import never_cache
+import bleach
 
 # Create your views here.
 def index(request):
@@ -434,16 +435,16 @@ def submit_upload(request):
 
 	try:
 		# get main data for the Protocol model
-		protocol_title = bleach(request.POST['title'])
-		protocol_desc = bleach(request.POST['description'])
-		protocol_changes = bleach(request.POST['change-log'])
+		protocol_title = bleach.clean(request.POST['title'])
+		protocol_desc = bleach.clean(request.POST['description'])
+		protocol_changes = bleach.clean(request.POST['change-log'])
 
 		protocol = Protocol(change_log = protocol_changes, title = protocol_title, description = protocol_desc, author = current_profile_info)
 
 		protocol_cat = ""
 		try:
 			# get category and associate it with protocol
-			protocol_cat = bleach(request.POST['category'])
+			protocol_cat = bleach.clean(request.POST['category'])
 			cat = Category.objects.get(title = protocol_cat)
 			protocol.category = cat
 		except:
@@ -451,7 +452,7 @@ def submit_upload(request):
 
 		# associate new protocol with previous revision if necessary
 		try:
-			previous_protocol_id = bleach(request.POST['BranchFrom'])
+			previous_protocol_id = bleach.clean(request.POST['BranchFrom'])
 
 			if (previous_protocol_id != -1):
 				# set up previous revisions and first revision for new protocol
@@ -470,12 +471,12 @@ def submit_upload(request):
 		num_steps = 0
 
 		# go over each available step
-		number_to_check = int(bleach(request.POST['number_to_check']))
+		number_to_check = int(bleach.clean(request.POST['number_to_check']))
 		for x in range(0, number_to_check + 1):
 			try:
 				prefix = 'step' + str(x)
-				number = int(bleach(request.POST[prefix + '[number]']))
-				description = bleach(request.POST[prefix + '[description]'])
+				number = int(bleach.clean(request.POST[prefix + '[number]']))
+				description = bleach.clean(request.POST[prefix + '[description]'])
 
 				time = 0
 				warning = ""
@@ -483,19 +484,19 @@ def submit_upload(request):
 
 				# try to pick up each individual part of each step
 				try:
-					warning = bleach(request.POST[prefix + '[warning]'])
+					warning = bleach.clean(request.POST[prefix + '[warning]'])
 					print('found warning')
 				except:
 					warning = ""
 
 				try:
-					time = int(bleach(request.POST[prefix + '[time]']))
+					time = int(bleach.clean(request.POST[prefix + '[time]']))
 				except:
 					time = -1
 				print(warning)
 				ps = ProtocolStep(action = description, warning = warning, step_number = number, time = time, protocol = protocol)
 				try:
-					title = bleach(request.POST[prefix + '[title]'])
+					title = bleach.clean(request.POST[prefix + '[title]'])
 					ps.title = title
 				except:
 					pass
@@ -513,7 +514,7 @@ def submit_upload(request):
 		# get any written-in reagents and save them
 		protocol_rea = ""
 		try:
-			protocol_rea = bleach(request.POST['text-reagents'])
+			protocol_rea = bleach.clean(request.POST['text-reagents'])
 		except:
 			pass
 
@@ -534,10 +535,10 @@ def submit_upload(request):
 
 def submit_comment(request):
 	current_profile_info = request.user
-	if (not current_profile_info.is_anonymous() and bleach(request.POST['comment']) != ""):
+	if (not current_profile_info.is_anonymous() and bleach.clean(request.POST['comment']) != ""):
 		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
-		comment = bleach(request.POST['comment'])
-		protocol_id = bleach(request.POST['protocol_id'])
+		comment = bleach.clean(request.POST['comment'])
+		protocol_id = bleach.clean(request.POST['protocol_id'])
 		protocol = Protocol.objects.get(id = protocol_id)
 
 		try:

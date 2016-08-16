@@ -248,6 +248,7 @@ $(document).ready(function() {
 									{% csrf_token %}
 								</form>
 							</div>
+							{% if current_profile_info == None %}
 							<div id="sign_up_block" class="col-sm-4 col-xs-4 block">
 								<div class="row">
 									<a class="bottom_link" href="/signup/">
@@ -276,6 +277,22 @@ $(document).ready(function() {
 									</a>
 								</div>
 							</div>
+							{% else %}
+							<div id="upload_block" class="col-sm-4 col-sm-offset-2 col-xs-4 col-xs-offset-2 block">
+								<div class="row">
+									<a class="bottom_link" href="/upload/">
+										<button class="btn skinny-btn">
+											<div class="col-sm-12">
+												<i class="glyphicon glyphicon-upload" style="font-size:51px;" aria-hidden="true"></i>
+											</div>
+											<div class="col-sm-12">
+												Upload
+											</div>
+										</button>
+									</a>
+								</div>
+							</div>
+							{% endif %}
 							<div id="browse_block" class="col-sm-4 col-xs-4 block">
 								<div class="row">
 									<a class="bottom_link" href="/browse/">
