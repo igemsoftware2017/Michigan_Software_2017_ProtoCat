@@ -10,6 +10,14 @@ tr:hover{
 }
 </style>
 
+<script>
+$(document).on('ready', function() {
+	$('#add-category').on('click', function() {
+		$('#add-category-modal').modal('show');
+	});
+});
+</script>
+
 <!-- allow you to go up a level -->
 <div class="col-sm-12">
 	{% if parent_category %}
@@ -22,7 +30,7 @@ tr:hover{
 </div>
 
 <div class="col-sm-12">
-	<div class="panel"><strong><center>Categories</center></strong></div>
+	<div class="panel"><strong><center>Categories</center></strong><button type="button" id="add-category" class="btn btn-primary">Add category</button></div>
 </div>
 
 <div class="col-sm-12">
@@ -83,4 +91,6 @@ tr:hover{
 	</div>
 	{% endfor %}
 </div>
+
+{% include 'repeated_parts/add_category.html' %}
 {% endblock %}

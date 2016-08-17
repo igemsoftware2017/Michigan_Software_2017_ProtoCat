@@ -1,0 +1,83 @@
+<script>
+var categories = [];
+$(document).on('ready', function() {
+
+	$('#save_category').on('click', function() {
+		var data = {
+			'title': $('[name="title"]').val(),
+			'description': $('[name="description"]').val(),
+			'parent_category': $('[name="parent"]').attr('data-id'),
+			'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+		};
+		$.ajax({
+			type: 'POST',
+			url: "/api/category/",
+			data: data,
+			success: function() {
+				$('#add-category-modal').modal('hide');
+			},
+			failure: function() {
+				console.log("Failed to submit categories")
+			}
+		});
+	});
+
+	$.ajax({
+		type: "GET",
+		url: "/api/category/",
+		success: function(data){
+			for (var i = 0; i < data.length; i++) {
+				var category = {
+					'value': data[i].title,
+					'id': data[i].id,
+				};
+				categories.push(category)
+			}
+			$('[name="parent"]').autocomplete({
+				source: categories,
+				delay: 0,
+				select: function(event, ui) {
+					$('[name="parent"]').attr('data-id', ui.item.id);
+				},
+			});
+		},
+		failure: function(){
+			console.log("Failed to load categories")
+		}
+	});
+});
+
+</script>
+
+<style>
+</style>
+
+
+<div class="modal fade" id="add-category-modal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content" style="overflow:hidden;">
+			<div class="modal-header" style="background-color:#00274c;color:white;">
+				<button type="button" class="close make_white" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title" id="myModalLabel">Add Category</h4>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-sm-6 col-xs-12">
+						<input type="text" class="form-control" name="title" placeholder="Title">
+					</div>
+					<div class="col-sm-6 col-xs-12">
+						<input type="text" class="form-control" name="parent" placeholder="Parent Category">
+					</div>
+					<div class="col-sm-12 col-xs-12">
+						<textarea class="form-control" name="description" placeholder="Description"></textarea>
+					</div>
+					{% csrf_token %}
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				<button type="button" class="btn btn-primary" type="button" id="save_category">Save reagent</button>
+			</div>
+		</div>
+	</div>
+</div>
