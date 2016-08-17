@@ -5,82 +5,82 @@
 <style>
 <!-- make the rows of data have the correct mouse cursor -->
 tr:hover{
-    cursor: hand;
-    cursor: pointer;
+	cursor: hand;
+	cursor: pointer;
 }
 </style>
 
 <!-- allow you to go up a level -->
-<div class="col-md-12">
-    {% if parent_category %}
-    {% if parent_category and parent_category.parent_category %}
-    <a href="/browse/{{ parent_category.parent_category.id }}/">Up a level</a>
-    {% else %}
-    <a href="/browse/">Up a level</a>
-    {% endif %}
-    {% endif %}
+<div class="col-sm-12">
+	{% if parent_category %}
+	{% if parent_category and parent_category.parent_category %}
+	<a href="/browse/{{ parent_category.parent_category.id }}/">Up a level</a>
+	{% else %}
+	<a href="/browse/">Up a level</a>
+	{% endif %}
+	{% endif %}
 </div>
 
-<div class="col-md-12">
-    <div class="panel"><strong><center>Categories</center></strong></div>
+<div class="col-sm-12">
+	<div class="panel"><strong><center>Categories</center></strong></div>
 </div>
 
-<div class="col-md-12">
-    <div class="container">
-    {% for category in categories %}
-        <div onclick="location.href='/browse/{{ category.id }}/'" class="col-xs-4">
-            <div class="panel panel-default">
-	        <div class="panel-heading">
-		    <center><strong>
-                        <a href="/browse/{{ category.id }}/">{{ category.title }}</a>
-                    </center></strong>
-		    {{ category.description }}
-		</div>
-            </div>
-        </div>
-    {% endfor %}
-    </div>
-</div>
-
-<div class="col-md-12">
-    <div class="panel"><strong><center>Protocols</center></strong></div>
-</div>
-
-<div class="col-md-12">
-    {% for protocol in protocols %}
-        <div onclick="location.href='/protocol/{{ protocol.id }}/'">
-	    <div class="panel panel-default">
-	        <div class-"panel-heading">
-		    <h3><center><strong>{{ protocol.title }}</strong></center></h3>
-		    <h5><center><strong>Author: </strong>{{ protocol.author }}</center></h5>
-		    <div class="panel-body">
-			<div class="container-fluid">
-			    <div class="row">
-			    <!-- I need these to stack next to eachother! -->
-			        <div class="col-xs-12 col-sm-6 col-md-8">
-                                    <strong>Description: </strong>
-				    {{ protocol.description }}
+<div class="col-sm-12">
+	<div class="row">
+		{% for category in categories %}
+		<div onclick="location.href='/browse/{{ category.id }}/'" class="col-xs-4">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<center><strong>
+						<a href="/browse/{{ category.id }}/">{{ category.title }}</a>
+					</center></strong>
+					{{ category.description }}
 				</div>
-				<div class="col-xs-6 col-md-4">
-				    <div>
-                                        <strong>
-					    Rating:
-					</strong>
-					{{ protocol.get_average_ratings}}
-				    </div>
-				    <div>
-				        <strong>	
-					    Uploaded on:
-				        </strong>
-					    {{ protocol.upload_date }}
-                                    </div>
-                                </div>
-			    </div>
 			</div>
-		    </div>
-	        </div>
-	    </div>
-        </div>
-    {% endfor %}
+		</div>
+		{% endfor %}
+	</div>
+</div>
+
+<div class="col-sm-12">
+	<div class="panel"><strong><center>Protocols</center></strong></div>
+</div>
+
+<div class="col-sm-12">
+	{% for protocol in protocols %}
+	<div onclick="location.href='/protocol/{{ protocol.id }}/'">
+		<div class="panel panel-default">
+			<div class-"panel-heading">
+				<h3><center><strong>{{ protocol.title }}</strong></center></h3>
+				<h5><center><strong>Author: </strong>{{ protocol.author }}</center></h5>
+				<div class="panel-body">
+					<div class="container-fluid">
+						<div class="row">
+							<!-- I need these to stack next to eachother! -->
+							<div class="col-xs-12 col-sm-6 col-md-8">
+								<strong>Description: </strong>
+								{{ protocol.description }}
+							</div>
+							<div class="col-xs-6 col-md-4">
+								<div>
+									<strong>
+										Rating:
+									</strong>
+									{{ protocol.get_average_ratings}}
+								</div>
+								<div>
+									<strong>
+										Uploaded on:
+									</strong>
+									{{ protocol.upload_date }}
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	{% endfor %}
 </div>
 {% endblock %}
