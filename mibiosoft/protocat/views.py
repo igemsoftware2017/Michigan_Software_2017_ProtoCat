@@ -9,6 +9,7 @@ from django.utils import timezone
 from django.core.files import File
 from django.conf import settings
 from django.views.decorators.cache import never_cache
+from django.http import JsonResponse
 import bleach
 
 # Create your views here.
@@ -154,16 +155,20 @@ def submit_sign_up(request):
 		print(current_profile_info)
 	else:
 		current_profile_info = None
-	username = request.POST['username']
-	password = request.POST['password']
-	email = request.POST['email']
-	user = User.objects.create_user(username, email, password)
-	user = authenticate(username = username, password = password)
-	profile_info = ProfileInfo(user = user)
-	profile_info.save()
-	print(profile_info.id)
-	print(len(connection.queries))
-	return HttpResponseRedirect('/')
+	try:
+		username = request.POST['username']
+		password = request.POST['password']
+		email = request.POST['email']
+		user = User.objects.create_user(username, email, password)
+		user = authenticate(username = username, password = password)
+		profile_info = ProfileInfo(user = user)
+		profile_info.save()
+		current_profile_info = profile_info
+		login(request, user)
+		print(len(connection.queries))
+		return JsonResponse({'success': True, 'location': '/'})
+	except:
+		return JsonResponse({'success': False})
 
 def login_user(request):
 	current_profile_info = request.user
