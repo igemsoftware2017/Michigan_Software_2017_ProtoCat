@@ -345,25 +345,28 @@ def search(request):
 	return render(request, 'search.html', context)
 
 def submit_rating(request):
-	current_profile_info = request.user
-	if (not current_profile_info.is_anonymous()):
-		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
-		new_value = request.POST['NewValue']
-		protocol_id = request.POST['id']
-		protocol = Protocol.objects.get(id = protocol_id)
+	try:
+		current_profile_info = request.user
+		if (not current_profile_info.is_anonymous()):
+			current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
+			new_value = request.POST['NewValue']
+			protocol_id = request.POST['id']
+			protocol = Protocol.objects.get(id = protocol_id)
 
-		try:
-			old_rating = ProtocolRating.objects.get(person = current_profile_info, protocol = protocol)
-			old_rating.score = new_value
-			old_rating.save()
-		except:
-			rating = ProtocolRating(person = current_profile_info, score = new_value, protocol = protocol)
-			rating.save()
-	context = {
-		'title': 'ProtoCat',
-		'current_profile_info': current_profile_info,
-	}
-	return render(request, 'index.html', context)
+			try:
+				old_rating = ProtocolRating.objects.get(person = current_profile_info, protocol = protocol)
+				old_rating.score = new_value
+				old_rating.save()
+			except:
+				rating = ProtocolRating(person = current_profile_info, score = new_value, protocol = protocol)
+				rating.save()
+		context = {
+			'title': 'ProtoCat',
+			'current_profile_info': current_profile_info,
+		}
+		return JsonResponse({'success': True})
+	except:
+		return JsonResponse({'success': False})
 
 def upload_default(request):
 	current_data = None
@@ -619,16 +622,11 @@ def update_profile(request):
 			user.save()
 			user.user.save()
 			print("Done!")
+			return JsonResponse({'success': True})
 	except Exception as inst:
 		print(inst)
 		print("Update didn't work")
-		pass
-
-	context = {
-		'title': 'ProtoCat',
-		'current_profile_info': current_profile_info,
-	}
-	return render(request, 'index.html', context)
+		return JsonResponse({'success': False})
 
 def test(request):
 	current_profile_info = request.user
