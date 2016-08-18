@@ -9,6 +9,8 @@ from django.utils import timezone
 from django.core.files import File
 from django.conf import settings
 from django.views.decorators.cache import never_cache
+from django.http import JsonResponse
+import bleach
 
 # Create your views here.
 def index(request):
@@ -153,16 +155,20 @@ def submit_sign_up(request):
 		print(current_profile_info)
 	else:
 		current_profile_info = None
-	username = request.POST['username']
-	password = request.POST['password']
-	email = request.POST['email']
-	user = User.objects.create_user(username, email, password)
-	user = authenticate(username = username, password = password)
-	profile_info = ProfileInfo(user = user)
-	profile_info.save()
-	print(profile_info.id)
-	print(len(connection.queries))
-	return HttpResponseRedirect('/')
+	try:
+		username = request.POST['username']
+		password = request.POST['password']
+		email = request.POST['email']
+		user = User.objects.create_user(username, email, password)
+		user = authenticate(username = username, password = password)
+		profile_info = ProfileInfo(user = user)
+		profile_info.save()
+		current_profile_info = profile_info
+		login(request, user)
+		print(len(connection.queries))
+		return JsonResponse({'success': True, 'location': '/'})
+	except:
+		return JsonResponse({'success': False})
 
 def login_user(request):
 	current_profile_info = request.user
@@ -178,20 +184,23 @@ def login_user(request):
 	return render(request, 'login.html', context)
 
 def submit_login(request):
-	username = request.POST['username']
-	password = request.POST['password']
-	user = authenticate(username = username, password = password)
+	try:
+		username = request.POST['username']
+		password = request.POST['password']
+		user = authenticate(username = username, password = password)
 
-	if user is not None:
-		# the pasword verified for the user
-		if user.is_active:
-			login(request, user)
-			profile_info = ProfileInfo.objects.get(user = user)
-			return HttpResponseRedirect('/user/' + str(profile_info.id) + '/')
+		if user is not None:
+			# the pasword verified for the user
+			if user.is_active:
+				login(request, user)
+				profile_info = ProfileInfo.objects.get(user = user)
+				return JsonResponse({'success': True, 'location': '/user/' + str(profile_info.id) + '/'})
+			else:
+				return JsonResponse({'success': False})
 		else:
-			return HttpResponseRedirect('/')
-	else:
-		return HttpResponseRedirect('/login/')
+			return JsonResponse({'success': False, 'error': 'Incorrect username/password combination'})
+	except:
+		return JsonResponse({'success': False, 'error': 'Please enter both the username and password'})
 
 def logoff(request):
 	logout(request)
@@ -339,25 +348,28 @@ def search(request):
 	return render(request, 'search.html', context)
 
 def submit_rating(request):
-	current_profile_info = request.user
-	if (not current_profile_info.is_anonymous()):
-		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
-		new_value = request.POST['NewValue']
-		protocol_id = request.POST['id']
-		protocol = Protocol.objects.get(id = protocol_id)
+	try:
+		current_profile_info = request.user
+		if (not current_profile_info.is_anonymous()):
+			current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
+			new_value = request.POST['NewValue']
+			protocol_id = request.POST['id']
+			protocol = Protocol.objects.get(id = protocol_id)
 
-		try:
-			old_rating = ProtocolRating.objects.get(person = current_profile_info, protocol = protocol)
-			old_rating.score = new_value
-			old_rating.save()
-		except:
-			rating = ProtocolRating(person = current_profile_info, score = new_value, protocol = protocol)
-			rating.save()
-	context = {
-		'title': 'ProtoCat',
-		'current_profile_info': current_profile_info,
-	}
-	return render(request, 'index.html', context)
+			try:
+				old_rating = ProtocolRating.objects.get(person = current_profile_info, protocol = protocol)
+				old_rating.score = new_value
+				old_rating.save()
+			except:
+				rating = ProtocolRating(person = current_profile_info, score = new_value, protocol = protocol)
+				rating.save()
+		context = {
+			'title': 'ProtoCat',
+			'current_profile_info': current_profile_info,
+		}
+		return JsonResponse({'success': True})
+	except:
+		return JsonResponse({'success': False})
 
 def upload_default(request):
 	current_data = None
@@ -434,16 +446,16 @@ def submit_upload(request):
 
 	try:
 		# get main data for the Protocol model
-		protocol_title = request.POST['title']
-		protocol_desc = request.POST['description']
-		protocol_changes = request.POST['change-log']
+		protocol_title = bleach.clean(request.POST['title'])
+		protocol_desc = bleach.clean(request.POST['description'])
+		protocol_changes = bleach.clean(request.POST['change-log'])
 
 		protocol = Protocol(change_log = protocol_changes, title = protocol_title, description = protocol_desc, author = current_profile_info)
 
 		protocol_cat = ""
 		try:
 			# get category and associate it with protocol
-			protocol_cat = request.POST['category']
+			protocol_cat = bleach.clean(request.POST['category'])
 			cat = Category.objects.get(title = protocol_cat)
 			protocol.category = cat
 		except:
@@ -451,7 +463,7 @@ def submit_upload(request):
 
 		# associate new protocol with previous revision if necessary
 		try:
-			previous_protocol_id = request.POST['BranchFrom']
+			previous_protocol_id = bleach.clean(request.POST['BranchFrom'])
 
 			if (previous_protocol_id != -1):
 				# set up previous revisions and first revision for new protocol
@@ -470,12 +482,12 @@ def submit_upload(request):
 		num_steps = 0
 
 		# go over each available step
-		number_to_check = int(request.POST['number_to_check'])
+		number_to_check = int(bleach.clean(request.POST['number_to_check']))
 		for x in range(0, number_to_check + 1):
 			try:
 				prefix = 'step' + str(x)
-				number = int(request.POST[prefix + '[number]'])
-				description = request.POST[prefix + '[description]']
+				number = int(bleach.clean(request.POST[prefix + '[number]']))
+				description = bleach.clean(request.POST[prefix + '[description]'])
 
 				time = 0
 				warning = ""
@@ -483,19 +495,19 @@ def submit_upload(request):
 
 				# try to pick up each individual part of each step
 				try:
-					warning = request.POST[prefix + '[warning]']
+					warning = bleach.clean(request.POST[prefix + '[warning]'])
 					print('found warning')
 				except:
 					warning = ""
 
 				try:
-					time = int(request.POST[prefix + '[time]'])
+					time = int(bleach.clean(request.POST[prefix + '[time]']))
 				except:
 					time = -1
 				print(warning)
 				ps = ProtocolStep(action = description, warning = warning, step_number = number, time = time, protocol = protocol)
 				try:
-					title = request.POST[prefix + '[title]']
+					title = bleach.clean(request.POST[prefix + '[title]'])
 					ps.title = title
 				except:
 					pass
@@ -513,7 +525,7 @@ def submit_upload(request):
 		# get any written-in reagents and save them
 		protocol_rea = ""
 		try:
-			protocol_rea = request.POST['text-reagents']
+			protocol_rea = bleach.clean(request.POST['text-reagents'])
 		except:
 			pass
 
@@ -534,10 +546,10 @@ def submit_upload(request):
 
 def submit_comment(request):
 	current_profile_info = request.user
-	if (not current_profile_info.is_anonymous() and request.POST['comment'] != ""):
+	if (not current_profile_info.is_anonymous() and bleach.clean(request.POST['comment']) != ""):
 		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
-		comment = request.POST['comment']
-		protocol_id = request.POST['protocol_id']
+		comment = bleach.clean(request.POST['comment'])
+		protocol_id = bleach.clean(request.POST['protocol_id'])
 		protocol = Protocol.objects.get(id = protocol_id)
 
 		try:
@@ -613,16 +625,11 @@ def update_profile(request):
 			user.save()
 			user.user.save()
 			print("Done!")
+			return JsonResponse({'success': True})
 	except Exception as inst:
 		print(inst)
 		print("Update didn't work")
-		pass
-
-	context = {
-		'title': 'ProtoCat',
-		'current_profile_info': current_profile_info,
-	}
-	return render(request, 'index.html', context)
+		return JsonResponse({'success': False})
 
 def test(request):
 	current_profile_info = request.user

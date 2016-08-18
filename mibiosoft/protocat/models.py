@@ -178,17 +178,17 @@ class ReagentForProtocol(models.Model):
 		(2, 'Constant'),
 		(3, 'Linear Scaling')
 	)
-	scaling_type = models.IntegerField(default = 3, choices=SCALING_TYPES)
+	scaling_type = models.IntegerField(default = 2, choices=SCALING_TYPES)
 
 	# 1 denotes it is an reactant, 2 denotes it is a intermediary,
 	# 3 denotes it is a product of the ENTIRE PROTOCOL
 	REAGENT_TYPES = (
 		(1, 'Reactant'),
 		(2, 'Intermediary'),
-		(3, 'Product')
+		(3, 'Product'),
+		(4, 'Catalyst')
 	)
 	reagent_type = models.IntegerField(default = 1, choices=REAGENT_TYPES)
-
 
 	amount = models.DecimalField(max_digits = 50, decimal_places = 25)
 
@@ -197,7 +197,7 @@ class ReagentForProtocol(models.Model):
 		('g', 'Grams')
 	)
 
-	unit = models.CharField(max_length = 10, choices = UNIT_TYPES)
+	unit = models.CharField(max_length = 25, choices = UNIT_TYPES)
 
 	# link it and other of the same type to the right protocol
 	protocol = models.ForeignKey(Protocol)
@@ -210,6 +210,7 @@ class ReagentForProtocol(models.Model):
 
 	significant_figures = models.IntegerField();
 	display_name = models.TextField(blank = True, null = True)
+	preserve_units = models.IntegerField(blank = True, null = True)
 
 	# link it to the correct generic reagent
 	reagent = models.ForeignKey(Reagent)

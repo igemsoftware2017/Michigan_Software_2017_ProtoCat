@@ -11,6 +11,7 @@ function tinymce_byname(name_of) {
 		convert_fonts_to_spans : true,
 		body_class: 'mce-class',
 		theme: 'modern',
+		skin_url: '/static/css/light',
 		plugins: [
 			'advlist autolink lists link image charmap print preview hr anchor pagebreak',
 			'searchreplace wordcount visualblocks visualchars code fullscreen',
@@ -36,6 +37,7 @@ function prep_everything(textbox_class) {
 		convert_fonts_to_spans : true,
 		body_class: 'mce-class',
 		theme: 'modern',
+		skin_url: '/static/css/light',
 		plugins: [
 			'advlist autolink lists link image charmap print preview hr anchor pagebreak',
 			'searchreplace wordcount visualblocks visualchars code fullscreen',
@@ -53,6 +55,8 @@ function prep_everything(textbox_class) {
 }
 
 new_name = {{ protocol.num_steps }};
+var add_reagent_to = 0;
+var reagent_id_in_step = 0;
 
 function add_step() {
 	var last_element = null;
@@ -97,6 +101,7 @@ function add_step() {
 
 	// Add onclick handler for removing a step
 	temp_item.find('.remove_step').on('click', delete_step);
+	temp_item.find('.add_reagent').on('click', add_reagent);
 
 	// Put new step at the very end
 	$(temp_item).insertAfter($('#step_holder').children('.individual-step').last()).show();
@@ -201,6 +206,7 @@ $(document).ready(function() {
 
 	// Add onclick handler for removing a step
 	$('.individual-step:visible').find('.remove_step').on('click', delete_step);
+	$('.individual-step:visible').find('.add_reagent').on('click', add_reagent);
 	$('#number_to_check').attr('value', new_name);
 });
 
@@ -247,10 +253,106 @@ function delete_step() {
 
 var availableTags;
 $( function() {
-	availableTags = [ {% for category in categories%}"{{ category.title }}", {% endfor %}];
+	availableTags = [ {% for category in categories %}"{{ category.title }}", {% endfor %}];
 	$('[name="category"]').autocomplete({
 		source: availableTags,
-		delay: 100,
+		delay: 0,
+	});
+});
+
+function add_reagent() {
+	add_reagent_to = parseInt($(this).parent().parent().find('.step-number').val());
+	$('#add-reagent-modal').modal('show');
+}
+
+var available_reagents = [];
+$(document).on('ready', function() {
+	$('#save_reagent').on('click', function() {
+		// try form validation
+		if ($('[name="linked_reagent"]').attr('data-id') == undefined) {
+			console.log('never clicked a reagent')
+			return;
+		}
+
+		switch ($('[name="prefix"]').val()) {
+			case "n":
+				preserve_units = -9;
+				break;
+			case "&mu;":
+				preserve_units = -6;
+				break;
+			case "m":
+				preserve_units = -3;
+				break;
+			case "c":
+				preserve_units = -2;
+				break;
+			case "d":
+				preserve_units = -1;
+				break;
+			case "":
+				preserve_units = 0;
+				break;
+			case "da":
+				preserve_units = 1;
+				break;
+			case "h":
+				preserve_units = 2;
+				break;
+			case "k":
+				preserve_units = 3;
+				break;
+			case "M":
+				preserve_units = 6;
+				break;
+			case "G":
+				preserve_units = 9;
+				break;
+		}
+		var amount = parseFloat($('[name="amount"]').val());
+		amount *= Math.pow(10, preserve_units);
+		if ($('[name="keep-units"]').bootstrapSwitch('state') != true) {
+			preserve_units = null;
+		}
+
+		var new_reagent = {
+			'step': add_reagent_to,
+			'number_in_step': reagent_id_in_step,
+			'amount': amount,
+			'unit': $('[name="unit"]').val(),
+			'reagent_type': +$('#reagent-type').find('input:checked').val(),
+			'scaling_type': +$('#scale-type').find('input:checked').val(),
+			'display_name': $('[name="display_name"]').val(),
+			'reagent_id': +$('[name="linked_reagent"]').attr('data-id'),
+			'preserve_units': preserve_units,
+		};
+		console.log(new_reagent)
+		reagent_id_in_step++;
+	});
+
+	$.ajax({
+		type: "GET",
+		url: "/api/reagent",
+		success: function(data){
+			for (var i = 0; i < data.length; i++) {
+				var object = {
+					'value': data[i].name,
+					'id': data[i].id,
+				};
+				available_reagents.push(object)
+			}
+			$('[name="linked_reagent"]').autocomplete({
+				source: available_reagents,
+				delay: 0,
+				select: function(event, ui) {
+					console.log(ui.item.id)
+					$('[name="linked_reagent"]').attr('data-id', ui.item.id);
+				},
+			});
+		},
+		failure: function(){
+			console.log("Failed to load reagents")
+		}
 	});
 });
 </script>
@@ -303,7 +405,7 @@ $( function() {
 .cannot-click {
 	pointer-events: none;
 }
-.add_step, .remove_step {
+.add_step, .remove_step, .add_reagent {
 	white-space: normal;
 }
 </style>
@@ -321,10 +423,13 @@ $( function() {
 					</div>
 				</div>
 				<div class="col-xs-12" style="margin-top:15px;">
-					<button type="button" class="btn btn-primary btn-block add_step">Add step</button>
+					<button type="button" class="btn btn-success btn-block add_step">Add step</button>
+				</div>
+				<div class="col-xs-12" style="margin-top:15px;">
+					<button type="button" class="btn btn-warning btn-block remove_step">Delete step</button>
 				</div>
 				<div class="col-xs-12" style="margin-top:15px;margin-bottom:15px;">
-					<button type="button" class="btn btn-warning btn-block remove_step">Delete step</button>
+					<button type="button" class="btn btn-primary btn-block add_reagent">Add reagent</button>
 				</div>
 			</div>
 		</div>
@@ -344,10 +449,10 @@ $( function() {
 							<div class="panel-heading">
 								<div class="row">
 									<div class="col-sm-2">
-										<label for="inputEmail3" class="control-label" style="width:100%;">Additional Information</label>
+										<label for="inputEmail3" class="control-label" style="width:100%;">Add Info</label>
 									</div>
 									<div class="col-sm-10 col-xs-12">
-										<textarea class="step" name="step[description]">Body info for this step</textarea>
+										<textarea class="step" name="step[description]">Body <b>info</b> for this step</textarea>
 									</div>
 								</div>
 							</div>
@@ -426,10 +531,13 @@ $( function() {
 							</div>
 						</div>
 						<div class="col-xs-12" style="margin-top:15px;">
-							<button type="button" class="btn btn-primary btn-block add_step">Add step</button>
+							<button type="button" class="btn btn-success btn-block add_step">Add step</button>
+						</div>
+						<div class="col-xs-12" style="margin-top:15px;">
+							<button type="button" class="btn btn-warning btn-block remove_step">Delete step</button>
 						</div>
 						<div class="col-xs-12" style="margin-top:15px;margin-bottom:15px;">
-							<button type="button" class="btn btn-warning btn-block remove_step">Delete step</button>
+							<button type="button" class="btn btn-primary btn-block add_reagent">Add reagent</button>
 						</div>
 					</div>
 				</div>
@@ -449,7 +557,7 @@ $( function() {
 									<div class="panel-heading">
 										<div class="row">
 											<div class="col-sm-2">
-												<label for="inputEmail3" class="control-label" style="width:100%;">Additional Information</label>
+												<label for="inputEmail3" class="control-label" style="width:100%;">Add Info</label>
 											</div>
 											<div class="col-sm-10 col-xs-12">
 												<textarea class="step" name="step{{protocol_step.step_number}}[description]">{{ protocol_step.action|safe }}</textarea>
@@ -488,4 +596,7 @@ $( function() {
 	</div>
 
 </form>
+
+{% include 'repeated_parts/protocol_reagent.html' %}
+
 {% endblock %}

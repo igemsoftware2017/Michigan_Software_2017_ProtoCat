@@ -39,12 +39,40 @@
 }
 </style>
 
+<script>
+$(document).on('ready', function() {
+	$('#submit-poster').on('submit', function(event) {
+		event.preventDefault();
+		var data = $('#submit-poster').serialize();
+		console.log("TRIGGERED")
+		$.ajax({
+			type: "POST",
+			url: "/submitlogin/",
+			data: data,
+			success: function(data, textStatus, request){
+				if (data.success) {
+					// data.redirect contains the string URL to redirect to
+					window.location.href = data.location;
+				}
+				else {
+					alert(data.error);
+				}
+			},
+			failure: function(){
+				alert('Unable to connect to the server');
+			}
+		});
+	});
+});
+
+</script>
+
 
 <div id="login_page" class="row">
 	<div id="login_form">
 		<div class="col-sm-4 col-sm-offset-2 col-xs-12">
 			<h2 id="login_title">Log in to ProtoCat</h2>
-			<form action="/submitlogin/" method="post">
+			<form id="submit-poster" action="/submitlogin/" method="post">
 				{% csrf_token %}
 				<input type="text" name="username" class="form-control" placeholder="Username"><br>
 				<input type="password" name="password" class="form-control" placeholder="Password"><br>

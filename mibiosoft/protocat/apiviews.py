@@ -8,6 +8,7 @@ from rest_framework import permissions
 from .permissions import *
 from .models import *
 from .serializers import *
+import bleach
 
 
 class ProtocolViewSet(viewsets.ModelViewSet):
@@ -42,30 +43,31 @@ class ProtocolViewSet(viewsets.ModelViewSet):
             protocol = Protocol()
             protocol.title = request.data['title']
             protocol.category = Category.objects.get(id = request.data['category'])
-            protocol.description = request.data['description']
-            protocol.change_log = request.data['change_log']
+            protocol.description = bleach.clean(request.data['description'])
+            protocol.change_log = bleach.clean(request.data['change_log'])
             if (request.data['previous_revision'] != None):
                 protocol.previous_revision = Protocol.objects.get(id = request.data['previous_revision'])
             protocol.author = request.user.profileinfo
+            protocol.materials = request.data['materials']
             step_list = []
             print('Main protocol finished')
             for step in request.data['protocol_step']:
                 protocol_step = ProtocolStep()
                 protocol_step.step_number = step['step_number']
                 protocol_step.time = int(step['time'])
-                protocol_step.action = step['action']
-                protocol_step.warning = step['warning']
+                protocol_step.action = bleach.clean(step['action'])
+                protocol_step.warning = bleach.clean(step['warning'])
                 protocol_step.time_scaling = int(step['time_scaling'])
                 step_list.append(protocol_step)
             protocol.save()
             for step in step_list:
                 step.protocol = protocol
                 step.save()
-            print(request.data['materials'])
-            return Response({'status': 'saved_protocol'})
+
+            return Response({'success': True})
         except Exception as inst:
             print(inst)
-            return Response({'status': 'failed'})
+            return Response({'success': False, 'error': str(inst)})
 
 class ProfileViewSet(viewsets.ModelViewSet):
     """
