@@ -184,20 +184,23 @@ def login_user(request):
 	return render(request, 'login.html', context)
 
 def submit_login(request):
-	username = request.POST['username']
-	password = request.POST['password']
-	user = authenticate(username = username, password = password)
+	try:
+		username = request.POST['username']
+		password = request.POST['password']
+		user = authenticate(username = username, password = password)
 
-	if user is not None:
-		# the pasword verified for the user
-		if user.is_active:
-			login(request, user)
-			profile_info = ProfileInfo.objects.get(user = user)
-			return HttpResponseRedirect('/user/' + str(profile_info.id) + '/')
+		if user is not None:
+			# the pasword verified for the user
+			if user.is_active:
+				login(request, user)
+				profile_info = ProfileInfo.objects.get(user = user)
+				return JsonResponse({'success': True, 'location': '/user/' + str(profile_info.id) + '/'})
+			else:
+				return JsonResponse({'success': False})
 		else:
-			return HttpResponseRedirect('/')
-	else:
-		return HttpResponseRedirect('/login/')
+			return JsonResponse({'success': False, 'error': 'Incorrect username/password combination'})
+	except:
+		return JsonResponse({'success': False, 'error': 'Please enter both the username and password'})
 
 def logoff(request):
 	logout(request)

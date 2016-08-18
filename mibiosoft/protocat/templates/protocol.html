@@ -263,11 +263,16 @@ $(document).on('ready', function(){
 			type: "POST",
 			url: "/rating/",
 			data: $('#inline-form').serialize() + '&NewValue=' + value,
-			success: function(){
-				console.log("it worked")
+			success: function(data){
+				if (data.success){
+					console.log("it worked")
+				}
+				else {
+					alert("You're rating was unable to submit.")
+				}
 			},
 			failure: function(){
-				console.log("it failed")
+				alert("Issue connecting to the server to send rating.")
 			}
 		});
 	});

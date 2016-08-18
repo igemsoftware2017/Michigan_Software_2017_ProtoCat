@@ -6,15 +6,34 @@
 
 function submit_xs() {
 	$('input[name="size"]').val(1);
+	var form_data = new FormData();
+	form_data.append("Data", "tosend");
+	form_data.append("csrfmiddlewaretoken", $('input[name="csrfmiddlewaretoken"]').val());
+	form_data.append("picture", $('input[name="picture"]').get(0).files[0]);
+	form_data.append("user_id", $('input[name="user_id"]').val());
+	form_data.append("size", $('input[name="size"]').val());
+	form_data.append("about1", $('input[name="about1"]').val());
+	form_data.append("website1", $('input[name="website1"]').val());
+	form_data.append("email1", $('input[name="email1"]').val());
+	form_data.append("about2", $('input[name="about2"]').val());
+	form_data.append("website2", $('input[name="website2"]').val());
+	form_data.append("email2", $('input[name="email2"]').val());
 	$.ajax({
 		type: "POST",
 		url: "/updateprofile/",
-		data: $('#submit-form').serialize(),
+		contentType: false,
+		processData: false,
+		data: form_data,
 		success: function(){
-			console.log("it worked")
+			if (data.success) {
+				console.log("it worked")
+			}
+			else {
+				alert("Unable to update profile - please try again.")
+			}
 		},
 		failure: function(){
-			console.log("it failed")
+			alert("Unable to connect to the server - please try again.")
 		}
 	});
 }
@@ -40,10 +59,15 @@ function submit_sm() {
 		processData: false,
 		data: form_data,
 		success: function(){
-			console.log("it worked")
+			if (data.success) {
+				console.log("it worked")
+			}
+			else {
+				alert("Unable to update profile - please try again.")
+			}
 		},
 		failure: function(){
-			console.log("it failed")
+			alert("Unable to connect to the server - please try again.")
 		}
 	});
 }
