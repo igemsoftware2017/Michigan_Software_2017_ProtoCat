@@ -124,7 +124,7 @@ $(function() {
 	<div class="row">
 		<div class="panel-group" id="accordion">
 			<div class="panel panel-default">
-				<div class="panel-heading" >
+				<div class="panel-heading">
 					<a data-toggle="collapse" data-parent="#accordion" href="#collapse1">
 						<div class="panel-title">
 							<h4>
@@ -136,14 +136,18 @@ $(function() {
 				<div id="collapse1" class="panel-collapse collapse">
 					<div class="panel-body">
 						<form method="POST" class="form-horizontal hidden-xs" action="/search/">
-							<div class="form-group form-group-lg">
-								<label class="col-sm-2 control-label" for="formGroupInputLarge" style="font-size:20px;padding-left:0px;">Search for:</label>
-								<div class="col-sm-10">
-									<input class="form-control" type="text" name="text_filter" value="{{ text_filter }}">
+							<div class="col-sm-12">
+								<div style="float:left;">
+									<h3 style="display:inline-block;">Search: </h3>
+								</div>
+								<div style="margin-left:90px;margin-top:17px;">
+									<input class="form-control" type="text" name="text_filter" placeholder="Search ProtoCat" value="{{ text_filter }}" style="width:100%;">
 								</div>
 							</div>
-							<h3>Filter:</h3>
 							<div class="row keep-margin" style="margin-left:15px;">
+								<div class="col-sm-12">
+									<h3>Filter:</h3>
+								</div>
 								<div class="col-xs-12 col-sm-6">
 									<fieldset class="form-group keep-margin">
 										<label for="formGroupExampleInput">Number of ratings between:</label>
@@ -209,7 +213,9 @@ $(function() {
 									</fieldset>
 								</div>
 							</div>
-							<h3>Sort by:</h3>
+							<div class="col-sm-12">
+								<h3>Sort by:</h3>
+							</div>
 							<div class="row keep-margin">
 								<div class="col-sm-9 col-xs-12 hidden-xs">
 									<div id="desktop-order-group" class="btn-group btn-group-justified" role="group" data-toggle="buttons">
