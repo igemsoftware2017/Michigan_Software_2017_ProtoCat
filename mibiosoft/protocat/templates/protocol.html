@@ -186,15 +186,8 @@ function timer(i) {
 		time_total[i] = count_to[i] * 1000;
 		running[i] = false;
 		// SOUND ALARM HERE
-		var isIE = /*@cc_on!@*/false || !!document.documentMode;
-		var isEdge = !isIE && !!window.StyleMedia;
-		if(isIE || isEdge){
-			var audio = new Audio('/static/audio/buzz.aac');
-			audio.play();
-		} else {
-			var audio = new Audio('/static/audio/buzz.wav');
-			audio.play();
-		}
+		var audio = new Audio('/static/audio/buzz.mp3');
+		audio.play();
 
 	}
 	update_element[i].innerHTML = get_time_total(i);
@@ -574,7 +567,7 @@ textarea[name=comment] {
 					{% if protocol.author.profile_image != "" %}
 					<img src="{{ protocol.author.profile_image.url }}" width=75 height=75 alt="Image not found" class="img-circle center-block"/>
 					{% else %}
-					<img src="http://2014.igem.org/wiki/images/thumb/0/04/ChrisP.jpg/330px-ChrisP.jpg.png" width=45 height=45 alt="Image not found" class="img-rounded"/>
+					<img src="http://2014.igem.org/wiki/images/thumb/0/04/ChrisP.jpg/330px-ChrisP.jpg.png" width=75 height=75 alt="Image not found" class="img-circle center-block"/>
 					{% endif %}
 				</a>
 				<h5 style="text-align:center;"><a href="/user/{{ protocol.author.id }}/">{{ protocol.author }}</a></h5>
