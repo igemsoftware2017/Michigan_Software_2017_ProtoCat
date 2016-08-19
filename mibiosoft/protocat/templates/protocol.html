@@ -186,15 +186,8 @@ function timer(i) {
 		time_total[i] = count_to[i] * 1000;
 		running[i] = false;
 		// SOUND ALARM HERE
-		var isIE = /*@cc_on!@*/false || !!document.documentMode;
-		var isEdge = !isIE && !!window.StyleMedia;
-		if(isIE || isEdge){
-			var audio = new Audio('/static/audio/buzz.aac');
-			audio.play();
-		} else {
-			var audio = new Audio('/static/audio/buzz.wav');
-			audio.play();
-		}
+		var audio = new Audio('/static/audio/buzz.mp3');
+		audio.play();
 
 	}
 	update_element[i].innerHTML = get_time_total(i);
