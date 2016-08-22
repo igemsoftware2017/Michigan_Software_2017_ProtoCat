@@ -10,6 +10,99 @@ from .models import *
 from .serializers import *
 import bleach
 
+ACCEPTABLE_TAGS = [
+    'a',
+    'abbr',
+    'acronym',
+    'address',
+    'area',
+    'b',
+    'bdo',
+    'big',
+    'blockquote',
+    'br',
+    'button',
+    'caption',
+    'center',
+    'cite',
+    'code',
+    'col',
+    'colgroup',
+    'dd',
+    'del',
+    'dfn',
+    'dir',
+    'div',
+    'dl',
+    'dt',
+    'em',
+    'fieldset',
+    'font',
+    'form',
+    'h1',
+    'h2',
+    'h3',
+    'h4',
+    'h5',
+    'h6',
+    'hr',
+    'i',
+    'img',
+    'input',
+    'ins',
+    'kbd',
+    'label',
+    'legend',
+    'li',
+    'map',
+    'menu',
+    'ol',
+    'optgroup',
+    'option',
+    'p',
+    'pre',
+    'q',
+    's',
+    'samp',
+    'select',
+    'small',
+    'span',
+    'strike',
+    'strong',
+    'sub',
+    'sup',
+    'table',
+    'tbody',
+    'td',
+    'textarea',
+    'tfoot',
+    'th',
+    'thead',
+    'u',
+    'tr',
+    'tt',
+    'u',
+    'ul',
+    'var',
+]
+
+ACCEPTABLE_ATTRIBUTES = {
+    '*': ['style', 'width', 'height'],
+    'img': ['src', 'alt'],
+    'a': ['href'],
+}
+
+ACCEPTABLE_STYLES = [
+    'color',
+    'font-weight',
+    'text-align',
+    'font-size',
+    'font-family',
+    'font-weight',
+    'float',
+    'line-height'
+]
+
 
 class ProtocolViewSet(viewsets.ModelViewSet):
     """
@@ -44,8 +137,14 @@ class ProtocolViewSet(viewsets.ModelViewSet):
             print(request.data)
             protocol.title = request.data['title']
             protocol.category = Category.objects.get(id = request.data['category'])
-            protocol.description = bleach.clean(request.data['description'])
-            protocol.change_log = bleach.clean(request.data['change_log'])
+            protocol.description = bleach.clean(request.data['description'],
+                                                tags = ACCEPTABLE_TAGS,
+                                                attributes = ACCEPTABLE_ATTRIBUTES,
+                                                styles = ACCEPTABLE_STYLES)
+            protocol.change_log = bleach.clean(request.data['change_log'],
+                                                tags = ACCEPTABLE_TAGS,
+                                                attributes = ACCEPTABLE_ATTRIBUTES,
+                                                styles = ACCEPTABLE_STYLES)
             if (request.data['previous_revision'] != None and request.data['previous_revision'] != "-1"):
                 protocol.previous_revision = Protocol.objects.get(id = request.data['previous_revision'])
             protocol.author = request.user.profileinfo
@@ -59,9 +158,15 @@ class ProtocolViewSet(viewsets.ModelViewSet):
                 protocol_step.step_number = step['step_number']
                 if (step['time'] != None):
                     protocol_step.time = int(step['time'])
-                protocol_step.action = bleach.clean(step['action'])
+                protocol_step.action = bleach.clean(step['action'],
+                                                    tags = ACCEPTABLE_TAGS,
+                                                    attributes = ACCEPTABLE_ATTRIBUTES,
+                                                    styles = ACCEPTABLE_STYLES)
                 if (step['warning'] != ""):
-                    protocol_step.warning = bleach.clean(step['warning'])
+                    protocol_step.warning = bleach.clean(step['warning'],
+                                                        tags = ACCEPTABLE_TAGS,
+                                                        attributes = ACCEPTABLE_ATTRIBUTES,
+                                                        styles = ACCEPTABLE_STYLES)
                 protocol_step.time_scaling = int(step['time_scaling'])
                 step_list.append(protocol_step)
             protocol.save()

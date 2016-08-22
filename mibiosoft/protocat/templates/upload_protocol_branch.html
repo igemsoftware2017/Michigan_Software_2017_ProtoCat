@@ -295,9 +295,9 @@ $(document).on('ready', function() {
 		var submit_data = {
 			'title': $('[name="title"]').val(),
 			'category': parseInt($('[name="category"]').attr('data-id')),
-			'description': $('[name="description"]').val(),
-			'materials': $('[name="text-reagents"]').val(),
-			'change_log': $('[name="change-log"]').val(),
+			'description': decodeEntities($('[name="description"]').val()),
+			'materials': decodeEntities($('[name="text-reagents"]').val()),
+			'change_log': decodeEntities($('[name="change-log"]').val()),
 			'previous_revision': $('[name="BranchFrom"]').val(),
 			'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
 			'protocol_steps': []
@@ -307,8 +307,8 @@ $(document).on('ready', function() {
 				"title": $(this).find('.title').val(),
 				"step_number": $(this).find('.step-number').val(),
 				"time": parseInt($(this).find('.time').val()),
-				"action": $(this).find('.action').val(),
-				"warning": $(this).find('.warning').val(),
+				"action": decodeEntities($(this).find('.action').val()),
+				"warning": decodeEntities($(this).find('.warning').val()),
 				"time_scaling": 2
 			};
 			submit_data.protocol_steps.push(step);
@@ -569,10 +569,10 @@ $(document).on('ready', function() {
 			<div class="panel-body">
 				<div class="tab-content">
 					<div id="Description" class="tab-pane fade in active">
-						<textarea name="description">{{ protocol.description }}</textarea>
+						<textarea name="description">{{ protocol.description|safe }}</textarea>
 					</div>
 					<div id="Reagents" class="tab-pane fade">
-						<textarea name="text-reagents"></textarea>
+						<textarea name="text-reagents">{{ protocol.materials|safe }}</textarea>
 					</div>
 					<div id="Changelog" class="tab-pane fade">
 						<textarea name="change-log"></textarea>
