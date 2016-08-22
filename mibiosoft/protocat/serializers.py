@@ -2,6 +2,13 @@ from rest_framework import serializers
 from .models import *
 from django.contrib.auth.models import User
 
+'''
+The serializers at the top allow that field to have more in-depth info
+
+"model =" allows a connection to a model from models.py
+"fields = ()" shows the api-uploadable fields
+"read_only_fields = ()" shows the api-viewable fields
+'''
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     username = serializers.ReadOnlyField()

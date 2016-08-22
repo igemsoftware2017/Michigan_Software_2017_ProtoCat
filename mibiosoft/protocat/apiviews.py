@@ -44,11 +44,12 @@ class ProtocolViewSet(viewsets.ModelViewSet):
             print(request.data)
             protocol.title = request.data['title']
             protocol.category = Category.objects.get(id = request.data['category'])
-            protocol.description = request.data['description']
-            protocol.change_log = request.data['change_log']
+            protocol.description = bleach.clean(request.data['description'])
+            protocol.change_log = bleach.clean(request.data['change_log'])
             if (request.data['previous_revision'] != None and request.data['previous_revision'] != "-1"):
                 protocol.previous_revision = Protocol.objects.get(id = request.data['previous_revision'])
             protocol.author = request.user.profileinfo
+            protocol.materials = request.data['materials']
             step_list = []
             print('Main protocol finished')
             for step in request.data['protocol_steps']:
@@ -67,8 +68,13 @@ class ProtocolViewSet(viewsets.ModelViewSet):
             for step in step_list:
                 step.protocol = protocol
                 step.save()
+<<<<<<< HEAD
             print(request.data['materials'])
             return Response({'success': True, 'location': '/protocol/' + str(protocol.id)})
+=======
+
+            return Response({'success': True})
+>>>>>>> 29056a342a44e1b978ed72ef536fcfe32ca135b7
         except Exception as inst:
             print(inst)
             return Response({'success': False, 'error': str(inst)})

@@ -8,6 +8,19 @@ tr:hover{
 	cursor: hand;
 	cursor: pointer;
 }
+
+.center {
+    display:inline-block;
+    float:none;
+    text-align:center;
+    margin-right:-4px;
+}
+
+.info {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+ 
 </style>
 
 <script>
@@ -29,16 +42,17 @@ $(document).on('ready', function() {
 	{% endif %}
 </div>
 
+{% if categories %}
 <div class="col-sm-12">
 	<div class="panel"><strong><center>Categories</center></strong><button type="button" id="add-category" class="btn btn-primary">Add category</button></div>
 </div>
 
-<div class="col-sm-12">
+<div align="center" class="col-sm-12">
 	<div class="row">
 		{% for category in categories %}
-		<div onclick="location.href='/browse/{{ category.id }}/'" class="col-xs-4">
+		<div onclick="location.href='/browse/{{ category.id }}/'" class="col-xs-4 center">
 			<div class="panel panel-default">
-				<div class="panel-heading">
+				<div class="panel-heading info">
 					<center><strong>
 						<a href="/browse/{{ category.id }}/">{{ category.title }}</a>
 					</center></strong>
@@ -49,7 +63,9 @@ $(document).on('ready', function() {
 		{% endfor %}
 	</div>
 </div>
+{% endif %}
 
+{% if protocols %}
 <div class="col-sm-12">
 	<div class="panel"><strong><center>Protocols</center></strong></div>
 </div>
@@ -91,6 +107,11 @@ $(document).on('ready', function() {
 	</div>
 	{% endfor %}
 </div>
+{% endif %}
+
+{% if not protocols and not categories %}
+<h3><center>There does not seem to be anything here...</center></h3>
+{% endif %}
 
 {% include 'repeated_parts/add_category.html' %}
 {% endblock %}
