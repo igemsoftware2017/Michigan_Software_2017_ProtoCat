@@ -68,13 +68,8 @@ class ProtocolViewSet(viewsets.ModelViewSet):
             for step in step_list:
                 step.protocol = protocol
                 step.save()
-<<<<<<< HEAD
             print(request.data['materials'])
             return Response({'success': True, 'location': '/protocol/' + str(protocol.id)})
-=======
-
-            return Response({'success': True})
->>>>>>> 29056a342a44e1b978ed72ef536fcfe32ca135b7
         except Exception as inst:
             print(inst)
             return Response({'success': False, 'error': str(inst)})
