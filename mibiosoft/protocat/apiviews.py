@@ -41,21 +41,26 @@ class ProtocolViewSet(viewsets.ModelViewSet):
     def create(self, request):
         try:
             protocol = Protocol()
+            print(request.data)
             protocol.title = request.data['title']
             protocol.category = Category.objects.get(id = request.data['category'])
             protocol.description = request.data['description']
             protocol.change_log = request.data['change_log']
-            if (request.data['previous_revision'] != None):
+            if (request.data['previous_revision'] != None and request.data['previous_revision'] != "-1"):
                 protocol.previous_revision = Protocol.objects.get(id = request.data['previous_revision'])
             protocol.author = request.user.profileinfo
             step_list = []
             print('Main protocol finished')
-            for step in request.data['protocol_step']:
+            for step in request.data['protocol_steps']:
                 protocol_step = ProtocolStep()
+                if (step['title'] != "" and step['title'] != None):
+                    protocol_step.title = step['title']
                 protocol_step.step_number = step['step_number']
-                protocol_step.time = int(step['time'])
+                if (step['time'] != None):
+                    protocol_step.time = int(step['time'])
                 protocol_step.action = bleach.clean(step['action'])
-                protocol_step.warning = bleach.clean(step['warning'])
+                if (step['warning'] != ""):
+                    protocol_step.warning = bleach.clean(step['warning'])
                 protocol_step.time_scaling = int(step['time_scaling'])
                 step_list.append(protocol_step)
             protocol.save()
@@ -63,10 +68,10 @@ class ProtocolViewSet(viewsets.ModelViewSet):
                 step.protocol = protocol
                 step.save()
             print(request.data['materials'])
-            return Response({'status': 'saved_protocol'})
+            return Response({'success': True, 'location': '/protocol/' + str(protocol.id)})
         except Exception as inst:
             print(inst)
-            return Response({'status': 'failed'})
+            return Response({'success': False, 'error': str(inst)})
 
 class ProfileViewSet(viewsets.ModelViewSet):
     """

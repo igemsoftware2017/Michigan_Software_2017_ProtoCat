@@ -241,12 +241,30 @@ function delete_step() {
 	$(this).parent().parent().parent().parent().parent().remove();
 }
 
-var availableTags;
-$( function() {
-	availableTags = [ {% for category in categories %}"{{ category.title }}", {% endfor %}];
-	$('[name="category"]').autocomplete({
-		source: availableTags,
-		delay: 0,
+var categories = [];
+$(document).on('ready', function() {
+	$.ajax({
+		type: "GET",
+		url: "/api/category/",
+		success: function(data){
+			for (var i = 0; i < data.length; i++) {
+				var category = {
+					'value': data[i].title,
+					'id': data[i].id,
+				};
+				categories.push(category)
+			}
+			$('[name="category"]').autocomplete({
+				source: categories,
+				delay: 0,
+				select: function(event, ui) {
+					$('[name="category"]').attr('data-id', ui.item.id);
+				},
+			});
+		},
+		failure: function(){
+			console.log("Failed to load categories")
+		}
 	});
 });
 
@@ -257,6 +275,57 @@ function add_reagent() {
 
 var available_reagents = [];
 $(document).on('ready', function() {
+	$.ajaxSetup({
+		headers: { "X-CSRFToken": getCookie("csrftoken") }
+	});
+
+	$('#form').on('submit', function(e) {
+		e.preventDefault();
+		tinyMCE.triggerSave();
+		var submit_data = {
+			'title': $('[name="title"]').val(),
+			'category': parseInt($('[name="category"]').attr('data-id')),
+			'description': $('[name="description"]').val(),
+			'materials': $('[name="text-reagents"]').val(),
+			'change_log': $('[name="change-log"]').val(),
+			'previous_revision': $('[name="BranchFrom"]').val(),
+			'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+			'protocol_steps': []
+		};
+		$('#form').children('#step_holder').children('.individual-step:not(#empty-holder)').each(function() {
+			var step = {
+				"title": $(this).find('.title').val(),
+				"step_number": $(this).find('.step-number').val(),
+				"time": parseInt($(this).find('.time').val()),
+				"action": $(this).find('.action').val(),
+				"warning": $(this).find('.warning').val(),
+				"time_scaling": 2
+			};
+			submit_data.protocol_steps.push(step);
+		});
+		console.log(submit_data);
+		$.ajax({
+			type: "POST",
+			data: JSON.stringify(submit_data),
+			url: "/api/protocol/",
+			processData: false,
+			contentType: 'application/json',
+			success: function(data){
+				if (data.success) {
+					window.location.href = data.location;
+				}
+				else {
+					alert(data.error);
+				}
+			},
+			failure: function(){
+				alert("Error connecting to the server.");
+			}
+		});
+	});
+
+
+
 	$('#save_reagent').on('click', function() {
 		// try form validation
 		if ($('[name="linked_reagent"]').attr('data-id') == undefined) {
@@ -427,10 +496,10 @@ $(document).on('ready', function() {
 					<div class="panel panel-default">
 						<div class="panel-heading make-padding-work">
 							<div class="form-group form-group-lg">
-								<input class="form-control" name="step[title]" type="text" class="title" placeholder="Step Title">
+								<input class="form-control title" name="step[title]" type="text" class="title" placeholder="Step Title">
 							</div>
 							<div class="form-group form-group-sm" style="margin-bottom:0px;">
-								<input class="form-control input-sm" name="step[time]" min="0" step="1" type="number" class="time" placeholder="Amount of time in seconds (optional)">
+								<input class="form-control input-sm time" name="step[time]" min="0" step="1" type="number" class="time" placeholder="Amount of time in seconds (optional)">
 							</div>
 						</div>
 						<div class="panel-body" style="padding-left:0px;padding-right:0px;">
@@ -440,7 +509,7 @@ $(document).on('ready', function() {
 										<label for="inputEmail3" class="control-label" style="width:100%;">Add Info</label>
 									</div>
 									<div class="col-sm-10 col-xs-12">
-										<textarea class="step" name="step[description]">Body <b contenteditable="false">info</b> for this step</textarea>
+										<textarea class="step action" name="step[description]"></textarea>
 									</div>
 								</div>
 							</div>
@@ -453,7 +522,7 @@ $(document).on('ready', function() {
 										<label for="inputEmail3" class="control-label" style="width:100%;">Warning</label>
 									</div>
 									<div class="col-sm-10 col-xs-12">
-										<textarea class="step" name="step[warning]" rows="5" placeholder="Warning"></textarea>
+										<textarea class="step warning" name="step[warning]" rows="5" placeholder="Warning"></textarea>
 									</div>
 								</div>
 							</div>
@@ -504,7 +573,7 @@ $(document).on('ready', function() {
 	</div>
 
 	<div id="step_holder">
-		<div class="individual-step"></div>
+		<div id="empty-holder" class="individual-step"></div>
 	</div>
 
 	{% csrf_token %}

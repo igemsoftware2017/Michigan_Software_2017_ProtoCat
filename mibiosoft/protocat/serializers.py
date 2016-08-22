@@ -12,7 +12,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 class ProtocolStepSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProtocolStep
-        fields = ('step_number', 'time', 'action', 'warning', 'time_scaling')
+        fields = ('step_number', 'title', 'time', 'action', 'warning', 'time_scaling')
 
 
 class ProfileSerializer(serializers.HyperlinkedModelSerializer):
@@ -78,7 +78,7 @@ class ReagentSerializer(serializers.HyperlinkedModelSerializer):
 
 '''
 {
-    "protocol_step": [
+    "protocol_steps": [
         {
             "step_number": 1,
             "time": -1,
