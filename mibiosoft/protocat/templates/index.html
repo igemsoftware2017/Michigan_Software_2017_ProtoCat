@@ -79,6 +79,9 @@ body {
 a {
 	outline: none;
 }
+.inverted {
+	transform: rotateZ(180deg);
+}
 .arrow {
 	opacity: 0;
 	animation-name: fadein;
@@ -87,6 +90,8 @@ a {
 	animation-direction: normal;
 	animation-fill-mode: forwards;
 	animation-delay: 2s;
+	-webkit-transition: all 500ms cubic-bezier(0.6, 0.06, 0.51, 1.48);
+	transition: all 500ms cubic-bezier(0.6, 0.06, 0.51, 1.48);
 }
 .arrow.rotate {
 	animation-name: half-rotate;
@@ -143,6 +148,7 @@ a {
 	cursor: pointer;
 	perspective: 1000px;
 	-webkit-perspective: 1000px;
+	overflow: hidden;
 }
 .black-text {
 	color: black;
@@ -158,8 +164,9 @@ a {
 	backface-visibility: hidden;
 	-webkit-backface-visibility: hidden;
 	-webkit-transition: all 500ms cubic-bezier(0.6, 0.06, 0.51, 1.48);
-	transition: all 500ms cubic-bezier(0.6, 0.06, 0.51, 1.48);;
+	transition: all 500ms cubic-bezier(0.6, 0.06, 0.51, 1.48);
 	border: 3px solid #00274c;
+	color: #00274c;
 	border-radius: 5px;
 	position: absolute;
 	top: 0px;
@@ -204,47 +211,35 @@ a {
 	}
 }
 
+.skinny-btn * {
+	-webkit-transition: all 500ms cubic-bezier(0.6, 0.06, 0.51, 1.48);
+	transition: all 500ms cubic-bezier(0.6, 0.06, 0.51, 1.48);
+}
+
+
+.skinny-btn:hover * {
+	transform: scale(1.1);
+}
+
+.skinny-btn:focus, .skinny-btn:visited, .skinny-btn:hover {
+	color: black;
+}
+
 </style>
 
 <script>
-/*
-function AnimateRotate(d, elem, direction) {
-	$({deg: 0}).animate({deg: d}, {
-		duration: 1000,
-		step: function(now){
-			$(elem).css({
-				transform: "rotate(" + now + "deg)"
-			});
-		},
-		complete: function(direction) {
-			console.log(direction)
-			if (direction == "down") {
-				$(this).removeClass('glyphicon-menu-down').addClass('glyphicon-menu-up').css({
-					transform: "rotate(0)"
-				});
-				$(this).parent().attr('href', '#page1');
-			}
-			else {
-				$(this).removeClass('glyphicon-menu-up').addClass('glyphicon-menu-down').css({
-					transform: "rotate(0)"
-				});
-				$(this).parent().attr('href', '#page2');
-			}
-		}
-	});
-}*/
-$(function() {
+$(document).on('ready', function() {
 	$('.arrow').each(function() {
 		$(this).waypoint(function(direction) {
 			if (direction == "down") {
-				$(this).removeClass('glyphicon-menu-down').addClass('glyphicon-menu-up');
+				$(this).addClass('inverted');
 				var id_pointing_to = $(this).parent().attr('href');
 				var num_pointing_to = parseInt(id_pointing_to.substring(5));
 				var new_id_pointing_to = "#page" + (num_pointing_to - 1).toString();
 				$(this).parent().attr('href', new_id_pointing_to);
 			}
 			else {
-				$(this).removeClass('glyphicon-menu-up').addClass('glyphicon-menu-down');
+				$(this).removeClass('inverted');
 				var id_pointing_to = $(this).parent().attr('href');
 				var num_pointing_to = parseInt(id_pointing_to.substring(5));
 				var new_id_pointing_to = "#page" + (num_pointing_to + 1).toString();
@@ -305,59 +300,51 @@ $(document).ready(function() {
 							{% if current_profile_info == None %}
 							<div id="sign_up_block" class="col-sm-4 col-xs-4 block">
 								<div class="row">
-									<a class="bottom_link" href="/signup/">
-										<button class="btn skinny-btn">
-											<div class="col-sm-12">
-												<i class="fa fa-user-plus fa-4x" aria-hidden="true"></i>
-											</div>
-											<div class="col-sm-12">
-												Sign up
-											</div>
-										</button>
+									<a class="bottom_link skinny-btn" href="/signup/">
+										<div class="col-sm-12">
+											<i class="fa fa-user-plus fa-4x" aria-hidden="true"></i>
+										</div>
+										<div class="col-sm-12">
+											Sign up
+										</div>
 									</a>
 								</div>
 							</div>
 							<div id="login_block" class="col-sm-4 col-xs-4 block">
 								<div class="row">
-									<a class="bottom_link" href="/login/">
-										<button class="btn skinny-btn">
-											<div class="col-sm-12">
-												<i class="fa fa-sign-in fa-4x" aria-hidden="true"></i>
-											</div>
-											<div class="col-sm-12">
-												Login
-											</div>
-										</button>
+									<a class="bottom_link skinny-btn" href="/login/">
+										<div class="col-sm-12">
+											<i class="fa fa-sign-in fa-4x" aria-hidden="true"></i>
+										</div>
+										<div class="col-sm-12">
+											Login
+										</div>
 									</a>
 								</div>
 							</div>
 							{% else %}
 							<div id="upload_block" class="col-sm-4 col-sm-offset-2 col-xs-4 col-xs-offset-2 block">
 								<div class="row">
-									<a class="bottom_link" href="/upload/">
-										<button class="btn skinny-btn">
-											<div class="col-sm-12">
-												<i class="glyphicon glyphicon-upload" style="font-size:51px;" aria-hidden="true"></i>
-											</div>
-											<div class="col-sm-12">
-												Upload
-											</div>
-										</button>
+									<a class="bottom_link skinny-btn" href="/upload/">
+										<div class="col-sm-12">
+											<i class="glyphicon glyphicon-upload" style="font-size:51px;" aria-hidden="true"></i>
+										</div>
+										<div class="col-sm-12">
+											Upload
+										</div>
 									</a>
 								</div>
 							</div>
 							{% endif %}
 							<div id="browse_block" class="col-sm-4 col-xs-4 block">
 								<div class="row">
-									<a class="bottom_link" href="/browse/">
-										<button class="btn skinny-btn">
-											<div class="col-sm-12">
-												<i class="fa fa-flask fa-4x" aria-hidden="true"></i>
-											</div>
-											<div class="col-sm-12">
-												Browse
-											</div>
-										</button>
+									<a class="bottom_link skinny-btn" href="/browse/">
+										<div class="col-sm-12">
+											<i class="fa fa-flask fa-4x" aria-hidden="true"></i>
+										</div>
+										<div class="col-sm-12">
+											Browse
+										</div>
 									</a>
 								</div>
 							</div>
@@ -411,62 +398,70 @@ $(document).ready(function() {
 			<div class="inside_page">
 				<div class="row page3_rows">
 					<div class="col-sm-4 col-sm-offset-2 col-xs-6">
-						<div class="flipper" onclick="window.location.href = '/api/'">
-							<div class="front">
-								<i class="fa fa-code black-text page3-glyphicon"></i>
-								<h4 class="page3_text">API Docs</h4>
+						<a href="/api/">
+							<div class="flipper" onclick="window.location.href = '/api/'">
+								<div class="front">
+									<i class="fa fa-code black-text page3-glyphicon"></i>
+									<h4 class="page3_text">API Docs</h4>
+								</div>
+								<div class="back">
+									<h3>API Docs</h3>
+									<p>
+										Let's get ProtoCat everywhere! Go over to our browseable API documentation to learn how to integrate this into your app.
+									</p>
+								</div>
 							</div>
-							<div class="back">
-								<h3>API Docs</h3>
-								<p>
-									Let's get ProtoCat everywhere! Go over to our browseable API documentation to learn how to integrate this into your app.
-								</p>
-							</div>
-						</div>
+						</a>
 					</div>
 					<div class="col-sm-4 col-xs-6">
-						<div class="flipper" onclick="window.location.href = 'http://2016.igem.org/Team:Michigan_Software'">
-							<div class="front">
-								<i class="glyphicon glyphicon-globe black-text page3-glyphicon"></i>
-								<h4 class="page3_text">Wiki</h4>
+						<a href="http://2016.igem.org/Team:Michigan_Software">
+							<div class="flipper" onclick="window.location.href = 'http://2016.igem.org/Team:Michigan_Software'">
+								<div class="front">
+									<i class="glyphicon glyphicon-globe black-text page3-glyphicon"></i>
+									<h4 class="page3_text">Wiki</h4>
+								</div>
+								<div class="back">
+									<h3>Wiki</h3>
+									<p>
+										If you are interested in how this was developed, jump over to our wiki!
+									</p>
+								</div>
 							</div>
-							<div class="back">
-								<h3>Wiki</h3>
-								<p>
-									If you are interested in how this was developed, jump over to our wiki!
-								</p>
-							</div>
-						</div>
+						</a>
 					</div>
 				</div>
 				<div id="page3_row2" class="row page3_rows">
 					<div class="col-sm-4 col-sm-offset-2 col-xs-6">
-						<div class="flipper" onclick="window.location.href = 'mailto:olivertc@umich.edu'">
-							<div class="front">
-								<i class="fa fa-envelope-o black-text page3-glyphicon"></i>
-								<h4 class="page3_text">Feedback</h4>
+						<a href="mailto:olivertc@umich.edu">
+							<div class="flipper" onclick="window.location.href = 'mailto:olivertc@umich.edu'">
+								<div class="front">
+									<i class="fa fa-envelope-o black-text page3-glyphicon"></i>
+									<h4 class="page3_text">Feedback</h4>
+								</div>
+								<div class="back">
+									<h3>Feedback</h3>
+									<p>
+										Have any suggestions? Send them as an email to us or go to our Github page and comment there!
+									</p>
+								</div>
 							</div>
-							<div class="back">
-								<h3>Feedback</h3>
-								<p>
-									Have any suggestions? Send them as an email to us or go to our Github page and comment there!
-								</p>
-							</div>
-						</div>
+						</a>
 					</div>
 					<div class="col-sm-4 col-xs-6">
-						<div class="flipper" onclick="window.location.href = 'https://github.com/igemsoftware/Michigan16'">
-							<div class="front">
-								<i class="fa fa-github black-text page3-glyphicon" aria-hidden="true"></i>
-								<h4 class="page3_text">Github</h4>
+						<a href="https://github.com/igemsoftware/Michigan16">
+							<div class="flipper" onclick="window.location.href = 'https://github.com/igemsoftware/Michigan16'">
+								<div class="front">
+									<i class="fa fa-github black-text page3-glyphicon" aria-hidden="true"></i>
+									<h4 class="page3_text">Github</h4>
+								</div>
+								<div class="back">
+									<h3>Github</h3>
+									<p>
+										Want to contribute to ProtoCat or run it on your own server? Jump over to our Github page!
+									</p>
+								</div>
 							</div>
-							<div class="back">
-								<h3>Github</h3>
-								<p>
-									Want to contribute to ProtoCat or run it on your own server? Jump over to our Github page!
-								</p>
-							</div>
-						</div>
+						</a>
 					</div>
 				</div>
 			</div>
