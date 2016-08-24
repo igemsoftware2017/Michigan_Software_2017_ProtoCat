@@ -87,9 +87,10 @@ ACCEPTABLE_TAGS = [
 ]
 
 ACCEPTABLE_ATTRIBUTES = {
-    '*': ['style', 'width', 'height'],
+    '*': ['style', 'width', 'height', 'class'],
     'img': ['src', 'alt'],
     'a': ['href'],
+    'span': ['data-reagent-number']
 }
 
 ACCEPTABLE_STYLES = [
@@ -134,7 +135,6 @@ class ProtocolViewSet(viewsets.ModelViewSet):
     def create(self, request):
         try:
             protocol = Protocol()
-            print(request.data)
             protocol.title = request.data['title']
             protocol.category = Category.objects.get(id = request.data['category'])
             protocol.description = bleach.clean(request.data['description'],
@@ -150,8 +150,11 @@ class ProtocolViewSet(viewsets.ModelViewSet):
             protocol.author = request.user.profileinfo
             protocol.materials = request.data['materials']
             step_list = []
+            reagent_list = []
             print('Main protocol finished')
+            # go over each step
             for step in request.data['protocol_steps']:
+                # fill out step info
                 protocol_step = ProtocolStep()
                 if (step['title'] != "" and step['title'] != None):
                     protocol_step.title = step['title']
@@ -168,12 +171,43 @@ class ProtocolViewSet(viewsets.ModelViewSet):
                                                         attributes = ACCEPTABLE_ATTRIBUTES,
                                                         styles = ACCEPTABLE_STYLES)
                 protocol_step.time_scaling = int(step['time_scaling'])
+                if 'reagents' in step:
+                    # make each reagent
+                    for reagent in step['reagents']:
+                        # fill all data parts
+                        step_reagent = ReagentForProtocol()
+                        step_reagent.scaling_type = reagent['scaling_type']
+                        step_reagent.reagent_type = reagent['reagent_type']
+                        step_reagent.amount = float(reagent['amount'])
+                        step_reagent.unit = reagent['unit']
+                        step_reagent.number_in_step = int(reagent['number_in_step'])
+                        step_reagent.significant_figures = int(reagent['significant_figures'])
+                        if (reagent['display_name'] != None and reagent['display_name'] != -1):
+                            step_reagent.display_name = reagent['display_name']
+                        if (reagent['preserve_units'] != None and reagent['preserve_units'] != -1):
+                            step_reagent.preserve_units = reagent['preserve_units']
+                        step_reagent.protocol_step_number = step['step_number']
+                        linked_reagent = ""
+                        # get reagent to link to this one
+                        try:
+                            linked_reagent = Reagent.objects.get(id = reagent['reagent_id'])
+                        except:
+                            linked_reagent = Reagent.objects.get(id = reagent['reagent_id']['id'])
+                        step_reagent.reagent = linked_reagent
+                        reagent_list.append(step_reagent)
                 step_list.append(protocol_step)
             protocol.save()
+            # save each step and each reagent
             for step in step_list:
                 step.protocol = protocol
                 step.save()
-            print(request.data['materials'])
+                for reagent in reagent_list:
+                    reagent.protocol = protocol
+                    # if the reagent is supposed to be associated with that step
+                    # associate them
+                    if (reagent.protocol_step_number == step.step_number):
+                        reagent.protocol_step = step
+                        reagent.save()
             return Response({'success': True, 'location': '/protocol/' + str(protocol.id)})
         except Exception as inst:
             print(inst)

@@ -203,7 +203,7 @@ class ReagentForProtocol(models.Model):
 	protocol = models.ForeignKey(Protocol)
 
 	# link the step to the correct reagents
-	protocol_step = models.ForeignKey(ProtocolStep)
+	protocol_step = models.ForeignKey(ProtocolStep, related_name = "reagents_for_step")
 	protocol_step_number = models.IntegerField();
 
 	number_in_step = models.IntegerField()

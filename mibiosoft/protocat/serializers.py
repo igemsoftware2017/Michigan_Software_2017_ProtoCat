@@ -11,15 +11,34 @@ The serializers at the top allow that field to have more in-depth info
 '''
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
-    username = serializers.ReadOnlyField()
     class Meta:
         model = User
-        fields = ('username', )
+        read_only_fields = ('username', )
+
+class ReagentSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Reagent
+        fields = ('url', 'name', 'website', 'picture', 'id')
+
+class AlternateReagentSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Reagent
+        fields = ('id',)
+
+class ProtocolReagentSerializer(serializers.ModelSerializer):
+    reagent_id = AlternateReagentSerializer(source='reagent')
+    class Meta:
+        model = ReagentForProtocol
+        fields = ('scaling_type', 'reagent_type', 'amount', 'unit', 'number_in_step', 'significant_figures', 'display_name', 'preserve_units', 'reagent_id')
 
 class ProtocolStepSerializer(serializers.ModelSerializer):
+    reagents = ProtocolReagentSerializer(
+        many = True,
+        required = False,
+        source = 'reagents_for_step')
     class Meta:
         model = ProtocolStep
-        fields = ('step_number', 'title', 'time', 'action', 'warning', 'time_scaling')
+        fields = ('step_number', 'title', 'time', 'action', 'warning', 'time_scaling', 'reagents')
 
 
 class ProfileSerializer(serializers.HyperlinkedModelSerializer):
@@ -74,15 +93,6 @@ class ProtocolSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('url', 'protocol_steps', 'title', 'category', 'upload_date', 'description', 'materials', 'change_log', 'previous_revision', 'comments_for_protocol', 'ratings_for_protocol', 'id')
         read_only_fields = ('author', 'num_ratings', 'avg_rating', 'first_revision')
 
-
-
-
-
-class ReagentSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = Reagent
-        fields = ('url', 'name', 'website', 'picture', 'id')
-
 '''
 {
     "protocol_steps": [
@@ -114,5 +124,124 @@ class ReagentSerializer(serializers.HyperlinkedModelSerializer):
     "materials": "Thing",
     "change_log": "Initial commit",
     "previous_revision": null
+}
+
+{
+    "protocol_steps": [
+    {
+        "step_number": 1,
+        "title": "",
+        "time": 10,
+        "action": "Modified Step 1 <span class=\"reagent\" data-reagent-number=\"1\"></span> <span class=\"reagent\" data-reagent-number=\"2\"></span> <span class=\"reagent\" data-reagent-number=\"3\"></span>",
+        "warning": "",
+        "time_scaling": 1,
+        "reagents": [
+            {
+                "scaling_type": 3,
+                "reagent_type": 1,
+                "amount": "0.0050000000000000000000000",
+                "unit": "g",
+                "number_in_step": 1,
+                "significant_figures": 3,
+                "display_name": null,
+                "preserve_units": 1,
+                "reagent_id": {
+                    "id": 1
+                }
+            },
+            {
+                "scaling_type": 3,
+                "reagent_type": 1,
+                "amount": "1.0000000000000000000000000",
+                "unit": "L",
+                "number_in_step": 2,
+                "significant_figures": 3,
+                "display_name": null,
+                "preserve_units": 1,
+                "reagent_id": {
+                    "id": 2
+                }
+            },
+            {
+                "scaling_type": 3,
+                "reagent_type": 3,
+                "amount": "1.0000000000000000000000000",
+                "unit": "g",
+                "number_in_step": 3,
+                "significant_figures": 3,
+                "display_name": null,
+                "preserve_units": 1,
+                "reagent_id": {
+                    "id": 2
+                }
+            }
+        ]
+    },
+    {
+        "step_number": 2,
+        "title": "",
+        "time": 20,
+        "action": "Original step 2 <span class=\"reagent\" data-reagent-number=\"1\"></span> <span class=\"reagent\" data-reagent-number=\"2\"></span>",
+        "warning": "",
+        "time_scaling": 2,
+        "reagents": [
+            {
+                "scaling_type": 3,
+                "reagent_type": 3,
+                "amount": "1.0000000000000000000000000",
+                "unit": "L",
+                "number_in_step": 1,
+                "significant_figures": 3,
+                "display_name": null,
+                "preserve_units": 1,
+                "reagent_id": {
+                    "id": 1
+                }
+            },
+            {
+                "scaling_type": 3,
+                "reagent_type": 1,
+                "amount": "1.0000000000000000000000000",
+                "unit": "L",
+                "number_in_step": 2,
+                "significant_figures": 3,
+                "display_name": null,
+                "preserve_units": 1,
+                "reagent_id": {
+                    "id": 1
+                }
+            }
+        ]
+    },
+    {
+        "step_number": 3,
+        "title": "",
+        "time": 30,
+        "action": "Original step 3 <span class=\"reagent\" data-reagent-number=\"1\"></span>",
+        "warning": "",
+        "time_scaling": 2,
+        "reagents": [
+            {
+                "scaling_type": 3,
+                "reagent_type": 1,
+                "amount": "1.5000000000000000000000000",
+                "unit": "L",
+                "number_in_step": 1,
+                "significant_figures": 3,
+                "display_name": null,
+                "preserve_units": 1,
+                "reagent_id": {
+                    "id": 2
+                }
+            }
+        ]
+    }
+    ],
+    "title": "Revision of 1st protocol",
+    "category": 3,
+    "description": "Another description",
+    "materials": "",
+    "change_log": "Made it better",
+    "previous_revision": 1
 }
 '''

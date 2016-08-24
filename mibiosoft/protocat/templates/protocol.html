@@ -16,6 +16,7 @@ var single_reagent = {
 	"reagent_type": {{ reagent.reagent_type }},
 	"protocol_step_number": {{ reagent.protocol_step_number }},
 	"reagent_id": {{ reagent.reagent.id }},
+	"preserve_units": {{ reagent.reagent.id }}
 };
 reagents.push(single_reagent);
 {% endfor %}
@@ -114,7 +115,7 @@ function get_list_of_reagent_type(reagents, type) {
 function update_visual_data() {
 	$('.action').each(function() {
 		step_num = Number($(this).attr('data-step-num'));
-		$(this).children('span').filter('.reagent').each(function() {
+		$(this).find('span').filter('.reagent').each(function() {
 			reagent_number = Number($(this).attr('data-reagent-number'));
 			var correct_reagent = null;
 			for (var reagent_num in reagents) {
@@ -125,7 +126,7 @@ function update_visual_data() {
 				}
 			}
 			if (correct_reagent != null) {
-				this.innerHTML = correct_reagent.amount.toPrecision(correct_reagent.significant_figures) + correct_reagent.unit + " " + correct_reagent.reagent;
+				this.innerHTML = correct_reagent.amount.toPrecision(correct_reagent.significant_figures) + " " + correct_reagent.unit + " " + correct_reagent.reagent;
 			}
 			else {
 				this.innerHTML = "ERROR";
@@ -226,7 +227,7 @@ function get_time_total(i) {
 $(document).on('ready', function(){
 	update_visual_data();
 	$('.timer').each(function(index) {
-		if (steps[index].time_scaling != 0) {
+		if (steps[index].time_scaling != 0 && steps[index].time != -1) {
 			count_to[index + 1] = steps[index].time;
 			time_total[index + 1] = 0;
 			update_element[index + 1] = this;
@@ -340,6 +341,7 @@ $(document).on('ready', function(){
 				}
 			}
 		}
+		console.log(max_batch);
 		if (max_batch > 0 && !all_constant) {
 			multiply_everything(max_batch);
 		}

@@ -114,6 +114,12 @@ function add_step() {
 
 	// Add event handler for when the user wants to change the step order
 	$(temp_item).find('.step-number').on("focusout", function() {
+		if (parseInt($(this).val()) >= $('#step_holder').children().length) {
+			$(this).val($('#step_holder').children().length - 1);
+		}
+		else if (parseInt($(this).val()) < 1) {
+			$(this).val(1);
+		}
 		rearrange(parseInt($(this).siblings('input').val()), parseInt($(this).val()), $(this).parent().parent().parent().parent().parent().parent());
 	});
 	disable_buttons();
@@ -140,7 +146,14 @@ function disable_buttons() {
 	}
 }
 
-
+function between(given, start, end) {
+	if (start < end) {
+		return given > start && given <= end;
+	}
+	else {
+		return given >= end && given < start;
+	}
+}
 
 function rearrange(num_from, num_to, moving) {
 	if (num_from != num_to) {
@@ -155,6 +168,24 @@ function rearrange(num_from, num_to, moving) {
 		else {
 			var other_direction = "+";
 			var direction = "-";
+		}
+
+		var reagent_incrementer = 1;
+		if (num_from < num_to) {
+			reagent_incrementer = -1;
+		}
+
+		var temp_list = [];
+		for (var i = 0; i < used_reagents.length; i++) {
+			if (between(used_reagents[i].step, num_from, num_to)) {
+				used_reagents[i].step += reagent_incrementer;
+			}
+			else if (used_reagents[i].step == num_from) {
+				temp_list.push(used_reagents[i]);
+			}
+		}
+		for (var i = 0; i < temp_list.length; i++) {
+			temp_list[i].step = num_to;
 		}
 
 		// Get every object that will need to move, change the number position of them,
@@ -273,6 +304,22 @@ function add_reagent() {
 	$('#add-reagent-modal').modal('show');
 }
 
+function id_of_description(step) {
+	return $(step).find('.action').attr('id');
+}
+
+// from megawac on stackoverflow
+// http://stackoverflow.com/questions/22884720/what-is-the-fastest-way-to-count-the-number-of-significant-digits-of-a-number
+var log10 = Math.log(10);
+function getSignificantDigitCount(n) {
+	n = Math.abs(String(n).replace(".", "")); //remove decimal and make positive
+	if (n == 0) return 0;
+	while (n != 0 && n % 10 == 0) n /= 10; //kill the 0s at the end of n
+
+	return Math.floor(Math.log(n) / log10) + 1; //get number of digits
+}
+
+var used_reagents = [];
 var available_reagents = [];
 $(document).on('ready', function() {
 	$.ajaxSetup({
@@ -289,18 +336,23 @@ $(document).on('ready', function() {
 			'materials': $('[name="text-reagents"]').val(),
 			'change_log': $('[name="change-log"]').val(),
 			'previous_revision': $('[name="BranchFrom"]').val(),
-			'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
 			'protocol_steps': []
 		};
 		$('#form').children('#step_holder').children('.individual-step:not(#empty-holder)').each(function() {
 			var step = {
 				"title": $(this).find('.title').val(),
-				"step_number": $(this).find('.step-number').val(),
+				"step_number": parseInt($(this).find('.step-number').val()),
 				"time": parseInt($(this).find('.time').val()),
 				"action": $(this).find('.action').val(),
 				"warning": $(this).find('.warning').val(),
-				"time_scaling": 2
+				"time_scaling": 2,
+				"reagents": []
 			};
+			for (var i = 0; i < used_reagents.length; i++) {
+				if (step.step_number === used_reagents[i].step) {
+					step.reagents.push(used_reagents[i]);
+				}
+			}
 			submit_data.protocol_steps.push(step);
 		});
 		console.log(submit_data);
@@ -377,15 +429,31 @@ $(document).on('ready', function() {
 		var new_reagent = {
 			'step': add_reagent_to,
 			'number_in_step': reagent_id_in_step,
-			'amount': amount,
+			'amount': amount.toString(),
 			'unit': $('[name="unit"]').val(),
 			'reagent_type': +$('#reagent-type').find('input:checked').val(),
 			'scaling_type': +$('#scale-type').find('input:checked').val(),
 			'display_name': $('[name="display_name"]').val(),
 			'reagent_id': +$('[name="linked_reagent"]').attr('data-id'),
 			'preserve_units': preserve_units,
+			'significant_figures': getSignificantDigitCount($('[name="amount"]').val())
 		};
+		if (new_reagent.display_name === "") {
+			new_reagent.display_name = $('[name="linked_reagent"]').val();
+		}
 		console.log(new_reagent)
+		used_reagents.push(new_reagent);
+		var content = ['<span class="reagent" data-reagent-number="',
+			reagent_id_in_step,'" contenteditable="false">',
+			new_reagent.amount,' ',new_reagent.unit,' of ', new_reagent.display_name,
+			'</span>'].join("");
+
+		$('#step_holder').each(function() {
+			if ($(this).find('.step-number').val() === new_reagent.step.toString()) {
+				var id = id_of_description($(this));
+				tinyMCE.get(id).execCommand("mceInsertRawHTML", false, content);
+			}
+		});
 		reagent_id_in_step++;
 	});
 
@@ -575,8 +643,6 @@ $(document).on('ready', function() {
 	<div id="step_holder">
 		<div id="empty-holder" class="individual-step"></div>
 	</div>
-
-	{% csrf_token %}
 
 	<input type="hidden" name="number_to_check" id="number_to_check"/>
 
