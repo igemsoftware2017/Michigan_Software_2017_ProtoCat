@@ -10,6 +10,7 @@ from django.core.files import File
 from django.conf import settings
 from django.views.decorators.cache import never_cache
 from django.http import JsonResponse
+from django.db.models import Max
 import bleach
 
 # Create your views here.
@@ -402,12 +403,17 @@ def upload_branch(request, protocol_id):
 	else:
 		current_profile_info = None
 
+	print(protocol_reagents.aggregate(Max('number_in_step')).get('number_in_step__max', 0.00))
+
 	context = {
 		'title': 'ProtoCat - Browse Categories',
 		'current_profile_info': current_profile_info,
 		'protocol': protocol,
 		'protocol_steps': protocol_steps,
 		'categories': categories,
+		'protocol_reagents': protocol_reagents,
+		# get the highest number to ensure that there are no conflicts
+		'last_reagent_id': protocol_reagents.aggregate(Max('number_in_step')).get('number_in_step__max', 0.00) + 1
 	}
 	print(len(connection.queries))
 	if (current_profile_info == None):

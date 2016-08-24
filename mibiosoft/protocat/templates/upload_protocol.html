@@ -350,7 +350,9 @@ $(document).on('ready', function() {
 			};
 			for (var i = 0; i < used_reagents.length; i++) {
 				if (step.step_number === used_reagents[i].step) {
-					step.reagents.push(used_reagents[i]);
+					if (step.action.includes('data-reagent-number="' + used_reagents[i].number_in_step.toString() + '"')) {
+						step.reagents.push(used_reagents[i]);
+					}
 				}
 			}
 			submit_data.protocol_steps.push(step);

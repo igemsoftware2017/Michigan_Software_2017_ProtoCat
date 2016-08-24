@@ -56,7 +56,7 @@ function prep_everything(textbox_class) {
 
 new_name = {{ protocol.num_steps }};
 var add_reagent_to = 0;
-var reagent_id_in_step = 0;
+var reagent_id_in_step = {{ last_reagent_id|add:1 }};
 
 function add_step() {
 	var last_element = null;
@@ -333,6 +333,23 @@ function getSignificantDigitCount(n) {
 
 var used_reagents = [];
 var available_reagents = [];
+
+{% for reagent in protocol_reagents %}
+var single_reagent = {
+	"number_in_step": {{ reagent.number_in_step }},
+	"scaling_type": {{ reagent.scaling_type }},
+	"amount": {{ reagent.amount }}.toString(),
+	"unit": "{{ reagent.unit }}",
+	"significant_figures": {{ reagent.significant_figures }},
+	"display_name": "{% if reagent.display_name == None %}{{ reagent.reagent }}{% else %}{{ reagent.display_name }}{% endif %}",
+	"reagent_type": {{ reagent.reagent_type }},
+	"step": {{ reagent.protocol_step_number }},
+	"reagent_id": {{ reagent.reagent.id }},
+	"preserve_units": {{ reagent.reagent.id }},
+};
+used_reagents.push(single_reagent);
+{% endfor %}
+
 $(document).on('ready', function() {
 	$.ajaxSetup({
 		headers: { "X-CSRFToken": getCookie("csrftoken") }
@@ -362,7 +379,9 @@ $(document).on('ready', function() {
 			};
 			for (var i = 0; i < used_reagents.length; i++) {
 				if (step.step_number === used_reagents[i].step) {
-					step.reagents.push(used_reagents[i]);
+					if (step.action.includes('data-reagent-number="' + used_reagents[i].number_in_step.toString() + '"')) {
+						step.reagents.push(used_reagents[i]);
+					}
 				}
 			}
 			submit_data.protocol_steps.push(step);

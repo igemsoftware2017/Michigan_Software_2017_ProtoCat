@@ -23,7 +23,7 @@ reagents.push(single_reagent);
 
 {% for protocol_step in protocol_steps %}
 var single_step = {
-	"action": '{{ protocol_step.action|safe }}',
+	"action": '{{ protocol_step.action|safe|linebreaks }}',
 	"time": {{ protocol_step.time }},
 	"time_scaling": {{ protocol_step.time_scaling }},
 	"step_number": {{ protocol_step.step_number }},

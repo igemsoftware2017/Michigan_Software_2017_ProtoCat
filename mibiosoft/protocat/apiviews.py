@@ -90,7 +90,7 @@ ACCEPTABLE_ATTRIBUTES = {
     '*': ['style', 'width', 'height', 'class'],
     'img': ['src', 'alt'],
     'a': ['href'],
-    'span': ['data-reagent-number']
+    'span': ['data-reagent-number', 'contenteditable']
 }
 
 ACCEPTABLE_STYLES = [
