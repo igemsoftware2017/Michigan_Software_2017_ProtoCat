@@ -137,9 +137,12 @@ a {
 	margin-bottom: 0px;
 	margin-top: 15px;
 }
-.fat-btn {
+.flipper {
 	width: 100%;
 	height: 20vh;
+	cursor: pointer;
+	perspective: 1000px;
+	-webkit-perspective: 1000px;
 }
 .black-text {
 	color: black;
@@ -150,6 +153,57 @@ a {
 #page3_row2 {
 	margin-top: 15px;
 }
+
+.flipper > div {
+	backface-visibility: hidden;
+	-webkit-backface-visibility: hidden;
+	-webkit-transition: all 500ms cubic-bezier(0.6, 0.06, 0.51, 1.48);
+	transition: all 500ms cubic-bezier(0.6, 0.06, 0.51, 1.48);;
+	border: 3px solid #00274c;
+	border-radius: 5px;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	right: 0px;
+	bottom: 0px;
+	display: -webkit-box;
+	display: -ms-flexbox;
+	display: flex;
+	-webkit-box-pack: center;
+	    -ms-flex-pack: center;
+	        justify-content: center;
+	-webkit-box-align: center;
+	    -ms-flex-align: center;
+	        align-items: center;
+	-webkit-box-orient: vertical;
+	-webkit-box-direction: normal;
+	    -ms-flex-direction: column;
+	        flex-direction: column;
+}
+
+.flipper > .front {
+	transform: rotateY(0deg);
+}
+
+.flipper > .back {
+	transform: rotateY(-180deg);
+	padding: 15px;
+}
+
+.flipper:hover > .front {
+	transform: rotateY(-180deg);
+}
+
+.flipper:hover > .back {
+	transform: rotateY(-360deg);
+}
+
+@media (max-width: 768px) {
+	.flipper > div {
+		font-size: 12px;
+	}
+}
+
 </style>
 
 <script>
@@ -357,38 +411,62 @@ $(document).ready(function() {
 			<div class="inside_page">
 				<div class="row page3_rows">
 					<div class="col-sm-4 col-sm-offset-2 col-xs-6">
-						<a href="/api/">
-							<button class="btn fat-btn">
+						<div class="flipper" onclick="window.location.href = '/api/'">
+							<div class="front">
 								<i class="fa fa-code black-text page3-glyphicon"></i>
 								<h4 class="page3_text">API Docs</h4>
-							</button>
-						</a>
+							</div>
+							<div class="back">
+								<h3>API Docs</h3>
+								<p>
+									Let's get ProtoCat everywhere! Go over to our browseable API documentation to learn how to integrate this into your app.
+								</p>
+							</div>
+						</div>
 					</div>
 					<div class="col-sm-4 col-xs-6">
-						<a href="http://2016.igem.org/Team:Michigan_Software">
-							<button class="btn fat-btn">
+						<div class="flipper" onclick="window.location.href = 'http://2016.igem.org/Team:Michigan_Software'">
+							<div class="front">
 								<i class="glyphicon glyphicon-globe black-text page3-glyphicon"></i>
 								<h4 class="page3_text">Wiki</h4>
-							</button>
-						</a>
+							</div>
+							<div class="back">
+								<h3>Wiki</h3>
+								<p>
+									If you are interested in how this was developed, jump over to our wiki!
+								</p>
+							</div>
+						</div>
 					</div>
 				</div>
 				<div id="page3_row2" class="row page3_rows">
 					<div class="col-sm-4 col-sm-offset-2 col-xs-6">
-						<a href="mailto:olivertc@umich.edu">
-							<button class="btn fat-btn">
+						<div class="flipper" onclick="window.location.href = 'mailto:olivertc@umich.edu'">
+							<div class="front">
 								<i class="fa fa-envelope-o black-text page3-glyphicon"></i>
 								<h4 class="page3_text">Feedback</h4>
-							</button>
-						</a>
+							</div>
+							<div class="back">
+								<h3>Feedback</h3>
+								<p>
+									Have any suggestions? Send them as an email to us or go to our Github page and comment there!
+								</p>
+							</div>
+						</div>
 					</div>
 					<div class="col-sm-4 col-xs-6">
-						<a href="https://github.com/igemsoftware/Michigan16">
-							<button class="btn fat-btn">
+						<div class="flipper" onclick="window.location.href = 'https://github.com/igemsoftware/Michigan16'">
+							<div class="front">
 								<i class="fa fa-github black-text page3-glyphicon" aria-hidden="true"></i>
 								<h4 class="page3_text">Github</h4>
-							</button>
-						</a>
+							</div>
+							<div class="back">
+								<h3>Github</h3>
+								<p>
+									Want to contribute to ProtoCat or run it on your own server? Jump over to our Github page!
+								</p>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
