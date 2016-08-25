@@ -20,7 +20,7 @@ tr:hover{
     overflow: hidden;
     text-overflow: ellipsis;
 }
- 
+
 </style>
 
 <script>
@@ -71,32 +71,34 @@ $(document).on('ready', function() {
 </div>
 
 <div class="col-sm-12">
-	{% for protocol in protocols %}
-	<div onclick="location.href='/protocol/{{ protocol.id }}/'">
-		<div class="panel panel-default">
-			<div class-"panel-heading">
-				<h3><center><strong>{{ protocol.title }}</strong></center></h3>
-				<h5><center><strong>Author: </strong>{{ protocol.author }}</center></h5>
-				<div class="panel-body">
-					<div class="container-fluid">
-						<div class="row">
-							<!-- I need these to stack next to eachother! -->
-							<div class="col-xs-12 col-sm-6 col-md-8">
-								<strong>Description: </strong>
-								{{ protocol.description }}
-							</div>
-							<div class="col-xs-6 col-md-4">
-								<div>
-									<strong>
-										Rating:
-									</strong>
-									{{ protocol.get_average_ratings}}
+	<div class="row">
+		{% for protocol in protocols %}
+		<div class="col-sm-6" onclick="location.href='/protocol/{{ protocol.id }}/'">
+			<div class="panel panel-default">
+				<div class-"panel-heading">
+					<h3><center><strong>{{ protocol.title }}</strong></center></h3>
+					<h5><center><strong>Author: </strong>{{ protocol.author }}</center></h5>
+					<div class="panel-body">
+						<div class="container-fluid">
+							<div class="row">
+								<!-- I need these to stack next to eachother! -->
+								<div class="col-xs-12 col-sm-6 col-md-8">
+									<strong>Description: </strong>
+									{{ protocol.description|safe }}
 								</div>
-								<div>
-									<strong>
-										Uploaded on:
-									</strong>
-									{{ protocol.upload_date }}
+								<div class="col-xs-6 col-md-4">
+									<div>
+										<strong>
+											Rating:
+										</strong>
+										{{ protocol.get_average_ratings}}
+									</div>
+									<div>
+										<strong>
+											Uploaded on:
+										</strong>
+										{{ protocol.upload_date }}
+									</div>
 								</div>
 							</div>
 						</div>
@@ -104,8 +106,8 @@ $(document).on('ready', function() {
 				</div>
 			</div>
 		</div>
+		{% endfor %}
 	</div>
-	{% endfor %}
 </div>
 {% endif %}
 
