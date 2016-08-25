@@ -91,12 +91,13 @@ function add_step() {
 	temp_item.attr('id', temp_name);
 	temp_item.find('[name="step[warning]"]').attr('name', temp_name + '[warning]');
 	temp_item.find('[name="step[number]"]').attr('name', temp_name + '[number]').attr('value', new_number);
-	temp_item.find('.previous-number').attr('value', new_name + 1);
+	temp_item.find('.previous-number').attr('value', $('#step_holder').children().length);
 	temp_item.find('[name="step[title]"]').attr('name', temp_name + '[title]');
 	temp_item.find('[name="step[time]"]').attr('name', temp_name + '[time]');
 	temp_item.find('[name="step[description]"]').attr('name', temp_name + '[description]');
 	temp_item.find('.step').addClass(temp_name).removeClass('step');
 	temp_item.find('.add_step').on('click', add_step);
+	temp_item.find('.bottom-left-corner').on('click', toggleWarning);
 
 
 	// Add onclick handler for removing a step
@@ -306,6 +307,51 @@ function add_reagent() {
 
 function id_of_description(step) {
 	return $(step).find('.action').attr('id');
+}
+
+var disabled = false;
+
+function toggleWarning() {
+	if (!disabled) {
+		disabled = true;
+		var warning_div = $(this).parent().parent().parent().siblings('.panel-danger');
+		var this_step = +$(warning_div).parent().parent().parent().parent().parent().find('.step-number').val();
+		var this_div = $(warning_div).parent().parent().parent().parent().parent().parent();
+		var change_height = 0;
+		if (warning_div.hasClass('hide-warning')) {
+			warning_div.removeClass('hide-warning');
+			var change_height = warning_div.outerHeight();
+			$(this).html('<h4>Hide warning </h4>  <i class="glyphicon glyphicon-chevron-up"></i>');
+		}
+		else {
+			var change_height = -1 * warning_div.outerHeight();
+			warning_div.addClass('hide-warning');
+			$(this).html('<h4>Show warning </h4>  <i class="glyphicon glyphicon-chevron-down"></i>')
+		}
+
+		moving_objects = $('.individual-step:visible')
+		.filter(function(index) {
+			var step_number = parseInt($(this).find('.step-number').val());
+			var is_before = $(this_div).prevAll().filter($(this)).length !== 0;
+			var boolean = (step_number > this_step && is_before);
+			return boolean;
+		})
+		.animate({ top: "+=" + change_height.toString() + "px" }, 0);
+
+		moving_objects = $('.individual-step:visible')
+		.filter(function(index) {
+			var step_number = parseInt($(this).find('.step-number').val());
+			var is_before = $(this_div).prevAll().filter($(this)).length !== 0;
+			var boolean = (step_number < this_step && !is_before);
+			return boolean;
+		})
+		.animate({ top: "-=" + change_height.toString() + "px" }, 0);
+
+
+		setTimeout(function() {
+			disabled = false;
+		}, 2000);
+	}
 }
 
 // from megawac on stackoverflow
@@ -536,6 +582,28 @@ $(document).on('ready', function() {
 .add_step, .remove_step, .add_reagent {
 	white-space: normal;
 }
+
+.hide-warning {
+	padding: 0px;
+	height: 0px;
+	overflow: hidden;
+}
+.bottom-left-corner {
+	position: absolute;
+	right: 0px;
+	bottom: 0px;
+	margin-right: 15px;
+	cursor: pointer;
+}
+.bottom-left-corner > h4{
+	display: inline-block;
+}
+
+.action-holder {
+	position: relative;
+	padding-bottom: 30px;
+}
+
 </style>
 
 <div class="col-sm-12 individual-step" style="display: none;" id="original_step">
@@ -572,19 +640,22 @@ $(document).on('ready', function() {
 								<input class="form-control input-sm time" name="step[time]" min="0" step="1" type="number" class="time" placeholder="Amount of time in seconds (optional)">
 							</div>
 						</div>
-						<div class="panel-body" style="padding-left:0px;padding-right:0px;">
+						<div class="panel-body action-holder" style="padding-left:0px;padding-right:0px;">
 							<div class="panel-heading">
 								<div class="row">
 									<div class="col-sm-2">
 										<label for="inputEmail3" class="control-label" style="width:100%;">Add Info</label>
 									</div>
 									<div class="col-sm-10 col-xs-12">
-										<textarea class="step action" name="step[description]"></textarea>
+										<textarea class="step action" name="step{{protocol_step.step_number}}[description]">{{ protocol_step.action|safe }}</textarea>
+									</div>
+									<div class="bottom-left-corner">
+										<h4>Show warning </h4>  <i class="glyphicon glyphicon-chevron-down"></i>
 									</div>
 								</div>
 							</div>
 						</div>
-						<div class="panel-body panel-danger" style="padding-left:0px;padding-right:0px;background-color:#f2dede;">
+						<div class="panel-body panel-danger transition-height hide-warning" style="padding-left:0px;padding-right:0px;background-color:#f2dede;">
 							<!-- Want to get rid of defualt border radius -->
 							<div class="panel-heading">
 								<div class="row">

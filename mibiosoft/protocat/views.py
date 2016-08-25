@@ -403,7 +403,10 @@ def upload_branch(request, protocol_id):
 	else:
 		current_profile_info = None
 
-	print(protocol_reagents.aggregate(Max('number_in_step')).get('number_in_step__max', 0.00))
+	try:
+		last_reagent_id = protocol_reagents.aggregate(Max('number_in_step')).get('number_in_step__max', 0.00) + 1
+	except:
+		last_reagent_id = 0
 
 	context = {
 		'title': 'ProtoCat - Browse Categories',
@@ -413,7 +416,7 @@ def upload_branch(request, protocol_id):
 		'categories': categories,
 		'protocol_reagents': protocol_reagents,
 		# get the highest number to ensure that there are no conflicts
-		'last_reagent_id': protocol_reagents.aggregate(Max('number_in_step')).get('number_in_step__max', 0.00) + 1
+		'last_reagent_id': last_reagent_id
 	}
 	print(len(connection.queries))
 	if (current_profile_info == None):
