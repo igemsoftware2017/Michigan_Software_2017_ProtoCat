@@ -3,24 +3,33 @@
 {% block content %}
 
 <style>
-<!-- make the rows of data have the correct mouse cursor -->
+// make the rows of data have the correct mouse cursor
 tr:hover{
 	cursor: hand;
 	cursor: pointer;
 }
 
 .center {
-    display:inline-block;
-    float:none;
-    text-align:center;
-    margin-right:-4px;
+	display:inline-block;
+	float:none;
+	text-align:center;
+	margin-right:-4px;
 }
 
 .info {
-    overflow: hidden;
-    text-overflow: ellipsis;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
-
+#add-category {
+	color: blue;
+	cursor: pointer;
+}
+#upload_new {
+	text-decoration: none;
+}
+#up-a-level-div {
+	margin-bottom: 15px;
+}
 </style>
 
 <script>
@@ -32,25 +41,29 @@ $(document).on('ready', function() {
 </script>
 
 <!-- allow you to go up a level -->
-<div class="col-sm-12">
+<div class="col-sm-12" id="up-a-level-div">
 	{% if parent_category %}
 	{% if parent_category and parent_category.parent_category %}
-	<a href="/browse/{{ parent_category.parent_category.id }}/">Up a level</a>
+	<a href="/browse/{{ parent_category.parent_category.id }}/">
+		<button class="btn btn-default form-control">Up a level</button>
+	</a>
 	{% else %}
-	<a href="/browse/">Up a level</a>
+	<a href="/browse/">
+		<button class="btn btn-default form-control">Up a level</button>
+	</a>
 	{% endif %}
 	{% endif %}
 </div>
 
 {% if categories %}
 <div class="col-sm-12">
-	<div class="panel"><strong><center>Categories</center></strong><button type="button" id="add-category" class="btn btn-primary">Add category</button></div>
+	<div class="panel"><strong><center>Categories<span id="add-category"> +</span></center></strong></div>
 </div>
 
 <div align="center" class="col-sm-12">
 	<div class="row">
 		{% for category in categories %}
-		<div onclick="location.href='/browse/{{ category.id }}/'" class="col-xs-4 center">
+		<div onclick="location.href='/browse/{{ category.id }}/'" class="col-xs-12 col-sm-4 center">
 			<div class="panel panel-default">
 				<div class="panel-heading info">
 					<center><strong>
@@ -67,7 +80,7 @@ $(document).on('ready', function() {
 
 {% if protocols %}
 <div class="col-sm-12">
-	<div class="panel"><strong><center>Protocols</center></strong></div>
+	<div class="panel"><strong><center>Protocols<a id="upload_new" href="/upload/"> +</a></center></strong></div>
 </div>
 
 <div class="col-sm-12">

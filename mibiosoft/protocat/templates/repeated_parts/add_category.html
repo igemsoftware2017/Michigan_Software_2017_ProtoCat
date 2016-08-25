@@ -50,6 +50,9 @@ $(document).on('ready', function() {
 </script>
 
 <style>
+#category-modal-body > div:not(:last-child) {
+	margin-bottom: 15px;
+}
 </style>
 
 
@@ -61,7 +64,7 @@ $(document).on('ready', function() {
 				<h4 class="modal-title" id="myModalLabel">Add Category</h4>
 			</div>
 			<div class="modal-body">
-				<div class="row">
+				<div class="row" id="category-modal-body">
 					<div class="col-sm-6 col-xs-12">
 						<input type="text" class="form-control" name="title" placeholder="Title">
 					</div>
