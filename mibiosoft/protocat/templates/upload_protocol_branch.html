@@ -91,7 +91,7 @@ function add_step() {
 	temp_item.attr('id', temp_name);
 	temp_item.find('[name="step[warning]"]').attr('name', temp_name + '[warning]');
 	temp_item.find('[name="step[number]"]').attr('name', temp_name + '[number]').attr('value', new_number);
-	temp_item.find('.previous-number').val($('#step_holder').children().length);
+	temp_item.find('.previous-number').attr('value', $('#step_holder').children().length);
 	temp_item.find('[name="step[title]"]').attr('name', temp_name + '[title]');
 	temp_item.find('[name="step[time]"]').attr('name', temp_name + '[time]');
 	temp_item.find('[name="step[description]"]').attr('name', temp_name + '[description]');
@@ -321,15 +321,51 @@ function id_of_description(step) {
 	return $(step).find('.action').attr('id');
 }
 
+var disabled = false;
+
 function toggleWarning() {
-	var warning_div = $(this).parent().parent().parent().siblings('.panel-danger');
-	if (warning_div.hasClass('hide-warning')) {
-		warning_div.removeClass('hide-warning');
-		$(this).html('<h4>Hide warning </h4>  <i class="glyphicon glyphicon-chevron-up"></i>');
-	}
-	else {
-		warning_div.addClass('hide-warning');
-		$(this).html('<h4>Show warning </h4>  <i class="glyphicon glyphicon-chevron-down"></i>')
+	if (!disabled) {
+		disabled = true;
+		var warning_div = $(this).parent().parent().parent().siblings('.panel-danger');
+		var this_step = +$(warning_div).parent().parent().parent().parent().parent().find('.step-number').val();
+		var this_div = $(warning_div).parent().parent().parent().parent().parent().parent();
+		var change_height = 0;
+		if (warning_div.hasClass('hide-warning')) {
+			warning_div.removeClass('hide-warning');
+			var change_height = warning_div.outerHeight();
+			$(this).html('<h4>Hide warning </h4>  <i class="glyphicon glyphicon-chevron-up"></i>');
+		}
+		else {
+			var change_height = -1 * warning_div.outerHeight();
+			warning_div.addClass('hide-warning');
+			$(this).html('<h4>Show warning </h4>  <i class="glyphicon glyphicon-chevron-down"></i>')
+		}
+
+		moving_objects = $('.individual-step:visible')
+		.filter(function(index) {
+			var step_number = parseInt($(this).find('.step-number').val());
+			var is_before = $(this_div).prevAll().filter($(this)).length !== 0;
+			var boolean = (step_number > this_step && is_before);
+			return boolean;
+		})
+		.animate({ top: "+=" + change_height.toString() + "px" }, 0);
+
+		moving_objects = $('.individual-step:visible')
+		.filter(function(index) {
+			var step_number = parseInt($(this).find('.step-number').val());
+			var is_before = $(this_div).prevAll().filter($(this)).length !== 0;
+			var boolean = (step_number < this_step && !is_before);
+			return boolean;
+		})
+		.animate({ top: "-=" + change_height.toString() + "px" }, 0);
+
+		$('.bottom-left-corner').addClass('disabled-hide');
+
+
+		setTimeout(function() {
+			$('.bottom-left-corner').removeClass('disabled-hide');
+			disabled = false;
+		}, 2000);
 	}
 }
 
@@ -597,11 +633,15 @@ $(document).on('ready', function() {
 	display: inline-block;
 }
 
-
 .action-holder {
 	position: relative;
 	padding-bottom: 30px;
 }
+
+.disabled-hide {
+	color: gray;
+}
+
 </style>
 
 <!-- MOVED TO TOP TO AVOID CHROME ERROR WHEN SUBMITTING EMPTY FORM -->

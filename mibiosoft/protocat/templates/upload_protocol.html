@@ -347,8 +347,11 @@ function toggleWarning() {
 		})
 		.animate({ top: "-=" + change_height.toString() + "px" }, 0);
 
+		$('.bottom-left-corner').addClass('disabled-hide');
+
 
 		setTimeout(function() {
+			$('.bottom-left-corner').removeClass('disabled-hide');
 			disabled = false;
 		}, 2000);
 	}
@@ -602,6 +605,10 @@ $(document).on('ready', function() {
 .action-holder {
 	position: relative;
 	padding-bottom: 30px;
+}
+
+.disabled-hide {
+	color: gray;
 }
 
 </style>
