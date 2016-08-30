@@ -146,7 +146,7 @@ function update_visual_data() {
 	var main_str = "";
 	for (var i in display_reactants) {
 		var str = ["<tr>"
-		,"<td><div class='input-group'><input type='number' class='form-control reagent_control' value=",display_reactants[i].amount.toPrecision(display_reactants[i].significant_figures),"><div class='input-group-addon'>",reactants[i].unit,"</div>","</div></td>"
+		,"<td><div class='input-group'><input type='number' class='form-control reactant_control' value=",display_reactants[i].amount.toPrecision(display_reactants[i].significant_figures),"><div class='input-group-addon'>",reactants[i].unit,"</div>","</div></td>"
 		,"<td><div class='fix-top-margin'>",display_reactants[i].reagent,"</div></td>"
 		,"</tr>"].join("");
 		main_str += str;
@@ -295,6 +295,57 @@ $(document).on('ready', function(){
 
 	$('#recalc_reactants').on('click', function() {
 		// limiting reagent calc
+		display_reactants = JSON.parse(JSON.stringify(display_reactants))
+
+		$('.reactant_control').each(function(index) {
+			display_reactants[index].amount = parseFloat($(this).val());
+		});
+		var variable_list = [];
+		for (var i = 0; i < reactants.length; i++) {
+			if (reactants[i].scaling_type < 3) {
+				// when it is constant, subtract the amount
+				for (var j = 0; j < display_reactants.length; j++) {
+					if (reactants[j].reagent_id == display_reactants[i].reagent_id
+						&& reactants[j].unit == display_reactants[i].unit) {
+
+						display_reactants[i].amount -= reactants[i].amount;
+					}
+				}
+				var copy_of = JSON.parse(JSON.stringify(reactants[i]));
+				copy_of.amount = 0;
+				variable_list.push(copy_of);
+			}
+			else {
+				variable_list.push(reactants[i]);
+				console.log(reactants[i])
+			}
+		}
+		temp_list = get_list_of_reagent_type(variable_list, "3");
+		variable_list = get_display_reagent_type(temp_list, variable_list, "3");
+		console.log(display_reactants)
+		console.log("----------------")
+		console.log(variable_list)
+		var min_batch = null;
+		var limiter = -1;
+		var all_constant = true;
+		for (var i = 0; i < variable_list.length; i++) {
+			if (variable_list[i].amount != 0) {
+				all_constant = false;
+				var current_batch = display_reactants[i].amount / variable_list[i].amount;
+				if (min_batch == null || current_batch < min_batch) {
+					min_batch = current_batch;
+					limiter = i;
+				}
+			}
+		}
+		console.log(min_batch);
+		if (min_batch > 0 && !all_constant) {
+			multiply_everything(min_batch);
+		}
+		else {
+			alert("Everything is constant or you don't have enough materials")
+		}
+		
 	});
 	$('#recalc_products').on('click', function() {
 		// batch calc
@@ -351,7 +402,7 @@ $(document).on('ready', function(){
 	});
 });
 
-$(function() {
+$(document).on('ready', function() {
 	$('.waypoint').each(function() {
 		$(this).waypoint(function(direction) {
 			NavbarActivator(this);
@@ -544,6 +595,14 @@ textarea[name=comment] {
 	color: red;
 }
 
+.panel-heading.waypoint {
+	background-color: #00274c;
+}
+
+.no-radius {
+	border-radius: 0px!important;
+}
+
 </style>
 
 <div class="col-sm-12">
@@ -694,7 +753,7 @@ textarea[name=comment] {
 						<!-- Modify Javascript to include reagents with each step -->
 						<div class="panel-body action" data-step-num="{{ protocol_step.step_number }}">{{ protocol_step.action|safe }}</div>
 						{% if protocol_step.warning != "" %}
-						<div class="panel panel-danger">
+						<div class="panel panel-danger no-radius">
 							<!-- Want to get rid of defualt border radius -->
 							<div class="panel-heading">
 								<h3 class="panel-title">Warning!</h3>
