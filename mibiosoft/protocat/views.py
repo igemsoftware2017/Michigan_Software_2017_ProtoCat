@@ -214,13 +214,46 @@ def reagent(request, reagent_id):
 		print(current_profile_info)
 	else:
 		current_profile_info = None
-	act_reagent = Reagent.objects.get(id = reagent_id)
-	title = 'ProtoCat - ' + str(act_reagent)
+	reagent = Reagent.objects.get(id = reagent_id)
+	title = 'ProtoCat - ' + str(reagent)
 	context = {
 		'title': title,
 		'current_profile_info': current_profile_info,
+		'reagent': reagent
 	}
 	return render(request, 'reagent.html', context)
+
+def edit_reagent(request, reagent_id):
+	current_profile_info = request.user
+	if (not current_profile_info.is_anonymous()):
+		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
+		print(current_profile_info)
+	else:
+		current_profile_info = None
+	reagent = Reagent.objects.get(id = reagent_id)
+	title = 'ProtoCat - ' + str(reagent)
+	context = {
+		'title': title,
+		'current_profile_info': current_profile_info,
+		'method': 'edit',
+		'reagent': reagent
+	}
+	return render(request, 'edit_reagent.html', context)
+
+def new_reagent(request):
+	current_profile_info = request.user
+	if (not current_profile_info.is_anonymous()):
+		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
+		print(current_profile_info)
+	else:
+		current_profile_info = None
+	title = 'ProtoCat - New Reagent'
+	context = {
+		'title': title,
+		'current_profile_info': current_profile_info,
+		'method': 'new'
+	}
+	return render(request, 'edit_reagent.html', context)
 
 def about(request):
 	current_profile_info = request.user

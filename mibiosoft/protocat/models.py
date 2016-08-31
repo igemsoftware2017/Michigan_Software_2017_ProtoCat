@@ -53,8 +53,7 @@ class Category(models.Model):
 # the generic reagent that has links to the correct associated_reagents
 class Reagent(models.Model):
 	name = models.TextField()
-	smiles_format = models.TextField(blank = True, null = True)
-	picture = models.ImageField(blank = True, null = True, upload_to = "media")
+	description = models.TextField(default = "")
 	website = models.URLField(blank = True, null = True)
 
 	def __str__(self):

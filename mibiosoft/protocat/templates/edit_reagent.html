@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<script>
+$(document).on('ready', function() {
+	$.ajaxSetup({
+		headers: { "X-CSRFToken": getCookie("csrftoken") }
+	});
+
+	tinymce.init({
+		selector: 'textarea',
+		convert_fonts_to_spans : true,
+		body_class: 'mce-class',
+		theme: 'modern',
+		height: 500,
+		skin_url: '/static/css/light',
+		plugins: [
+			'advlist autolink lists link image charmap print preview hr anchor pagebreak',
+			'searchreplace wordcount visualblocks visualchars code fullscreen',
+			'insertdatetime media nonbreaking save table contextmenu directionality',
+			'emoticons template paste textcolor colorpicker textpattern imagetools'
+		],
+		toolbar1: 'undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | print preview media',
+		image_advtab: true,
+		content_css: [
+			'/static/css/tinymce-styling.css',
+			'//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css'
+		],
+	});
+
+	$('#reagent').on('submit', function(e) {
+		e.preventDefault();
+		tinyMCE.triggerSave();
+		$.ajax({
+			type: $(this).attr('method'),
+			url: $(this).attr('action'),
+			data: $('#reagent').serialize(),
+			success: function(data){
+				window.location.href = data.location;
+			},
+			failure: function(){
+				alert("Issue connecting to the server. Please try again later.")
+			}
+		});
+	});
+});
+</script>
+
+<style>
+#website_textbox, #title_textbox {
+	width: 200px;
+	margin: 0 auto;
+	margin-bottom: 15px;
+}
+.full-width {
+	width: 100%;
+}
+#submit_reagent {
+	margin-top: 15px;
+	padding-left: 15px;
+	padding-right: 15px;
+}
+@media (max-width: 787px) {
+	#website_textbox, #title_textbox {
+		width: 100%;
+	}
+}
+</style>
+
+<form id="reagent" action="/api/reagent/{% if method == 'edit' %}{{ reagent.id }}/{% endif %}" {% if method != "new" %}method="PUT"{% else %}method="POST"{% endif %}>
+	<div class="col-sm-12">
+		<div class="row">
+			<div class="col-xs-12 padded">
+				<div class="center-block" style="text-align:center;">
+					{% if method != "new" %}
+						<h2>{{ reagent.name }}</h2>
+					{% else %}
+						<input name="name" id="title_textbox" class="form-control" placeholder="Name"></h4>
+					{% endif %}
+					<input name="website" id="website_textbox" class="form-control" {% if reagent %}value="{{ reagent.website }}"{% endif %} placeholder="Website"></h4>
+				</div>
+			</div>
+		</div>
+	</div>
+	<br>
+	<div class="col-sm-12">
+		<textarea name="description">{{ reagent.description|safe }}</textarea>
+	</div>
+	<input type="submit" id="submit_reagent" class="btn btn-primary full-width">
+</form>
+
+{% endblock %}

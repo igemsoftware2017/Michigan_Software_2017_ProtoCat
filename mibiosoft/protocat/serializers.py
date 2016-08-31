@@ -18,7 +18,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 class ReagentSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Reagent
-        fields = ('url', 'name', 'website', 'picture', 'id')
+        fields = ('url', 'name', 'website', 'description', 'id')
 
 class AlternateReagentSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:

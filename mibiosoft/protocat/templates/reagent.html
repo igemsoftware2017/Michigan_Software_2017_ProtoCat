@@ -2,9 +2,27 @@
 
 {% block content %}
 
-<div class="jumbotron">
-	<h1>Congrats, you made it to {{title}}!</h1>
-	<h3>Now it's time to start working	</h3>
+<style>
+</style>
+
+<div class="col-sm-12">
+	<div class="row">
+		<div class="col-xs-12 padded">
+			<div class="center-block" style="text-align:center;">
+				<h2>{{ reagent.name }}</h2>
+				<h4>{{ reagent.website|urlize }}</h4>
+			</div>
+		</div>
+	</div>
+</div>
+<br>
+<div class="col-sm-12">
+	{% if reagent.description != "" %}
+	{{ reagent.description|safe }}
+	<h5><a href="/editreagent/{{reagent.id}}">Edit this reagent</a></h5>
+	{% else %}
+	<h3 style="text-align:center">Looks like no one has written a description yet.<br> <a href="/editreagent/{{reagent.id}}">Edit this reagent</a></h3>
+	{% endif%}
 </div>
 
 {% endblock %}

@@ -277,3 +277,37 @@ class ReagentViewSet(viewsets.ModelViewSet):
 	permission_classes = (IsReadOnlyOrAuthenticated,)
 	queryset = Reagent.objects.all()
 	serializer_class = ReagentSerializer
+
+	def create(self, request):
+		try:
+			print(request.data)
+			reagent = Reagent()
+			reagent.name = request.data['name']
+			reagent.website = request.data['website']
+			reagent.description = bleach.clean(request.data['description'],
+													tags = ACCEPTABLE_TAGS,
+													attributes = ACCEPTABLE_ATTRIBUTES,
+													styles = ACCEPTABLE_STYLES)
+			reagent.save()
+			return Response({'success': True, 'location': '/reagent/' + str(reagent.id)})
+		except Exception as inst:
+			print(inst)
+			return Response({'status': 'failed'})
+
+	def update(self, request, pk=None):
+		reagent = Reagent.objects.get(id = pk)
+		try:
+			reagent.website = request.data['website']
+		except:
+			pass
+		try:
+			reagent.description = bleach.clean(request.data['description'],
+													tags = ACCEPTABLE_TAGS,
+													attributes = ACCEPTABLE_ATTRIBUTES,
+													styles = ACCEPTABLE_STYLES)
+			console.log(reagent.description)
+		except:
+			pass
+		reagent.save()
+
+		return Response({'success': True, 'location': '/reagent/' + str(reagent.id)})
