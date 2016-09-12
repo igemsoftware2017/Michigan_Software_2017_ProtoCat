@@ -195,7 +195,7 @@ def submit_login(request):
 			if user.is_active:
 				login(request, user)
 				profile_info = ProfileInfo.objects.get(user = user)
-				return JsonResponse({'success': True, 'location': '/user/' + str(profile_info.id) + '/'})
+				return JsonResponse({'success': True, 'location': '/'})
 			else:
 				return JsonResponse({'success': False})
 		else:
