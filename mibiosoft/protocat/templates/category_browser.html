@@ -55,11 +55,10 @@ $(document).on('ready', function() {
 	{% endif %}
 </div>
 
-{% if categories %}
 <div class="col-sm-12">
 	<div class="panel"><strong><center>Categories<span id="add-category"> +</span></center></strong></div>
 </div>
-
+{% if categories %}
 <div align="center" class="col-sm-12">
 	<div class="row">
 		{% for category in categories %}
@@ -76,13 +75,15 @@ $(document).on('ready', function() {
 		{% endfor %}
 	</div>
 </div>
+{% else %}
+<center><h3>Looks like there are no protocols here.</h3></center>
 {% endif %}
 
-{% if protocols %}
+
 <div class="col-sm-12">
 	<div class="panel"><strong><center>Protocols<a id="upload_new" href="/upload/"> +</a></center></strong></div>
 </div>
-
+{% if protocols %}
 <div class="col-sm-12">
 	<div class="row">
 		{% for protocol in protocols %}
@@ -122,10 +123,8 @@ $(document).on('ready', function() {
 		{% endfor %}
 	</div>
 </div>
-{% endif %}
-
-{% if not protocols and not categories %}
-<h3><center>There does not seem to be anything here...</center></h3>
+{% else %}
+<center><h3>Looks like there are no protocols here.</h3></center>
 {% endif %}
 
 {% include 'repeated_parts/add_category.html' %}
