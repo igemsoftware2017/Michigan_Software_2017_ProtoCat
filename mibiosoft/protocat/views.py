@@ -468,7 +468,7 @@ def upload_page(request, current_data):
 	categories = Category.objects.all()
 
 	context = {
-		'title': 'ProtoCat - Browse Categories',
+		'title': 'ProtoCat - Upload Protocol',
 		'current_profile_info': current_profile_info,
 		'categories': categories,
 	}

@@ -73,7 +73,7 @@ class Protocol(models.Model):
 	change_log = models.TextField()
 
 	# many protocols to one category
-	category = models.ForeignKey(Category, default = 1, related_name="protocol_for_category")
+	category = models.ForeignKey(Category, blank = True, null = True, related_name="protocol_for_category")
 
 	# True if the author want dynamic scaling of products and reactants
 	scaleable = models.BooleanField(default = False)

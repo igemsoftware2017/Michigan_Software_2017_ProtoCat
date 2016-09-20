@@ -139,7 +139,7 @@ class ProtocolViewSet(viewsets.ModelViewSet):
 			try:
 				protocol.category = Category.objects.get(id = request.data['category'])
 			except:
-				pass
+				protocol.category = None
 			protocol.description = bleach.clean(request.data['description'],
 												tags = ACCEPTABLE_TAGS,
 												attributes = ACCEPTABLE_ATTRIBUTES,
