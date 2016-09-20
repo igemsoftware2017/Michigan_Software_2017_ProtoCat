@@ -136,7 +136,10 @@ class ProtocolViewSet(viewsets.ModelViewSet):
 		try:
 			protocol = Protocol()
 			protocol.title = request.data['title']
-			protocol.category = Category.objects.get(id = request.data['category'])
+			try:
+				protocol.category = Category.objects.get(id = request.data['category'])
+			except:
+				pass
 			protocol.description = bleach.clean(request.data['description'],
 												tags = ACCEPTABLE_TAGS,
 												attributes = ACCEPTABLE_ATTRIBUTES,
