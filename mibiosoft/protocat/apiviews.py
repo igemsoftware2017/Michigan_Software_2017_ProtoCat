@@ -151,7 +151,10 @@ class ProtocolViewSet(viewsets.ModelViewSet):
 			if (request.data['previous_revision'] != None and request.data['previous_revision'] != "-1"):
 				protocol.previous_revision = Protocol.objects.get(id = request.data['previous_revision'])
 			protocol.author = request.user.profileinfo
-			protocol.materials = request.data['materials']
+			try:
+				protocol.materials = request.data['materials']
+			except:
+				pass
 			step_list = []
 			reagent_list = []
 			print('Main protocol finished')
@@ -257,8 +260,10 @@ class CategoryViewSet(viewsets.ModelViewSet):
 			category = Category()
 			category.title = request.data['title']
 			category.description = request.data['description']
-			if (request.data['parent_category'] != None):
+			try:
 				category.parent_category = Category.objects.get(id = request.data['parent_category'])
+			except:
+				pass
 			category.author = request.user.profileinfo
 			category.save()
 			return Response({'status': 'Saved category'})
