@@ -25,6 +25,7 @@ urlpatterns = [
 	url(r'^upload/$', views.upload_default, name="default_upload_page"),
 	url(r'^upload/(?P<protocol_id>[0-9]+)/$', views.upload_branch, name="upload_page"),
 	url(r'^submitprotocol/$', views.submit_upload, name="submit_upload_page"),
+	url(r'^toggleprotocol/$', views.toggle_protocol, name="toggle_page"),
 	url(r'^submitcomment/$', views.submit_comment, name="submit_comment_page"),
 	url(r'^updateprofile/$', views.update_profile, name="update_profile"),
 	url(r'^test/$', views.test, name="test"),

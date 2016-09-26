@@ -416,7 +416,7 @@ $(document).on('ready', function() {
 		}, {
 			offset: $('.navbar-default').height()
 		});
-	})
+	});
 });
 
 function NavbarActivator(moved_item) {
@@ -440,9 +440,30 @@ function NavbarActivator(moved_item) {
 {% if user_rating != None %}
 $(document).on('ready', function() {
 	$('div.rating').find('.filled-stars').find('.glyphicon').addClass('user-rated');
-	console.log('ran')
+	console.log('ran');
 });
 {% endif %}
+
+$(document).on('ready', function() {
+	$('#toggle_protocol').on('click', function() {
+		var form_data = new FormData();
+		form_data.append("protocol_id", "{{ protocol.id }}");
+		form_data.append("csrfmiddlewaretoken", $('[name="csrfmiddlewaretoken"]').val());
+		$.ajax({
+			type: "POST",
+			url: "/toggleprotocol/",
+			contentType: false,
+			processData: false,
+			data: form_data,
+			success: function(){
+				location.reload();
+			},
+			failure: function(){
+				alert("Unable to connect to the server");
+			}
+		});
+	});
+});
 </script>
 <style>
 .protocol_title{
@@ -604,7 +625,11 @@ textarea[name=comment] {
 }
 
 </style>
-
+{% if protocol.author == current_profile_info %}
+<div class="col-sm-12">
+	<button id="toggle_protocol" class="form-control" style="margin-bottom:15px;">{% if protocol.searchable %}Hide this protocol{% else %}Show this protocol{% endif %}</button>
+</div>
+{% endif %}
 <div class="col-sm-12">
 	<div class="panel panel-default">
 		<div id="title_bar" class="row protocol_title">

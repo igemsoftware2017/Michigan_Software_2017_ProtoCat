@@ -270,6 +270,7 @@ def about(request):
 	return render(request, 'about.html', context)
 
 def search(request):
+	search_hidden = False
 	text_filter = ""
 	try:
 		text_filter = request.POST['text_filter']
@@ -309,6 +310,9 @@ def search(request):
 	order = sort_direction + order
 
 	results = Protocol.objects.filter(Q(title__icontains = text_filter) | Q(description__icontains = text_filter))
+
+	if (not search_hidden):
+		results = results.filter(searchable = True)
 
 	# filter the results even more
 	try:
@@ -686,3 +690,24 @@ def test(request):
 		'current_profile_info': current_profile_info,
 	}
 	return render(request, 'test.html', context)
+
+
+def toggle_protocol(request):
+	current_profile_info = request.user
+	if (not current_profile_info.is_anonymous()):
+		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
+		print(current_profile_info)
+	else:
+		current_profile_info = None
+	try:
+		protocol = Protocol.objects.get(id = request.POST['protocol_id'])
+		if (protocol.author == current_profile_info):
+			protocol.searchable = not protocol.searchable
+			protocol.save()
+			return JsonResponse({'success': True})
+		else:
+			return JsonResponse({'success': False}) 
+	except Exception as inst:
+		print(inst)
+		print("Update didn't work")
+		return JsonResponse({'success': False})
