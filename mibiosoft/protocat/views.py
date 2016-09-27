@@ -403,14 +403,14 @@ def submit_rating(request):
 			protocol = Protocol.objects.get(id = protocol_id)
 			try:
 				old_rating = ProtocolRating.objects.get(person = current_profile_info, protocol = protocol)
-				protocol.avg_rating -= old_rating.score
+				protocol.avg_rating = ((protocol.avg_rating * protocol.num_ratings) - old_rating.score + new_value) / protocol.num_ratings
 				old_rating.score = new_value
 				old_rating.save()
 			except:
 				rating = ProtocolRating(person = current_profile_info, score = new_value, protocol = protocol)
+				protocol.avg_rating = ((protocol.avg_rating * protocol.num_ratings) + new_value) / (protocol.num_ratings + 1)
 				protocol.num_ratings += 1
 				rating.save()
-			protocol.avg_rating += new_value
 			protocol.save()
 		context = {
 			'title': 'ProtoCat',
