@@ -21,7 +21,7 @@ class ReagentAdmin(admin.ModelAdmin):
 		model = Reagent
 
 class ProtocolAdmin(admin.ModelAdmin):
-	list_display = ["__str__", "get_total_ratings", "get_number_ratings", "scaleable", "searchable", "category", "get_reagents", "author", "previous_revision", "upload_date", "materials"]
+	list_display = ["__str__", "get_total_ratings", "get_number_ratings", "scaleable", "searchable", "avg_rating", "num_ratings", "category", "get_reagents", "author", "previous_revision", "upload_date", "materials"]
 	class Meta:
 		model = Protocol
 

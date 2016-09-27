@@ -340,27 +340,35 @@ def search(request):
 		pass
 
 	try:
-		min_num_ratings = int(request.POST['min-num-ratings'])
+		min_num_ratings = int(request.POST['min-num-ratings'])  - 1
+		print(min_num_ratings)
 		results = results.exclude(num_ratings__lt=min_num_ratings)
 	except:
+		print("No min num ratings")
 		pass
 
 	try:
-		max_num_ratings = int(request.POST['max-num-ratings'])
+		max_num_ratings = int(request.POST['max-num-ratings']) + 1
+		print(max_num_ratings)
 		results = results.exclude(num_ratings__gt=max_num_ratings)
 	except:
+		print("No max num ratings")
 		pass
 
 	try:
-		min_avg_ratings = int(request.POST['min-avg-ratings'])
+		min_avg_ratings = int(request.POST['min-avg-ratings']) - 1
+		print(min_avg_ratings)
 		results = results.exclude(avg_rating__lt=min_avg_ratings)
 	except:
+		print("No min avg ratings")
 		pass
 
 	try:
-		max_avg_ratings = int(request.POST['max-avg-ratings'])
+		max_avg_ratings = int(request.POST['max-avg-ratings']) + 1
+		print(max_avg_ratings)
 		results = results.exclude(avg_rating__gt=max_avg_ratings)
 	except:
+		print("No max avg ratings")
 		pass
 
 	# get user info
@@ -390,17 +398,20 @@ def submit_rating(request):
 		current_profile_info = request.user
 		if (not current_profile_info.is_anonymous()):
 			current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
-			new_value = request.POST['NewValue']
+			new_value = int(request.POST['NewValue'])
 			protocol_id = request.POST['id']
 			protocol = Protocol.objects.get(id = protocol_id)
-
 			try:
 				old_rating = ProtocolRating.objects.get(person = current_profile_info, protocol = protocol)
+				protocol.avg_rating -= old_rating.score
 				old_rating.score = new_value
 				old_rating.save()
 			except:
 				rating = ProtocolRating(person = current_profile_info, score = new_value, protocol = protocol)
+				protocol.num_ratings += 1
 				rating.save()
+			protocol.avg_rating += new_value
+			protocol.save()
 		context = {
 			'title': 'ProtoCat',
 			'current_profile_info': current_profile_info,

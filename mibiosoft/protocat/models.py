@@ -83,7 +83,7 @@ class Protocol(models.Model):
 
 	num_ratings = models.IntegerField(default = 0)
 
-	avg_rating = models.DecimalField(default = -1, max_digits = 50, decimal_places = 25)
+	avg_rating = models.DecimalField(max_digits = 50, decimal_places = 25)
 
 	num_steps = models.IntegerField(default = 0, validators=[MinValueValidator(1)])
 
