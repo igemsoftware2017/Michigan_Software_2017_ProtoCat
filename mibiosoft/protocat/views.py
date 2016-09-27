@@ -356,7 +356,7 @@ def search(request):
 		pass
 
 	try:
-		min_avg_ratings = int(request.POST['min-avg-ratings']) - 1
+		min_avg_ratings = float(request.POST['min-avg-ratings']) - 0.01
 		print(min_avg_ratings)
 		results = results.exclude(avg_rating__lt=min_avg_ratings)
 	except:
@@ -364,7 +364,7 @@ def search(request):
 		pass
 
 	try:
-		max_avg_ratings = int(request.POST['max-avg-ratings']) + 1
+		max_avg_ratings = float(request.POST['max-avg-ratings']) + 0.01
 		print(max_avg_ratings)
 		results = results.exclude(avg_rating__gt=max_avg_ratings)
 	except:
