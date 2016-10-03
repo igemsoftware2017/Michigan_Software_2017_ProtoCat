@@ -320,11 +320,9 @@ def search(request):
 		revision_start_date = revision_start_date.split("/")
 		revision_start_date = map(int, revision_start_date)
 		my_datetime = datetime.date(revision_start_date[2], revision_start_date[0], revision_start_date[1])
-		print("worked")
 		# try to make timezone aware
 		results = results.exclude(upload_date__lt=my_datetime)
 	except:
-		print("Time/date ")
 		pass
 
 	try:
@@ -332,11 +330,9 @@ def search(request):
 		revision_end_date = revision_end_date.split("/")
 		revision_end_date = map(int, revision_end_date)
 		my_datetime = datetime.date(revision_end_date[2], revision_end_date[0], revision_end_date[1])
-		print("worked")
 		# try to make timezone aware
 		results = results.exclude(upload_date__gt=my_datetime)
 	except:
-		print("Time/date error")
 		pass
 
 	try:
@@ -344,7 +340,6 @@ def search(request):
 		print(min_num_ratings)
 		results = results.exclude(num_ratings__lt=min_num_ratings)
 	except:
-		print("No min num ratings")
 		pass
 
 	try:
@@ -352,7 +347,6 @@ def search(request):
 		print(max_num_ratings)
 		results = results.exclude(num_ratings__gt=max_num_ratings)
 	except:
-		print("No max num ratings")
 		pass
 
 	try:
@@ -360,7 +354,6 @@ def search(request):
 		print(min_avg_ratings)
 		results = results.exclude(avg_rating__lt=min_avg_ratings)
 	except:
-		print("No min avg ratings")
 		pass
 
 	try:
@@ -368,7 +361,6 @@ def search(request):
 		print(max_avg_ratings)
 		results = results.exclude(avg_rating__gt=max_avg_ratings)
 	except:
-		print("No max avg ratings")
 		pass
 
 	# get user info

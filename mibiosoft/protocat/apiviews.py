@@ -202,7 +202,10 @@ class ProtocolViewSet(viewsets.ModelViewSet):
 						step_reagent.reagent = linked_reagent
 						reagent_list.append(step_reagent)
 				step_list.append(protocol_step)
-			protocol.num_steps = step_list.length
+			try:
+				protocol.num_steps = step_list.length
+			except:
+				protocol.num_steps = 0
 			protocol.save()
 			# save each step and each reagent
 			for step in step_list:
