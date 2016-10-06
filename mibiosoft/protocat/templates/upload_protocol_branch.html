@@ -382,7 +382,6 @@ function getSignificantDigitCount(n) {
 
 
 var used_reagents = [];
-var available_reagents = [];
 
 {% for reagent in protocol_reagents %}
 var single_reagent = {
@@ -536,31 +535,6 @@ $(document).on('ready', function() {
 			}
 		});
 		reagent_id_in_step++;
-	});
-
-	$.ajax({
-		type: "GET",
-		url: "/api/reagent",
-		success: function(data){
-			for (var i = 0; i < data.length; i++) {
-				var object = {
-					'value': data[i].name,
-					'id': data[i].id,
-				};
-				available_reagents.push(object)
-			}
-			$('[name="linked_reagent"]').autocomplete({
-				source: available_reagents,
-				delay: 0,
-				select: function(event, ui) {
-					console.log(ui.item.id)
-					$('[name="linked_reagent"]').attr('data-id', ui.item.id);
-				},
-			});
-		},
-		failure: function(){
-			console.log("Failed to load reagents")
-		}
 	});
 });
 </script>

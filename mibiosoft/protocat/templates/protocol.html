@@ -10,9 +10,11 @@ var single_reagent = {
 	"number_in_step": {{ reagent.number_in_step }},
 	"scaling_type": {{ reagent.scaling_type }},
 	"amount": {{ reagent.amount }},
+	"original_amount": {{ reagent.amount }},
 	"unit": "{{ reagent.unit }}",
-	"significant_figures": {{ reagent.significant_figures }},
+	"significant_figures": 3,
 	"reagent": "{% if reagent.display_name == None %}{{ reagent.reagent }}{% else %}{{ reagent.display_name }}{% endif %}",
+	"linked_name": "{{ reagent.reagent }}",
 	"reagent_type": {{ reagent.reagent_type }},
 	"protocol_step_number": {{ reagent.protocol_step_number }},
 	"reagent_id": {{ reagent.reagent.id }},
@@ -46,10 +48,39 @@ var running = [];
 var count_to = [];
 var update_element = [];
 
+function reset_everything() {
+	for (var reagent_num in reagents) {
+		reagents[reagent_num].amount = reagents[reagent_num].original_amount;
+	}
+	multiply_everything(1);
+}
+
 function multiply_everything(factor) {
 	for (var reagent_num in reagents) {
 		if (reagents[reagent_num].scaling_type == 3) {
 			reagents[reagent_num].amount *= factor;
+		}
+	}
+	for (var reagent_num in reagents) {
+		if (reagents[reagent_num].scaling_type == 1) {
+			// if it is a filler, do the correct subtraction
+			reagents[reagent_num].amount = reagents[reagent_num].original_amount;
+			for (var comp_reagent_num in reagents) {
+				if (reagents[comp_reagent_num].protocol_step_number == reagents[reagent_num].protocol_step_number
+					&& reagents[comp_reagent_num].unit == reagents[reagent_num].unit
+					&& reagents[comp_reagent_num].reagent_type == reagents[reagent_num].reagent_type
+					&& comp_reagent_num != reagent_num) {
+					
+					// subtract the other reagents from the filler
+					reagents[reagent_num].amount -= reagents[comp_reagent_num].amount;
+				}
+			}
+			if (reagents[reagent_num].amount < 0) {
+				alert("Error: a filling reagent is negative");
+				if (factor != 1) {
+					reset_everything();
+				}
+			}
 		}
 	}
 	reactants = get_list_of_reagent_type(reagents, "1");
@@ -98,13 +129,32 @@ function get_list_of_reagent_type(reagents, type) {
 			var put_in = true;
 			for (var i in result) {
 				var temp = result[i];
+				console.log(temp);
 				if (temp.reagent_id == reagent.reagent_id && temp.unit == reagent.unit) {
 					put_in = false;
+					if (reagent.scaling_type == 1) {
+						// filling reagent, ban changing the amount
+						temp.changable = "disabled=\"disabled\"";
+					}
+					else if (temp.changable == "disabled" && reagent.scaling_type == 3) {
+						temp.changable = "";
+					}
 				}
 			}
 			if (put_in) {
 				new_reagent = JSON.parse(JSON.stringify(reagent));
 				new_reagent.amount = 0;
+				if (new_reagent.scaling_type == 1) {
+					// filling reagent, ban changing the amount
+					temp.changable = "disabled=\"disabled\"";
+				}
+				else if (new_reagent.scaling_type == 2) {
+					new_reagent.changable = "disabled";
+				}
+				else {
+					// non-filling reagent, allow changing for now
+					new_reagent.changable = "";
+				}
 				result.push(new_reagent);
 			}
 		}
@@ -140,14 +190,16 @@ function update_visual_data() {
 	intermediaries = get_list_of_reagent_type(reagents, "2");
 	display_intermediaries = get_display_reagent_type(reagents, intermediaries, "2");
 	products = get_list_of_reagent_type(reagents, "3");
+	//console.log(reagents);
 	display_products = get_display_reagent_type(reagents, products, "3");
 
 
 	var main_str = "";
 	for (var i in display_reactants) {
 		var str = ["<tr>"
-		,"<td><div class='input-group'><input type='number' class='form-control reactant_control' value=",display_reactants[i].amount.toPrecision(display_reactants[i].significant_figures),"><div class='input-group-addon'>",reactants[i].unit,"</div>","</div></td>"
-		,"<td><div class='fix-top-margin'>",display_reactants[i].reagent,"</div></td>"
+		,"<td><div class='input-group'><input type='number'",display_reactants[i].changable
+		," class='form-control reactant_control' value=",display_reactants[i].amount.toPrecision(display_reactants[i].significant_figures),"><div class='input-group-addon'>",reactants[i].unit,"</div>","</div></td>"
+		,"<td><div class='fix-top-margin'>",display_reactants[i].linked_name,"</div></td>"
 		,"</tr>"].join("");
 		main_str += str;
 	}
@@ -157,8 +209,9 @@ function update_visual_data() {
 	main_str = "";
 	for (var i in display_intermediaries) {
 		var str = ["<tr>"
-		,"<td><div class='input-group'><input type='number' class='form-control' value=",display_intermediaries[i].amount.toPrecision(display_intermediaries[i].significant_figures),"><div class='input-group-addon'>",intermediaries[i].unit,"</div>","</div></td>"
-		,"<td class='fix-top-margin'>",display_intermediaries[i].reagent,"</div></td>"
+		,"<td><div class='input-group'><input type='number'",display_intermediaries[i].changable
+		," class='form-control' value=",display_intermediaries[i].amount.toPrecision(display_intermediaries[i].significant_figures),"><div class='input-group-addon'>",intermediaries[i].unit,"</div>","</div></td>"
+		,"<td class='fix-top-margin'>",display_intermediaries[i].linked_name,"</div></td>"
 		,"</tr>"].join("");
 		main_str += str;
 	}
@@ -168,8 +221,9 @@ function update_visual_data() {
 	main_str = "";
 	for (var i in display_products) {
 		var str = ["<tr>"
-		,"<td><div class='input-group'><input type='number' class='form-control product_control' value=",display_products[i].amount.toPrecision(display_products[i].significant_figures),"><div class='input-group-addon'>",products[i].unit,"</div>","</div></td>"
-		,"<td><div class='fix-top-margin'>",display_products[i].reagent,"</div></td>"
+		,"<td><div class='input-group'><input type='number'",display_products[i].changable
+		," class='form-control product_control' value=",display_products[i].amount.toPrecision(display_products[i].significant_figures),"><div class='input-group-addon'>",products[i].unit,"</div>","</div></td>"
+		,"<td><div class='fix-top-margin'>",display_products[i].linked_name,"</div></td>"
 		,"</tr>"].join("");
 		main_str += str;
 	}
@@ -225,7 +279,7 @@ function get_time_total(i) {
 }
 
 $(document).on('ready', function(){
-	update_visual_data();
+	multiply_everything(1);
 	$('.timer').each(function(index) {
 		if (steps[index].time_scaling != 0 && steps[index].time != -1) {
 			count_to[index + 1] = steps[index].time;
@@ -329,7 +383,7 @@ $(document).on('ready', function(){
 		var limiter = -1;
 		var all_constant = true;
 		for (var i = 0; i < variable_list.length; i++) {
-			if (variable_list[i].amount != 0) {
+			if (variable_list[i].amount != 0 && display_reactants[i].changable == "") {
 				all_constant = false;
 				var current_batch = display_reactants[i].amount / variable_list[i].amount;
 				if (min_batch == null || current_batch < min_batch) {
@@ -383,7 +437,7 @@ $(document).on('ready', function(){
 		var limiter = -1;
 		var all_constant = true;
 		for (var i = 0; i < variable_list.length; i++) {
-			if (variable_list[i].amount != 0) {
+			if (variable_list[i].amount != 0 && display_products[i].changable == "") {
 				all_constant = false;
 				var current_batch = display_products[i].amount / variable_list[i].amount;
 				if (current_batch > max_batch) {

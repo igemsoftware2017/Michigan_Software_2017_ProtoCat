@@ -1,6 +1,68 @@
 <script>
+var available_reagents = [];
 $(document).on('ready', function() {
 	$('[name="keep-units"]').bootstrapSwitch();
+	
+	$("#add-reagent").on("click",function(){
+		console.log("CLICKED");
+    	window.open('/newreagent/','_blank');
+	});
+
+	$.ajax({
+		type: "GET",
+		url: "/api/reagent",
+		success: function(data){
+			for (var i = 0; i < data.length; i++) {
+				var object = {
+					'value': data[i].name,
+					'id': data[i].id,
+				};
+				available_reagents.push(object)
+			}
+			$('[name="linked_reagent"]').autocomplete({
+				source: available_reagents,
+				delay: 0,
+				select: function(event, ui) {
+					console.log(ui.item.id)
+					$('[name="linked_reagent"]').attr('data-id', ui.item.id);
+				},
+			});
+		},
+		failure: function(){
+			console.log("Failed to load reagents")
+		}
+	});
+
+	$('#refresh-reagent').on('click', function () {
+		console.log("CLICKED");
+		$.ajax({
+			type: "GET",
+			url: "/api/reagent",
+			success: function(data){
+				available_reagents = [];
+				for (var i = 0; i < data.length; i++) {
+					var object = {
+						'value': data[i].name,
+						'id': data[i].id,
+					};
+					available_reagents.push(object)
+				}
+				$('[name="linked_reagent"]').autocomplete({ source: available_reagents });
+				/*$('[name="linked_reagent"]').autocomplete({
+					source: available_reagents,
+					delay: 0,
+					select: function(event, ui) {
+						console.log(ui.item.id)
+						$('[name="linked_reagent"]').attr('data-id', ui.item.id);
+					},
+				});*/
+			},
+			failure: function(){
+				console.log("Failed to load reagents")
+			}
+		});
+		
+	});
 });
 </script>
 
@@ -126,7 +188,17 @@ select::-ms-expand {
 					</div>
 					<div class="col-xs-5" style="padding-left:0px;">
 						<input type="text" class="form-control" style="margin-bottom:15px;" name="display_name" placeholder="Appear as"/>
-						<input type="text" class="form-control" name="linked_reagent" placeholder="Link to Reagent"/>
+						<div class="input-group">
+							<input type="text" class="form-control" name="linked_reagent" placeholder="Link to Reagent"/>
+							<span class="input-group-btn">
+								<button class="btn btn-default" id="refresh-reagent">
+									<i class="glyphicon glyphicon-refresh"></i>
+								</button>
+								<button class="btn btn-default" id="add-reagent">
+									<i class="glyphicon glyphicon-plus"></i>
+								</button>
+							</span>
+						</div>
 					</div>
 				</div>
 				<div class="row separator">
