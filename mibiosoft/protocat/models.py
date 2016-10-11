@@ -53,7 +53,7 @@ class Category(models.Model):
 # the generic reagent that has links to the correct associated_reagents
 class Reagent(models.Model):
 	name = models.TextField()
-	description = models.TextField(default = "")
+	description = models.TextField(blank = True, null = True, default = "")
 	website = models.URLField(blank = True, null = True)
 
 	def __str__(self):

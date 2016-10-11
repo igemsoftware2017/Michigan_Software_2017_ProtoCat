@@ -76,9 +76,9 @@ $(document).on('ready', function() {
 					{% if method != "new" %}
 						<h2>{{ reagent.name }}</h2>
 					{% else %}
-						<input name="name" id="title_textbox" class="form-control" placeholder="Name"></h4>
+						<input name="name" id="title_textbox" class="form-control" placeholder="Name of reagent"></h4>
 					{% endif %}
-					<input name="website" id="website_textbox" class="form-control" {% if reagent %}value="{{ reagent.website }}"{% endif %} placeholder="Website"></h4>
+					<input name="website" id="website_textbox" class="form-control" {% if reagent %}value="{{ reagent.website }}"{% endif %} placeholder="Reference website (optional)"></h4>
 				</div>
 			</div>
 		</div>
