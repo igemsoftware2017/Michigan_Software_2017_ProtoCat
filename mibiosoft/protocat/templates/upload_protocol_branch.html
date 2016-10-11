@@ -394,7 +394,7 @@ var single_reagent = {
 	"reagent_type": {{ reagent.reagent_type }},
 	"step": {{ reagent.protocol_step_number }},
 	"reagent_id": {{ reagent.reagent.id }},
-	"preserve_units": {{ reagent.reagent.id }},
+	"preserve_units": {{ reagent.preserve_units }},
 };
 used_reagents.push(single_reagent);
 {% endfor %}
@@ -461,7 +461,7 @@ $(document).on('ready', function() {
 	$('#save_reagent').on('click', function() {
 		// try form validation
 		if ($('[name="linked_reagent"]').attr('data-id') == undefined) {
-			console.log('never clicked a reagent')
+			alert("You did not link to a reagent");
 			return;
 		}
 
@@ -527,9 +527,12 @@ $(document).on('ready', function() {
 			reagent_id_in_step,'" contenteditable="false">',
 			new_reagent.amount,' ',new_reagent.unit,' of ', new_reagent.display_name,
 			'</span>'].join("");
+		console.log(new_reagent.step.toString());
 
-		$('#step_holder').each(function() {
+		$('#step_holder').children('div:visible').each(function() {
+			console.log($(this).find('.step-number').val());
 			if ($(this).find('.step-number').val() === new_reagent.step.toString()) {
+				console.log("ADDING");
 				var id = id_of_description($(this));
 				tinyMCE.get(id).execCommand("mceInsertRawHTML", false, content);
 			}

@@ -431,7 +431,7 @@ $(document).on('ready', function() {
 	$('#save_reagent').on('click', function() {
 		// try form validation
 		if ($('[name="linked_reagent"]').attr('data-id') == undefined) {
-			console.log('never clicked a reagent')
+			alert("You did not link to a reagent");
 			return;
 		}
 
@@ -498,7 +498,10 @@ $(document).on('ready', function() {
 			new_reagent.amount,' ',new_reagent.unit,' of ', new_reagent.display_name,
 			'</span>'].join("");
 
-		$('#step_holder').each(function() {
+		console.log(new_reagent.step.toString());
+
+		$('#step_holder').children('div:visible').each(function() {
+			console.log($(this).find('.step-number').val());
 			if ($(this).find('.step-number').val() === new_reagent.step.toString()) {
 				var id = id_of_description($(this));
 				tinyMCE.get(id).execCommand("mceInsertRawHTML", false, content);
