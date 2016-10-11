@@ -12,16 +12,58 @@ var single_reagent = {
 	"amount": {{ reagent.amount }},
 	"original_amount": {{ reagent.amount }},
 	"unit": "{{ reagent.unit }}",
-	"significant_figures": 3,
+	"significant_figures": {{ reagent.significant_figures }},
 	"reagent": "{% if reagent.display_name == None %}{{ reagent.reagent }}{% else %}{{ reagent.display_name }}{% endif %}",
-	"linked_name": "{{ reagent.reagent }}",
+	//"linked_name": "{{ reagent.reagent }}",
 	"reagent_type": {{ reagent.reagent_type }},
 	"protocol_step_number": {{ reagent.protocol_step_number }},
 	"reagent_id": {{ reagent.reagent.id }},
-	"preserve_units": {{ reagent.reagent.id }}
+	"prefix": "",
+	"care_units": {% if reagent.preserve_units != None %}true{% else %}false{% endif %},
+	"preserve_units": {{ reagent.preserve_units }}
 };
 reagents.push(single_reagent);
 {% endfor %}
+
+for (reagent_num in reagents) {
+	if (reagents[reagent_num].care_units) {
+		switch (reagents[reagent_num].preserve_units) {
+			case -9:
+				reagents[reagent_num].prefix = "n";
+				break;
+			case -6:
+				reagents[reagent_num].prefix = "μ";
+				break;
+			case -3:
+				reagents[reagent_num].prefix = "m";
+				break;
+			case -2:
+				reagents[reagent_num].prefix = "c";
+				break;
+			case -1:
+				reagents[reagent_num].prefix = "d";
+				break;
+			case 0:
+				reagents[reagent_num].prefix = "";
+				break;
+			case 1:
+				reagents[reagent_num].prefix = "da";
+				break;
+			case 2:
+				reagents[reagent_num].prefix = "h";
+				break;
+			case 3:
+				reagents[reagent_num].prefix = "k";
+				break;
+			case 6:
+				reagents[reagent_num].prefix = "M";
+				break;
+			case 9:
+				reagents[reagent_num].prefix = "G";
+				break;
+		}
+	}
+}
 
 {% for protocol_step in protocol_steps %}
 var single_step = {
@@ -30,7 +72,7 @@ var single_step = {
 	"time_scaling": {{ protocol_step.time_scaling }},
 	"step_number": {{ protocol_step.step_number }},
 };
-//var javascript_single_reagent = JSON.parse(single_reagent);
+
 steps.push(single_step);
 {% endfor %}
 
@@ -176,7 +218,10 @@ function update_visual_data() {
 				}
 			}
 			if (correct_reagent != null) {
-				this.innerHTML = correct_reagent.amount.toPrecision(correct_reagent.significant_figures) + " " + correct_reagent.unit + " " + correct_reagent.reagent;
+				console.log(correct_reagent.preserve_units)
+				this.innerHTML = correct_reagent.amount.toPrecision(correct_reagent.significant_figures) / Math.pow(10, correct_reagent.preserve_units) 
+					+ " " + correct_reagent.prefix + correct_reagent.unit 
+					+ " <a href=\"/reagent/" + correct_reagent.reagent_id + "\">" + correct_reagent.reagent + "</a>";
 			}
 			else {
 				this.innerHTML = "ERROR";
@@ -199,7 +244,7 @@ function update_visual_data() {
 		var str = ["<tr>"
 		,"<td><div class='input-group'><input type='number'",display_reactants[i].changable
 		," class='form-control reactant_control' value=",display_reactants[i].amount.toPrecision(display_reactants[i].significant_figures),"><div class='input-group-addon'>",reactants[i].unit,"</div>","</div></td>"
-		,"<td><div class='fix-top-margin'>",display_reactants[i].linked_name,"</div></td>"
+		,"<td><a href=\"/reagent/",display_reactants[i].reagent_id,"\"> <div class='fix-top-margin'>",display_reactants[i].reagent,"</div></td>"
 		,"</tr>"].join("");
 		main_str += str;
 	}
@@ -211,7 +256,7 @@ function update_visual_data() {
 		var str = ["<tr>"
 		,"<td><div class='input-group'><input type='number'",display_intermediaries[i].changable
 		," class='form-control' value=",display_intermediaries[i].amount.toPrecision(display_intermediaries[i].significant_figures),"><div class='input-group-addon'>",intermediaries[i].unit,"</div>","</div></td>"
-		,"<td class='fix-top-margin'>",display_intermediaries[i].linked_name,"</div></td>"
+		,"<td class='fix-top-margin'>",display_intermediaries[i].reagent,"</div></td>"
 		,"</tr>"].join("");
 		main_str += str;
 	}
@@ -223,7 +268,7 @@ function update_visual_data() {
 		var str = ["<tr>"
 		,"<td><div class='input-group'><input type='number'",display_products[i].changable
 		," class='form-control product_control' value=",display_products[i].amount.toPrecision(display_products[i].significant_figures),"><div class='input-group-addon'>",products[i].unit,"</div>","</div></td>"
-		,"<td><div class='fix-top-margin'>",display_products[i].linked_name,"</div></td>"
+		,"<td><a href=\"/reagent/",display_products[i].reagent_id,"\"> <div class='fix-top-margin'>",display_products[i].reagent,"</div></a></td>"
 		,"</tr>"].join("");
 		main_str += str;
 	}
@@ -697,7 +742,7 @@ textarea[name=comment] {
 					{% csrf_token %}
 					<label style="position:relative;top:-27px;left:87px"> - {{ protocol.get_number_ratings }} ratings</label>
 				</form>
-				<h5>Category: <a href="/browse/{{ protocol.category.id }}/">{{ protocol.category }}</a></h5>
+				<h5>Category: <a href="/browse/{{ protocol.category.id }}">{{ protocol.category }}</a></h5>
 				<a href="/upload/{{protocol.id}}">
 					<i class="fa fa-code-fork" id="fork"></i>
 				</a>
