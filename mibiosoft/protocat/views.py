@@ -45,7 +45,7 @@ def category_browser(request, current_parent):
 	else:
 		current_profile_info = None
 	categories = Category.objects.filter(parent_category = current_parent)
-	protocols = Protocol.objects.filter(category = current_parent)
+	protocols = Protocol.objects.filter(category = current_parent).filter(searchable = True)
 
 	text = 'ProtoCat'
 	context = {
@@ -449,7 +449,7 @@ def upload_branch(request, protocol_id):
 		last_reagent_id = 0
 
 	context = {
-		'title': 'ProtoCat - Browse Categories',
+		'title': 'ProtoCat - Upload Protocol',
 		'current_profile_info': current_profile_info,
 		'protocol': protocol,
 		'protocol_steps': protocol_steps,
