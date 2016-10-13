@@ -394,7 +394,7 @@ var single_reagent = {
 	"reagent_type": {{ reagent.reagent_type }},
 	"step": {{ reagent.protocol_step_number }},
 	"reagent_id": {{ reagent.reagent.id }},
-	"preserve_units": {{ reagent.preserve_units }},
+	"preserve_units": {% if reagent.preserve_units != None %}{{ reagent.preserve_units }}{% else %}null{% endif %}
 };
 used_reagents.push(single_reagent);
 {% endfor %}
