@@ -67,7 +67,7 @@ def protocol(request, protocol_id):
 		current_profile_info = None
 	protocol = Protocol.objects.get(id = protocol_id)
 	protocol_steps = ProtocolStep.objects.filter(protocol = protocol).order_by('step_number')
-	protocol_reagents = ReagentForProtocol.objects.filter(protocol = protocol)
+	protocol_reagents = ReagentForProtocol.objects.filter(protocol = protocol).order_by('display_name')
 	next_protocols = Protocol.objects.filter(previous_revision = protocol)
 	for next_protocol in next_protocols:
 		print(next_protocol)

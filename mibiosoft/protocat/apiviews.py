@@ -188,8 +188,6 @@ class ProtocolViewSet(viewsets.ModelViewSet):
 						step_reagent.unit = reagent['unit']
 						step_reagent.number_in_step = int(reagent['number_in_step'])
 						step_reagent.significant_figures = int(reagent['significant_figures'])
-						if (reagent['display_name'] != None and reagent['display_name'] != -1):
-							step_reagent.display_name = reagent['display_name']
 						if (reagent['preserve_units'] != None and reagent['preserve_units'] != -1):
 							step_reagent.preserve_units = reagent['preserve_units']
 						step_reagent.protocol_step_number = step['step_number']
@@ -199,6 +197,10 @@ class ProtocolViewSet(viewsets.ModelViewSet):
 							linked_reagent = Reagent.objects.get(id = reagent['reagent_id'])
 						except:
 							linked_reagent = Reagent.objects.get(id = reagent['reagent_id']['id'])
+						if (reagent['display_name'] != None and reagent['display_name'] != -1):
+							step_reagent.display_name = reagent['display_name']
+						else:
+							step_reagent.display_name = linked_reagent.name
 						step_reagent.reagent = linked_reagent
 						reagent_list.append(step_reagent)
 				step_list.append(protocol_step)
