@@ -311,6 +311,11 @@ def search(request):
 
 	results = Protocol.objects.filter(Q(title__icontains = text_filter) | Q(description__icontains = text_filter))
 
+	try:
+		search_hidden = (request.POST['search-hidden'] == "on")
+	except:
+		pass
+
 	if (not search_hidden):
 		results = results.filter(searchable = True)
 

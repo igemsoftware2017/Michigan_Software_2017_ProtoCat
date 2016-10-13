@@ -72,6 +72,10 @@
 	margin-left: 0px !important;
 	margin-right: 0px !important;
 }
+.bootstrap-switch {
+	display: block;
+	margin: 0 auto;
+}
 </style>
 
 <script>
@@ -105,7 +109,9 @@ $(document).on('ready', function(){
 	});
 });
 
-$(function() {
+$(document).on('ready', function() {
+	$('[name="search-hidden"]').bootstrapSwitch();
+
 	$('input.datepicker').daterangepicker({
 		autoUpdateInput: false,
 		singleDatePicker: true,
@@ -209,6 +215,14 @@ $(function() {
 											<div class="col-xs-5" style="padding-left:0px">
 												<input type="text" class="form-control datepicker" name="revision-end-upload" placeholder="10/24/1984" style="text-align:center;"/>
 											</div>
+										</div>
+									</fieldset>
+								</div>
+								<div class="col-xs-12 col-sm-6">
+									<fieldset class="form-group keep-margin">
+										<label for="formGroupExampleInput2">Search hidden protocols:</label>
+										<div>
+											<input type="checkbox" name="search-hidden">
 										</div>
 									</fieldset>
 								</div>
@@ -325,6 +339,14 @@ $(function() {
 											<div class="col-xs-5" style="padding-left:0px">
 												<input type="text" class="form-control datepicker" name="revision-end-upload" placeholder="10/24/1984" style="text-align:center;"/>
 											</div>
+										</div>
+									</fieldset>
+								</div>
+								<div class="col-xs-12 col-sm-6">
+									<fieldset class="form-group keep-margin">
+										<label for="formGroupExampleInput2">Search hidden protocols:</label>
+										<div>
+											<input type="checkbox" name="search-hidden">
 										</div>
 									</fieldset>
 								</div>
