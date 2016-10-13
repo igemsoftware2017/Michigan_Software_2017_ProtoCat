@@ -219,7 +219,7 @@ function update_visual_data() {
 			}
 			if (correct_reagent != null) {
 				console.log(correct_reagent.preserve_units)
-				this.innerHTML = correct_reagent.amount.toPrecision(correct_reagent.significant_figures) / Math.pow(10, correct_reagent.preserve_units) 
+				this.innerHTML = (correct_reagent.amount / Math.pow(10, correct_reagent.preserve_units)).toPrecision(correct_reagent.significant_figures) 
 					+ " " + correct_reagent.prefix + correct_reagent.unit 
 					+ " <a href=\"/reagent/" + correct_reagent.reagent_id + "\">" + correct_reagent.reagent + "</a>";
 			}
