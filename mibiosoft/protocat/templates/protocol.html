@@ -845,7 +845,7 @@ textarea[name=comment] {
 							<a href="/protocol/{{ protocol.previous_revision.id }}">Previous Revision</a><br>
 							{% endif %}
 							{% for next_protocol in next_protocols %}
-							<a href="/protocol/{{ next_protocol.id }}">Next Revision</a><br>
+							<a href="/protocol/{{ next_protocol.id }}">Next Revision</a> {{ next_protocol.upload_date }}<br>
 							{% endfor %}
 						</div>
 					</div>
