@@ -169,7 +169,7 @@ select::-ms-expand {
 							<input type="text" class="form-control skinny" name="amount" placeholder="Amount"/>
 							<select class="form-control skinnier" name="prefix">
 								<option>n</option>
-								<option>&mu;</option>
+								<option>μ</option>
 								<option>m</option>
 								<option>c</option>
 								<option>d</option>
@@ -226,14 +226,14 @@ select::-ms-expand {
 					<div class="col-sm-6 col-xs-12 fix-margin-top">
 						<label>Scaling Type:</label>
 						<div class="btn-group btn-flipper" id="scale-type" role="group" data-toggle="buttons">
+							<label class="btn btn-primary">
+								<input type="radio" name="scaling" value="3" autocomplete="off" checked>Linear
+							</label>
+							<label class="btn btn-primary">
+								<input type="radio" name="scaling" value="2" autocomplete="off">Constant
+							</label>
 							<label class="btn btn-primary active">
 								<input type="radio" name="scaling" value="1" autocomplete="off">Filling
-							</label>
-							<label class="btn btn-primary">
-								<input type="radio" name="scaling" value="2" autocomplete="off" checked>Constant
-							</label>
-							<label class="btn btn-primary">
-								<input type="radio" name="scaling" value="3" autocomplete="off">Linear
 							</label>
 						</div>
 					</div>
