@@ -20,7 +20,7 @@ var single_reagent = {
 	"reagent_id": {{ reagent.reagent.id }},
 	"prefix": "",
 	"care_units": {% if reagent.preserve_units != None %}true{% else %}false{% endif %},
-	"preserve_units": {{ reagent.preserve_units }}
+	"preserve_units": {% if reagent.preserve_units != None %}{{ reagent.preserve_units }}{% else %}0{% endif %}
 };
 reagents.push(single_reagent);
 {% endfor %}
