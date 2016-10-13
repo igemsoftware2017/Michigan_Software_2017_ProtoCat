@@ -863,7 +863,7 @@ textarea[name=comment] {
 					<div id="step{{ protocol_step.step_number }}" class="panel panel-default waypoint step">
 						<!-- Modified margin to get rid of negative margin inherent to row -->
 						<div class="row panel-heading no-side-margins">
-							<h3 class="panel-title col-xs-6" style="padding-left:0px;">Step {{ protocol_step.step_number }}<span class="hidden-xs"> - {{ protocol_step.title }}</span></h3>
+							<h3 class="panel-title col-xs-6" style="padding-left:0px;">Step {{ protocol_step.step_number }}{% if protocol_step.title != "" %}<span class="hidden-xs"> - {{ protocol_step.title }}</span>{% endif %}</h3>
 							<div class="col-xs-6" align="right">
 								<span class="timer"></span>
 								{% if protocol_step.time != -1 %}
