@@ -4,10 +4,10 @@ $(document).on('ready', function() {
 
 	$('#save_category').on('click', function() {
 		var data = {
-			'title': $('[name="title"]').val(),
-			'description': $('[name="description"]').val(),
-			'parent_category': $('[name="parent"]').attr('data-id'),
-			'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+			'title': $('#add-category-modal').find('[name="title"]').val(),
+			'description': $('#add-category-modal').find('[name="description"]').val(),
+			'parent_category': $('#add-category-modal').find('[name="parent"]').attr('data-id'),
+			'csrfmiddlewaretoken': $('#add-category-modal').find('input[name="csrfmiddlewaretoken"]').val(),
 		};
 		$.ajax({
 			type: 'POST',

@@ -2,6 +2,13 @@
 
 {% block content %}
 
+<script>
+var category_id = {{ parent_category.id }};
+var parent_title = "{{ parent_category.title }}";
+var parent_description = "{{ parent_category.description }}";
+var parent_parent_id = {% if parent_category.parent_category %}{{ parent_category.parent_category.id }}{% else %}null{% endif %};
+</script>
+
 <style>
 // make the rows of data have the correct mouse cursor
 tr:hover{
@@ -27,7 +34,7 @@ tr:hover{
 #upload_new {
 	text-decoration: none;
 }
-#up-a-level-div {
+#up-a-level-div > a > button, #up-a-level-div > button {
 	margin-bottom: 15px;
 }
 </style>
@@ -36,6 +43,9 @@ tr:hover{
 $(document).on('ready', function() {
 	$('#add-category').on('click', function() {
 		$('#add-category-modal').modal('show');
+	});
+	$('#edit-category').on('click', function() {
+		$('#edit-category-modal').modal('show');
 	});
 });
 </script>
@@ -52,6 +62,7 @@ $(document).on('ready', function() {
 		<button class="btn btn-default form-control">Up a level</button>
 	</a>
 	{% endif %}
+	<button id="edit-category" class="btn btn-default form-control">Edit current category</button>
 	{% endif %}
 </div>
 
@@ -128,4 +139,5 @@ $(document).on('ready', function() {
 {% endif %}
 
 {% include 'repeated_parts/add_category.html' %}
+{% include 'repeated_parts/edit_category.html' %}
 {% endblock %}

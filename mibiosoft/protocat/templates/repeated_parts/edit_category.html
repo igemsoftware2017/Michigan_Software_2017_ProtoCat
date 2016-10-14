@@ -1,0 +1,63 @@
+<script>
+$(document).on('ready', function() {
+    $.ajaxSetup({
+		headers: { "X-CSRFToken": getCookie("csrftoken") }
+	});
+    $('#edit-category-modal').find('[name="title"]').val(parent_title);
+    $('#edit-category-modal').find('[name="description"]').val(parent_description);
+
+	$('#save_edit_category').on('click', function() {
+		var data = {
+			'title': $('#edit-category-modal').find('[name="title"]').val(),
+			'description': $('#edit-category-modal').find('[name="description"]').val(),
+            'parent_category': parent_parent_id
+			//'csrfmiddlewaretoken': $('#edit-category-modal').find('input[name="csrfmiddlewaretoken"]').val(),
+		};
+		$.ajax({
+			type: 'PUT',
+			url: "/api/category/" + category_id + "/",
+			data: data,
+			success: function() {
+				$('#edit-category-modal').modal('hide');
+			},
+			failure: function() {
+				console.log("Failed to edit categories")
+			}
+		});
+	});
+});
+
+</script>
+
+<style>
+#category-modal-body > div:not(:last-child) {
+	margin-bottom: 15px;
+}
+</style>
+
+
+<div class="modal fade" id="edit-category-modal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content" style="overflow:hidden;">
+			<div class="modal-header" style="background-color:#00274c;color:white;">
+				<button type="button" class="close make_white" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title" id="myModalLabel">Edit Category</h4>
+			</div>
+			<div class="modal-body">
+				<div class="row" id="category-modal-body">
+					<div class="col-sm-12 col-xs-12">
+						<input type="text" class="form-control" name="title" placeholder="Title">
+					</div>
+					<div class="col-sm-12 col-xs-12">
+						<textarea class="form-control" name="description" placeholder="Description"></textarea>
+					</div>
+					{% csrf_token %}
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				<button type="button" class="btn btn-primary" type="button" id="save_edit_category">Save category</button>
+			</div>
+		</div>
+	</div>
+</div>
