@@ -341,14 +341,14 @@ def search(request):
 		pass
 
 	try:
-		min_num_ratings = int(request.POST['min-num-ratings'])  - 1
+		min_num_ratings = int(request.POST['min-num-ratings'])
 		print(min_num_ratings)
 		results = results.exclude(num_ratings__lt=min_num_ratings)
 	except:
 		pass
 
 	try:
-		max_num_ratings = int(request.POST['max-num-ratings']) + 1
+		max_num_ratings = int(request.POST['max-num-ratings'])
 		print(max_num_ratings)
 		results = results.exclude(num_ratings__gt=max_num_ratings)
 	except:
