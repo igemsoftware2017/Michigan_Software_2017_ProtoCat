@@ -284,7 +284,7 @@ def search(request):
 		elif (order == 'sort-title'):
 			order = 'title'
 		elif (order == 'sort-author'):
-			order = 'author'
+			order = 'author__user__username'
 		elif (order == 'sort-num-ratings'):
 			order = 'num_ratings'
 		elif (order == 'sort-avg-rating'):
@@ -336,35 +336,35 @@ def search(request):
 		revision_end_date = map(int, revision_end_date)
 		my_datetime = datetime.date(revision_end_date[2], revision_end_date[0], revision_end_date[1])
 		# try to make timezone aware
-		results = results.exclude(upload_date__gt=my_datetime)
+		results = results.exclude(upload_date__gt = my_datetime)
 	except:
 		pass
 
 	try:
 		min_num_ratings = int(request.POST['min-num-ratings'])
 		print(min_num_ratings)
-		results = results.exclude(num_ratings__lt=min_num_ratings)
+		results = results.exclude(num_ratings__lt = min_num_ratings)
 	except:
 		pass
 
 	try:
 		max_num_ratings = int(request.POST['max-num-ratings'])
 		print(max_num_ratings)
-		results = results.exclude(num_ratings__gt=max_num_ratings)
+		results = results.exclude(num_ratings__gt = max_num_ratings)
 	except:
 		pass
 
 	try:
-		min_avg_ratings = float(request.POST['min-avg-ratings']) - 0.01
+		min_avg_ratings = float(request.POST['min-avg-ratings'])
 		print(min_avg_ratings)
-		results = results.exclude(avg_rating__lt=min_avg_ratings)
+		results = results.exclude(avg_rating__lt = min_avg_ratings)
 	except:
 		pass
 
 	try:
-		max_avg_ratings = float(request.POST['max-avg-ratings']) + 0.01
+		max_avg_ratings = float(request.POST['max-avg-ratings'])
 		print(max_avg_ratings)
-		results = results.exclude(avg_rating__gt=max_avg_ratings)
+		results = results.exclude(avg_rating__gt = max_avg_ratings)
 	except:
 		pass
 
