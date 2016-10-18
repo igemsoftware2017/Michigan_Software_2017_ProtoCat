@@ -66,11 +66,11 @@ class Reagent(models.Model):
 class Protocol(models.Model):
 	title = models.TextField()
 	author = models.ForeignKey(ProfileInfo, related_name="protocols")
-	description = models.TextField()
-	materials = models.TextField(default = "")
+	description = models.TextField(blank = True, null = True)
+	materials = models.TextField(default = "", blank = True, null = True)
 
 	# Allow the revisionist to describe changes made
-	change_log = models.TextField()
+	change_log = models.TextField(blank = True, null = True)
 
 	# many protocols to one category
 	category = models.ForeignKey(Category, blank = True, null = True, related_name="protocol_for_category")
