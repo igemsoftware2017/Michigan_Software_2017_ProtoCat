@@ -159,7 +159,9 @@ class ProtocolViewSet(viewsets.ModelViewSet):
 			reagent_list = []
 			print('Main protocol finished')
 			# go over each step
+			i = 0
 			for step in request.data['protocol_steps']:
+				i = i + 1
 				# fill out step info
 				protocol_step = ProtocolStep()
 				if (step['title'] != "" and step['title'] != None):
@@ -204,10 +206,7 @@ class ProtocolViewSet(viewsets.ModelViewSet):
 						step_reagent.reagent = linked_reagent
 						reagent_list.append(step_reagent)
 				step_list.append(protocol_step)
-			try:
-				protocol.num_steps = step_list.length
-			except:
-				protocol.num_steps = 0
+			protocol.num_steps = i
 			protocol.save()
 			# save each step and each reagent
 			for step in step_list:
