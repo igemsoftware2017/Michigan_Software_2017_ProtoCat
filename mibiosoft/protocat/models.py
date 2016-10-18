@@ -85,7 +85,7 @@ class Protocol(models.Model):
 
 	avg_rating = models.DecimalField(default = 0, max_digits = 50, decimal_places = 25)
 
-	num_steps = models.IntegerField(default = 0, validators=[MinValueValidator(1)])
+	num_steps = models.IntegerField(default = 0)
 
 	# many branching protocols to one parent protocol
 	previous_revision = models.ForeignKey('self', related_name='previous_revision1', blank = True, null = True)

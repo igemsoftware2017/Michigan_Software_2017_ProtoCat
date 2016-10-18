@@ -207,6 +207,7 @@ class ProtocolViewSet(viewsets.ModelViewSet):
 						reagent_list.append(step_reagent)
 				step_list.append(protocol_step)
 			protocol.num_steps = i
+			print(i)
 			protocol.save()
 			# save each step and each reagent
 			for step in step_list:
