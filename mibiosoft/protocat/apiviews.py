@@ -148,8 +148,11 @@ class ProtocolViewSet(viewsets.ModelViewSet):
 												tags = ACCEPTABLE_TAGS,
 												attributes = ACCEPTABLE_ATTRIBUTES,
 												styles = ACCEPTABLE_STYLES)
-			if (request.data['previous_revision'] != None and request.data['previous_revision'] != "-1"):
-				protocol.previous_revision = Protocol.objects.get(id = request.data['previous_revision'])
+			try:
+				if (request.data['previous_revision'] != None and request.data['previous_revision'] != "-1"):
+					protocol.previous_revision = Protocol.objects.get(id = request.data['previous_revision'])
+			except:
+				protocol.previous_revision = None
 			protocol.author = request.user.profileinfo
 			try:
 				protocol.materials = request.data['materials']
@@ -157,10 +160,12 @@ class ProtocolViewSet(viewsets.ModelViewSet):
 				pass
 			step_list = []
 			reagent_list = []
-			print('Main protocol finished')
+			#print('Main protocol finished')
 			# go over each step
 			i = 0
+			#print(request.data)
 			for step in request.data['protocol_steps']:
+				#print(request.data['protocol_steps'])
 				i = i + 1
 				# fill out step info
 				protocol_step = ProtocolStep()
@@ -178,6 +183,7 @@ class ProtocolViewSet(viewsets.ModelViewSet):
 														tags = ACCEPTABLE_TAGS,
 														attributes = ACCEPTABLE_ATTRIBUTES,
 														styles = ACCEPTABLE_STYLES)
+
 				protocol_step.time_scaling = int(step['time_scaling'])
 				if 'reagents' in step:
 					# make each reagent
@@ -206,8 +212,9 @@ class ProtocolViewSet(viewsets.ModelViewSet):
 						step_reagent.reagent = linked_reagent
 						reagent_list.append(step_reagent)
 				step_list.append(protocol_step)
+				#print("Step " + i + " completed")
 			protocol.num_steps = i
-			print(i)
+			#print(i)
 			protocol.save()
 			# save each step and each reagent
 			for step in step_list:
@@ -222,7 +229,7 @@ class ProtocolViewSet(viewsets.ModelViewSet):
 						reagent.save()
 			return Response({'success': True, 'location': '/protocol/' + str(protocol.id)})
 		except Exception as inst:
-			print(inst)
+			#print(inst)
 			return Response({'success': False, 'error': str(inst)})
 
 class ProfileViewSet(viewsets.ModelViewSet):
@@ -262,7 +269,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
 
 	def create(self, request):
 		try:
-			print(request.data)
+			#print(request.data)
 			category = Category()
 			category.title = request.data['title']
 			category.description = request.data['description']
@@ -274,7 +281,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
 			category.save()
 			return Response({'status': 'Saved category'})
 		except Exception as inst:
-			print(inst)
+			#print(inst)
 			return Response({'status': 'failed'})
 
 class ReagentViewSet(viewsets.ModelViewSet):
@@ -294,7 +301,7 @@ class ReagentViewSet(viewsets.ModelViewSet):
 
 	def create(self, request):
 		try:
-			print(request.data)
+			#print(request.data)
 			reagent = Reagent()
 			reagent.name = request.data['name']
 			reagent.website = request.data['website']
@@ -305,7 +312,7 @@ class ReagentViewSet(viewsets.ModelViewSet):
 			reagent.save()
 			return Response({'success': True, 'location': '/reagent/' + str(reagent.id)})
 		except Exception as inst:
-			print(inst)
+			#print(inst)
 			return Response({'status': 'failed'})
 
 	def update(self, request, pk=None):

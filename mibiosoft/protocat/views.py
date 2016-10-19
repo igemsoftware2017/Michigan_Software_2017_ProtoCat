@@ -18,15 +18,15 @@ def index(request):
 	current_profile_info = request.user
 	if (not current_profile_info.is_anonymous()):
 		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
-		print(current_profile_info)
+		#print(current_profile_info)
 	else:
 		current_profile_info = None
 	context = {
 		'title': 'ProtoCat',
 		'current_profile_info': current_profile_info,
 	}
-	print ("RENDERING INDEX")
-	print(len(connection.queries))
+	#print ("RENDERING INDEX")
+	#print(len(connection.queries))
 	return render(request, 'index.html', context)
 
 def category_default(request):
@@ -41,7 +41,7 @@ def category_browser(request, current_parent):
 	current_profile_info = request.user
 	if (not current_profile_info.is_anonymous()):
 		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
-		print(current_profile_info)
+		#print(current_profile_info)
 	else:
 		current_profile_info = None
 	categories = Category.objects.filter(parent_category = current_parent)
@@ -55,22 +55,22 @@ def category_browser(request, current_parent):
 		'protocols': protocols,
 		'current_profile_info': current_profile_info,
 	}
-	print(len(connection.queries))
+	#print(len(connection.queries))
 	return render(request, 'category_browser.html', context)
 
 def protocol(request, protocol_id):
 	current_profile_info = request.user
 	if (not current_profile_info.is_anonymous()):
 		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
-		print(current_profile_info)
+		#print(current_profile_info)
 	else:
 		current_profile_info = None
 	protocol = Protocol.objects.get(id = protocol_id)
 	protocol_steps = ProtocolStep.objects.filter(protocol = protocol).order_by('step_number')
 	protocol_reagents = ReagentForProtocol.objects.filter(protocol = protocol).order_by('display_name')
 	next_protocols = Protocol.objects.filter(previous_revision = protocol)
-	for next_protocol in next_protocols:
-		print(next_protocol)
+	#for next_protocol in next_protocols:
+		#print(next_protocol)
 	comments = ProtocolComment.objects.filter(protocol = protocol).order_by('-upload_date')
 
 	aggregated_reagents = None
@@ -101,9 +101,9 @@ def protocol(request, protocol_id):
 		'user_rating': rating,
 		'current_profile_info': current_profile_info,
 	}
-	print (len(connection.queries))
+	#print (len(connection.queries))
 
-	print ("RENDERING PROTOCOL")
+	#print ("RENDERING PROTOCOL")
 
 	return render(request, 'protocol.html', context)
 
@@ -111,7 +111,7 @@ def user(request, user_id):
 	current_profile_info = request.user
 	if (not current_profile_info.is_anonymous()):
 		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
-		print(current_profile_info)
+		#print(current_profile_info)
 	else:
 		current_profile_info = None
 	user = ProfileInfo.objects.get(id = user_id)
@@ -129,7 +129,7 @@ def user(request, user_id):
 		'user_rated_protocols': user_rated_protocols,
 		'notes': user_created_notes
 	}
-	print(len(connection.queries))
+	#print(len(connection.queries))
 
 	if (current_profile_info != user):
 		return render(request, 'user.html', context)
@@ -140,7 +140,7 @@ def sign_up(request):
 	current_profile_info = request.user
 	if (not current_profile_info.is_anonymous()):
 		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
-		print(current_profile_info)
+		#print(current_profile_info)
 	else:
 		current_profile_info = None
 	context = {
@@ -153,7 +153,7 @@ def submit_sign_up(request):
 	current_profile_info = request.user
 	if (not current_profile_info.is_anonymous()):
 		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
-		print(current_profile_info)
+		#print(current_profile_info)
 	else:
 		current_profile_info = None
 	try:
@@ -166,7 +166,7 @@ def submit_sign_up(request):
 		profile_info.save()
 		current_profile_info = profile_info
 		login(request, user)
-		print(len(connection.queries))
+		#print(len(connection.queries))
 		return JsonResponse({'success': True, 'location': '/'})
 	except:
 		return JsonResponse({'success': False})
@@ -175,7 +175,7 @@ def login_user(request):
 	current_profile_info = request.user
 	if (not current_profile_info.is_anonymous()):
 		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
-		print(current_profile_info)
+		#print(current_profile_info)
 	else:
 		current_profile_info = None
 	context = {
@@ -211,7 +211,7 @@ def reagent(request, reagent_id):
 	current_profile_info = request.user
 	if (not current_profile_info.is_anonymous()):
 		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
-		print(current_profile_info)
+		#print(current_profile_info)
 	else:
 		current_profile_info = None
 	reagent = Reagent.objects.get(id = reagent_id)
@@ -227,7 +227,7 @@ def edit_reagent(request, reagent_id):
 	current_profile_info = request.user
 	if (not current_profile_info.is_anonymous()):
 		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
-		print(current_profile_info)
+		#print(current_profile_info)
 	else:
 		current_profile_info = None
 	reagent = Reagent.objects.get(id = reagent_id)
@@ -244,7 +244,7 @@ def new_reagent(request):
 	current_profile_info = request.user
 	if (not current_profile_info.is_anonymous()):
 		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
-		print(current_profile_info)
+		#print(current_profile_info)
 	else:
 		current_profile_info = None
 	title = 'ProtoCat - New Reagent'
@@ -259,14 +259,14 @@ def about(request):
 	current_profile_info = request.user
 	if (not current_profile_info.is_anonymous()):
 		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
-		print(current_profile_info)
+		#print(current_profile_info)
 	else:
 		current_profile_info = None
 	context = {
 		'title': 'ProtoCat',
 		'current_profile_info': current_profile_info,
 	}
-	print ("RENDERING ABOUT")
+	#print ("RENDERING ABOUT")
 	return render(request, 'about.html', context)
 
 def search(request):
@@ -342,28 +342,28 @@ def search(request):
 
 	try:
 		min_num_ratings = int(request.POST['min-num-ratings'])
-		print(min_num_ratings)
+		#print(min_num_ratings)
 		results = results.exclude(num_ratings__lt = min_num_ratings)
 	except:
 		pass
 
 	try:
 		max_num_ratings = int(request.POST['max-num-ratings'])
-		print(max_num_ratings)
+		#print(max_num_ratings)
 		results = results.exclude(num_ratings__gt = max_num_ratings)
 	except:
 		pass
 
 	try:
 		min_avg_ratings = float(request.POST['min-avg-ratings'])
-		print(min_avg_ratings)
+		#print(min_avg_ratings)
 		results = results.exclude(avg_rating__lt = min_avg_ratings)
 	except:
 		pass
 
 	try:
 		max_avg_ratings = float(request.POST['max-avg-ratings'])
-		print(max_avg_ratings)
+		#print(max_avg_ratings)
 		results = results.exclude(avg_rating__gt = max_avg_ratings)
 	except:
 		pass
@@ -373,7 +373,7 @@ def search(request):
 
 	if (not current_profile_info.is_anonymous()):
 		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
-		print(current_profile_info)
+		#print(current_profile_info)
 	else:
 		current_profile_info = None
 
@@ -386,8 +386,8 @@ def search(request):
 		'results': results,
 		'current_profile_info': current_profile_info,
 	}
-	print(len(connection.queries))
-	print ("RENDERING SEARCH")
+	#print(len(connection.queries))
+	#print ("RENDERING SEARCH")
 	return render(request, 'search.html', context)
 
 def submit_rating(request):
@@ -444,7 +444,7 @@ def upload_branch(request, protocol_id):
 	current_profile_info = request.user
 	if (not current_profile_info.is_anonymous()):
 		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
-		print(current_profile_info)
+		#print(current_profile_info)
 	else:
 		current_profile_info = None
 
@@ -463,7 +463,7 @@ def upload_branch(request, protocol_id):
 		# get the highest number to ensure that there are no conflicts
 		'last_reagent_id': last_reagent_id
 	}
-	print(len(connection.queries))
+	#print(len(connection.queries))
 	if (current_profile_info == None):
 		return HttpResponseRedirect('/')
 	else:
@@ -473,7 +473,7 @@ def upload_page(request, current_data):
 	current_profile_info = request.user
 	if (not current_profile_info.is_anonymous()):
 		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
-		print(current_profile_info)
+		#print(current_profile_info)
 	else:
 		current_profile_info = None
 
@@ -484,7 +484,7 @@ def upload_page(request, current_data):
 		'current_profile_info': current_profile_info,
 		'categories': categories,
 	}
-	print(len(connection.queries))
+	#print(len(connection.queries))
 	if (current_profile_info == None):
 		return HttpResponseRedirect('/')
 	else:
@@ -494,7 +494,7 @@ def submit_upload(request):
 	current_profile_info = request.user
 	if (not current_profile_info.is_anonymous()):
 		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
-		print(current_profile_info)
+		#print(current_profile_info)
 	else:
 		current_profile_info = None
 
@@ -550,7 +550,7 @@ def submit_upload(request):
 				# try to pick up each individual part of each step
 				try:
 					warning = bleach.clean(request.POST[prefix + '[warning]'])
-					print('found warning')
+					#print('found warning')
 				except:
 					warning = ""
 
@@ -558,7 +558,7 @@ def submit_upload(request):
 					time = int(bleach.clean(request.POST[prefix + '[time]']))
 				except:
 					time = -1
-				print(warning)
+				#print(warning)
 				ps = ProtocolStep(action = description, warning = warning, step_number = number, time = time, protocol = protocol)
 				try:
 					title = bleach.clean(request.POST[prefix + '[title]'])
@@ -570,7 +570,7 @@ def submit_upload(request):
 				num_steps = num_steps + 1
 			except:
 				# Means that the name doesn't exist
-				print('error1')
+				#print('error1')
 				pass
 
 		protocol.num_steps = num_steps
@@ -588,8 +588,8 @@ def submit_upload(request):
 		protocol.save()
 
 	except Exception as e:
-		print('error2')
-		print(e)
+		#print('error2')
+		#print(e)
 		pass
 
 	context = {
@@ -624,7 +624,7 @@ def update_profile(request):
 	current_profile_info = request.user
 	if (not current_profile_info.is_anonymous()):
 		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
-		print(current_profile_info)
+		#print(current_profile_info)
 	else:
 		current_profile_info = None
 
@@ -678,18 +678,18 @@ def update_profile(request):
 				pass
 			user.save()
 			user.user.save()
-			print("Done!")
+			#print("Done!")
 			return JsonResponse({'success': True})
 	except Exception as inst:
-		print(inst)
-		print("Update didn't work")
+		#print(inst)
+		#print("Update didn't work")
 		return JsonResponse({'success': False})
 
 def test(request):
 	current_profile_info = request.user
 	if (not current_profile_info.is_anonymous()):
 		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
-		print(current_profile_info)
+		#print(current_profile_info)
 	else:
 		current_profile_info = None
 
@@ -704,7 +704,7 @@ def toggle_protocol(request):
 	current_profile_info = request.user
 	if (not current_profile_info.is_anonymous()):
 		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
-		print(current_profile_info)
+		#print(current_profile_info)
 	else:
 		current_profile_info = None
 	try:
@@ -716,6 +716,6 @@ def toggle_protocol(request):
 		else:
 			return JsonResponse({'success': False}) 
 	except Exception as inst:
-		print(inst)
-		print("Update didn't work")
+		#print(inst)
+		#print("Update didn't work")
 		return JsonResponse({'success': False})
