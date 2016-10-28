@@ -48,14 +48,16 @@
 				{% endif %}
 				<h5 style="text-align:center;"><a href="/user/{{ protocol.author.id }}/">{{ protocol.author }}</a></h5>
 				{% if protocol.get_average_ratings == "N/A" %}
-				<h2 class="small" style="text-align:center;margin-top:0px;height:41px;">Be the first to rate this</h2>
+				<h2 class="small" style="text-align:center;margin-top:0px;height:40px;">Be the first to rate this</h2>
 				{% else %}
-				<form role="search" method="POST" action="/ratings/" class="center-block" style="margin-top:-15px">
-					<input id="input-2" name="input-2" value="{{ protocol.get_average_ratings }}" class="rating-loading input-2" data-size="xs" data-step="1" data-show-caption="false" data-show-clear="false">
-					<input id="id" name='id' type="hidden" value="{{protocol.id}}">
-					{% csrf_token %}
-				</form>
-				<h2 class="small" style="text-align:center;margin-top:0px;">{{ protocol.get_number_ratings }} ratings</h2>
+				<div style="height:40px;padding-top:10px;margin-bottom:10px;">
+					<form role="search" method="POST" action="/ratings/" class="center-block" style="margin-top:-15px">
+						<input id="input-2" name="input-2" value="{{ protocol.get_average_ratings }}" class="rating-loading input-2" data-size="xs" data-step="1" data-show-caption="false" data-show-clear="false">
+						<input id="id" name='id' type="hidden" value="{{protocol.id}}">
+						{% csrf_token %}
+					</form>
+					<h2 class="small" style="text-align:center;margin-top:0px;">{{ protocol.get_number_ratings }} ratings</h2>
+				</div>
 				{% endif %}
 			</div>
 		</div>
