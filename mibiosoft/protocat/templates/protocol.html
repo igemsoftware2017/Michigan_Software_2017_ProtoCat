@@ -221,7 +221,7 @@ function update_visual_data() {
 				console.log(correct_reagent.preserve_units)
 				this.innerHTML = (correct_reagent.amount / Math.pow(10, correct_reagent.preserve_units)).toPrecision(correct_reagent.significant_figures) 
 					+ " " + correct_reagent.prefix + correct_reagent.unit 
-					+ " <a href=\"/reagent/" + correct_reagent.reagent_id + "\">" + correct_reagent.reagent + "</a>";
+					+ " <a href=\"/reagent/" + correct_reagent.reagent_id + "\"> of " + correct_reagent.reagent + "</a>";
 			}
 			else {
 				this.innerHTML = "ERROR";
@@ -722,6 +722,9 @@ textarea[name=comment] {
 .no-radius {
 	border-radius: 0px!important;
 }
+.multiplier {
+	width: 100%;
+}
 
 </style>
 {% if protocol.author == current_profile_info %}
@@ -830,11 +833,11 @@ textarea[name=comment] {
 										</tbody>
 									</table>
 								</div>
-								<div class="col-sm-12" style="margin-top:15px;">
-									{% if protocol_reagents.count != 0 %}
-									<button onclick="multiply_everything(0.5);">Halve me please!</button>
-									<button onclick="multiply_everything(2);">Double me please!</button>
-									{% endif %}
+								<div class="col-sm-6" style="margin-top:15px;">
+									<button class="btn btn-default multiplier" onclick="multiply_everything(0.5);">Halve Reagents</button>
+								</div>
+								<div class="col-sm-6" style="margin-top:15px;">
+									<button class="btn btn-default multiplier" onclick="multiply_everything(2);">Double Reagents</button>
 								</div>
 							</div>
 							{% endif %}
