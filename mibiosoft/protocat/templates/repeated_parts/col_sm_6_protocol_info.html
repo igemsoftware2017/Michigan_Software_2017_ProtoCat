@@ -19,14 +19,20 @@
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
+.username {
+	width: 100%;
+	display: inline-block;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
 </style>
 
 <div class="col-sm-6">
 	<div class="well well-sm protocol_div" onclick="location.href='/protocol/{{ protocol.id }}/'">
 		<div class="row">
 			<div class="col-sm-7 fix-margin-left">
-				<h3 class = "title">{{ protocol.title }}</h3>
-				<h5 class="visible-xs"> Uploaded by <a href="/user/{{ protocol.author.id }}/">{{ protocol.author }}</a></h5>
+				<h3 class="title">{{ protocol.title }}</h3>
+				<h5 class="visible-xs"> Uploaded by <a class="username" href="/user/{{ protocol.author.id }}/">{{ protocol.author }}</a></h5>
 				<h5>Uploaded on {{ protocol.upload_date|date:'m/d/Y P' }}</h5>
 				{% if protocol.get_average_ratings == "N/A" %}
 				<h5 class="visible-xs">Be the first to rate this</h5>
@@ -46,7 +52,7 @@
 				{% else %}
 				<img src="http://2014.igem.org/wiki/images/thumb/0/04/ChrisP.jpg/330px-ChrisP.jpg.png" width=75 height=75 alt="Image not found" class="img-circle center-block"/>
 				{% endif %}
-				<h5 style="text-align:center;"><a href="/user/{{ protocol.author.id }}/">{{ protocol.author }}</a></h5>
+				<h5 style="text-align:center;"><a class="username" href="/user/{{ protocol.author.id }}/">{{ protocol.author }}</a></h5>
 				{% if protocol.get_average_ratings == "N/A" %}
 				<h2 class="small" style="text-align:center;margin-top:0px;height:40px;">Be the first to rate this</h2>
 				{% else %}
