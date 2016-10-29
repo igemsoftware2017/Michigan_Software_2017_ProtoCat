@@ -221,7 +221,7 @@ function update_visual_data() {
 				console.log(correct_reagent.preserve_units)
 				this.innerHTML = (correct_reagent.amount / Math.pow(10, correct_reagent.preserve_units)).toPrecision(correct_reagent.significant_figures) 
 					+ " " + correct_reagent.prefix + correct_reagent.unit 
-					+ " <a href=\"/reagent/" + correct_reagent.reagent_id + "\"> of " + correct_reagent.reagent + "</a>";
+					+ " of <a href=\"/reagent/" + correct_reagent.reagent_id + "\">" + correct_reagent.reagent + "</a>";
 			}
 			else {
 				this.innerHTML = "ERROR";
@@ -833,11 +833,15 @@ textarea[name=comment] {
 										</tbody>
 									</table>
 								</div>
-								<div class="col-sm-6" style="margin-top:15px;">
-									<button class="btn btn-default multiplier" onclick="multiply_everything(0.5);">Halve Reagents</button>
-								</div>
-								<div class="col-sm-6" style="margin-top:15px;">
-									<button class="btn btn-default multiplier" onclick="multiply_everything(2);">Double Reagents</button>
+								<div class="col-sm-12">
+									<div class="row">
+										<div class="col-sm-6" style="margin-top:15px;">
+											<button class="btn btn-default multiplier" onclick="multiply_everything(0.5);">Halve Reagents</button>
+										</div>
+										<div class="col-sm-6" style="margin-top:15px;">
+											<button class="btn btn-default multiplier" onclick="multiply_everything(2);">Double Reagents</button>
+										</div>
+									</div>
 								</div>
 							</div>
 							{% endif %}
