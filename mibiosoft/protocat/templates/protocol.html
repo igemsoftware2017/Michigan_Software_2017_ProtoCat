@@ -844,7 +844,7 @@ textarea[name=comment] {
 									<h4>Other Materials</h4>
 								</div>
 								<div class="col-sm-12">
-									{{ protocol.materials }}
+									{{ protocol.materials|safe }}
 								</div>
 							</div>
 							{% endif %}
