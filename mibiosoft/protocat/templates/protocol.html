@@ -803,6 +803,7 @@ textarea[name=comment] {
 						<div id="Description" class="tab-pane fade in active">
 							<p>{{ protocol.description|safe }}</p><br>
 						</div>
+						{% if protocol_reagents %}
 						<div id="Reagents" class="tab-pane fade">
 							<div class="row">
 								<div class="col-sm-6 col-xs-12">
@@ -836,6 +837,17 @@ textarea[name=comment] {
 									{% endif %}
 								</div>
 							</div>
+							{% endif %}
+							{% if protocol.materials != "" and protocol.materials != None %}
+							<div class="row">
+								<div class="col-sm-12">
+									<h4>Other Materials</h4>
+								</div>
+								<div class="col-sm-12">
+									{{ protocol.materials }}
+								</div>
+							</div>
+							{% endif %}
 							<!--h3>Intermediaries</h3><table class="table table-hover"><thead><tr><th>Name</th><th>Amount</th><th>Reagent ID</th></tr></thead><tbody id="intermediaries"></tbody></table-->
 						</div>
 
