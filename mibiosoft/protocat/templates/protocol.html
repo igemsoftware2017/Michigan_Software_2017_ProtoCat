@@ -803,8 +803,8 @@ textarea[name=comment] {
 						<div id="Description" class="tab-pane fade in active">
 							<p>{{ protocol.description|safe }}</p><br>
 						</div>
-						{% if protocol_reagents %}
 						<div id="Reagents" class="tab-pane fade">
+							{% if protocol_reagents %}
 							<div class="row">
 								<div class="col-sm-6 col-xs-12">
 									<h4 class="reagent_header">Reactants Available</h4>
