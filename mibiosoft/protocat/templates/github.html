@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<style>
+#github_poster {
+    margin-left: 25%;
+    margin-right: 25%;
+    width: 50%;
+    text-align: center;
+}
+
+#github_poster > div {
+    text-align: left;
+}
+
+</style>
+
+<form id="github_poster" action="/postgithub/" method="POST">
+    <h3>Input Github Username:</h3>
+    <div class="input-group">
+        <input name="name" class="form-control" type="text" placeholder="Github Username" />
+        {% csrf_token %}
+        <span class="input-group-btn">
+            <input type="submit" class="btn btn-primary" value="Post" />
+        </span>
+    </div>
+</form>
+
+
+{% endblock %}

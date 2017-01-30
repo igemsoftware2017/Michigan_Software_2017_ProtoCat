@@ -719,3 +719,23 @@ def toggle_protocol(request):
 		#print(inst)
 		#print("Update didn't work")
 		return JsonResponse({'success': False})
+
+
+def github(request):
+	current_profile_info = request.user
+	if (not current_profile_info.is_anonymous()):
+		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
+		#print(current_profile_info)
+	else:
+		current_profile_info = None
+	context = {
+		'title': 'ProtoCat',
+		'current_profile_info': current_profile_info,
+	}
+	return render(request, "github.html", context)
+
+def github_post(request):
+	gh = GithubId()
+	gh.name = request.POST['name']
+	gh.save()
+	return HttpResponseRedirect('/')

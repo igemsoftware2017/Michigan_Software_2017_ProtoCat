@@ -2,3 +2,6 @@
 migrations
 db.sqlite3
 .vscode
+settings.py
+__init__.py
+wsgi.py

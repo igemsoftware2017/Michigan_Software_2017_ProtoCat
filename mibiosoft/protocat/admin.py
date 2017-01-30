@@ -44,6 +44,9 @@ class ProtocolCommentAdmin(admin.ModelAdmin):
 	class Meta:
 		model = ProtocolComment
 
+class GithubIdAdmin(admin.ModelAdmin):
+	class Meta:
+		model = GithubId
 
 
 # Register your models here.
@@ -56,3 +59,4 @@ admin.site.register(ProtocolStep, ProtocolStepAdmin)
 admin.site.register(ReagentForProtocol, ReagentForProtocolAdmin)
 admin.site.register(ProtocolRating, ProtocolRatingAdmin)
 admin.site.register(ProtocolComment, ProtocolCommentAdmin)
+admin.site.register(GithubId, GithubIdAdmin)

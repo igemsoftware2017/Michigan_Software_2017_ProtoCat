@@ -255,3 +255,8 @@ class ProtocolComment(models.Model):
 
 	def type(self):
 		return "Note"
+
+class GithubId(models.Model):
+	name = models.TextField()
+	def __str__(self):
+		return self.name
