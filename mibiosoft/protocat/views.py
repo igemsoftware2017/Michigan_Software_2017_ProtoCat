@@ -13,20 +13,16 @@ from django.http import JsonResponse
 from django.db.models import Max
 import bleach
 
-# Create your views here.
 def index(request):
 	current_profile_info = request.user
 	if (not current_profile_info.is_anonymous()):
 		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
-		#print(current_profile_info)
 	else:
 		current_profile_info = None
 	context = {
 		'title': 'ProtoCat',
 		'current_profile_info': current_profile_info,
 	}
-	#print ("RENDERING INDEX")
-	#print(len(connection.queries))
 	return render(request, 'index.html', context)
 
 def category_default(request):
@@ -41,7 +37,6 @@ def category_browser(request, current_parent):
 	current_profile_info = request.user
 	if (not current_profile_info.is_anonymous()):
 		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
-		#print(current_profile_info)
 	else:
 		current_profile_info = None
 	categories = Category.objects.filter(parent_category = current_parent)
@@ -55,24 +50,21 @@ def category_browser(request, current_parent):
 		'protocols': protocols,
 		'current_profile_info': current_profile_info,
 	}
-	#print(len(connection.queries))
 	return render(request, 'category_browser.html', context)
 
 def protocol(request, protocol_id):
 	current_profile_info = request.user
 	if (not current_profile_info.is_anonymous()):
 		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
-		#print(current_profile_info)
 	else:
 		current_profile_info = None
 	protocol = Protocol.objects.get(id = protocol_id)
 	protocol_steps = ProtocolStep.objects.filter(protocol = protocol).order_by('step_number')
 	protocol_reagents = ReagentForProtocol.objects.filter(protocol = protocol).order_by('display_name')
 	next_protocols = Protocol.objects.filter(previous_revision = protocol)
-	#for next_protocol in next_protocols:
-		#print(next_protocol)
 	comments = ProtocolComment.objects.filter(protocol = protocol).order_by('-upload_date')
 
+	# go through each reagent, get rid of duplicates
 	aggregated_reagents = None
 	if (protocol_reagents != None):
 		aggregated_reagents = list(protocol_reagents[:1])
@@ -101,9 +93,6 @@ def protocol(request, protocol_id):
 		'user_rating': rating,
 		'current_profile_info': current_profile_info,
 	}
-	#print (len(connection.queries))
-
-	#print ("RENDERING PROTOCOL")
 
 	return render(request, 'protocol.html', context)
 
@@ -111,9 +100,9 @@ def user(request, user_id):
 	current_profile_info = request.user
 	if (not current_profile_info.is_anonymous()):
 		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
-		#print(current_profile_info)
 	else:
 		current_profile_info = None
+
 	user = ProfileInfo.objects.get(id = user_id)
 	user_created_protocols = Protocol.objects.filter(author = user).order_by('-upload_date')
 	user_created_notes = ProtocolComment.objects.filter(author = user).order_by('-upload_date')
@@ -129,8 +118,8 @@ def user(request, user_id):
 		'user_rated_protocols': user_rated_protocols,
 		'notes': user_created_notes
 	}
-	#print(len(connection.queries))
 
+	# either allow user to edit or not
 	if (current_profile_info != user):
 		return render(request, 'user.html', context)
 	else:
@@ -140,7 +129,6 @@ def sign_up(request):
 	current_profile_info = request.user
 	if (not current_profile_info.is_anonymous()):
 		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
-		#print(current_profile_info)
 	else:
 		current_profile_info = None
 	context = {
@@ -153,10 +141,10 @@ def submit_sign_up(request):
 	current_profile_info = request.user
 	if (not current_profile_info.is_anonymous()):
 		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
-		#print(current_profile_info)
 	else:
 		current_profile_info = None
 	try:
+		# grab data to verify user
 		username = request.POST['username']
 		password = request.POST['password']
 		email = request.POST['email']
@@ -166,7 +154,6 @@ def submit_sign_up(request):
 		profile_info.save()
 		current_profile_info = profile_info
 		login(request, user)
-		#print(len(connection.queries))
 		return JsonResponse({'success': True, 'location': '/'})
 	except:
 		return JsonResponse({'success': False})
@@ -175,7 +162,6 @@ def login_user(request):
 	current_profile_info = request.user
 	if (not current_profile_info.is_anonymous()):
 		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
-		#print(current_profile_info)
 	else:
 		current_profile_info = None
 	context = {
@@ -211,7 +197,6 @@ def reagent(request, reagent_id):
 	current_profile_info = request.user
 	if (not current_profile_info.is_anonymous()):
 		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
-		#print(current_profile_info)
 	else:
 		current_profile_info = None
 	reagent = Reagent.objects.get(id = reagent_id)
@@ -227,7 +212,6 @@ def edit_reagent(request, reagent_id):
 	current_profile_info = request.user
 	if (not current_profile_info.is_anonymous()):
 		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
-		#print(current_profile_info)
 	else:
 		current_profile_info = None
 	reagent = Reagent.objects.get(id = reagent_id)
@@ -244,7 +228,6 @@ def new_reagent(request):
 	current_profile_info = request.user
 	if (not current_profile_info.is_anonymous()):
 		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
-		#print(current_profile_info)
 	else:
 		current_profile_info = None
 	title = 'ProtoCat - New Reagent'
@@ -259,14 +242,12 @@ def about(request):
 	current_profile_info = request.user
 	if (not current_profile_info.is_anonymous()):
 		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
-		#print(current_profile_info)
 	else:
 		current_profile_info = None
 	context = {
 		'title': 'ProtoCat',
 		'current_profile_info': current_profile_info,
 	}
-	#print ("RENDERING ABOUT")
 	return render(request, 'about.html', context)
 
 def search(request):
@@ -276,7 +257,9 @@ def search(request):
 		text_filter = request.POST['text_filter']
 	except:
 		pass
+
 	# get the right way to order them
+	# default is by title
 	try:
 		order = request.POST['sort-order']
 		if (order == 'sort-revised-upload-date'):
@@ -342,28 +325,24 @@ def search(request):
 
 	try:
 		min_num_ratings = int(request.POST['min-num-ratings'])
-		#print(min_num_ratings)
 		results = results.exclude(num_ratings__lt = min_num_ratings)
 	except:
 		pass
 
 	try:
 		max_num_ratings = int(request.POST['max-num-ratings'])
-		#print(max_num_ratings)
 		results = results.exclude(num_ratings__gt = max_num_ratings)
 	except:
 		pass
 
 	try:
 		min_avg_ratings = float(request.POST['min-avg-ratings'])
-		#print(min_avg_ratings)
 		results = results.exclude(avg_rating__lt = min_avg_ratings)
 	except:
 		pass
 
 	try:
 		max_avg_ratings = float(request.POST['max-avg-ratings'])
-		#print(max_avg_ratings)
 		results = results.exclude(avg_rating__gt = max_avg_ratings)
 	except:
 		pass
@@ -373,7 +352,6 @@ def search(request):
 
 	if (not current_profile_info.is_anonymous()):
 		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
-		#print(current_profile_info)
 	else:
 		current_profile_info = None
 
@@ -386,8 +364,6 @@ def search(request):
 		'results': results,
 		'current_profile_info': current_profile_info,
 	}
-	#print(len(connection.queries))
-	#print ("RENDERING SEARCH")
 	return render(request, 'search.html', context)
 
 def submit_rating(request):
