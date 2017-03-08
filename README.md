@@ -23,10 +23,10 @@ pip install django Pillow djangorestframework drfdocs bleach
 Then, to install our software, if you have git installed on your computer, simply type
 
 ```
-git clone https://github.com/igemsoftware2016/Michigan16.git
+git clone https://github.com/MiBioSoft2017/ProtoCat4.git
 ```
 
-Otherwise, you can go to the [GitHub page](https://github.com/igemsoftware2016/Michigan16) and click download there.
+Otherwise, you can go to the [GitHub page](https://github.com/MiBioSoft2017/ProtoCat4.git) and click download there.
 
 Now, open up a terminal/command prompt and go into the newly downloaded folder (default name Michigan16) and type in the follow:
 ```
