@@ -62,6 +62,8 @@ class Reagent(models.Model):
 	def get_website(self):
 		return self.website
 
+
+
 # has links to all the important parts of the protocol
 class Protocol(models.Model):
 	title = models.TextField()
@@ -129,6 +131,19 @@ class Protocol(models.Model):
 			total = total + rating.score
 		count = all_ratings.count()
 		return float(total) / count
+
+
+# favourite protocol
+class Favourite_Protocol(models.Model):
+	user = models.ForeignKey(ProfileInfo)
+	fav_protocol = models.ForeignKey(Protocol)
+	#add note for Favourite_Protocol
+	def __str__(self):
+		return self.fav_protocol
+
+
+
+
 
 # the data for each protocol step
 class ProtocolStep(models.Model):
