@@ -48,6 +48,11 @@ class GithubIdAdmin(admin.ModelAdmin):
 	class Meta:
 		model = GithubId
 
+class Favourite_ProtocolAdmin(admin.ModelAdmin):
+	list_display = ["__str__", "fav_protocol"]
+	class Meta:
+		model = Favourite_Protocol
+
 
 # Register your models here.
 
@@ -60,3 +65,4 @@ admin.site.register(ReagentForProtocol, ReagentForProtocolAdmin)
 admin.site.register(ProtocolRating, ProtocolRatingAdmin)
 admin.site.register(ProtocolComment, ProtocolCommentAdmin)
 admin.site.register(GithubId, GithubIdAdmin)
+admin.site.register(Favourite_Protocol, Favourite_ProtocolAdmin)

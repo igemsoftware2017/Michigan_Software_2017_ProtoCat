@@ -139,7 +139,10 @@ class Favourite_Protocol(models.Model):
 	fav_protocol = models.ForeignKey(Protocol)
 	#add note for Favourite_Protocol
 	def __str__(self):
+		return str(self.user)
+	def get_user_protocol(self):
 		return self.fav_protocol
+
 
 
 
