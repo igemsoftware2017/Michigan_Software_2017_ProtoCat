@@ -142,6 +142,10 @@ class Favourite_Protocol(models.Model):
 		return str(self.user)
 	def get_user_protocol(self):
 		return self.fav_protocol
+	def get_protocol_by_user(self):
+		return self.objects.filter(user = self.user)
+	def get_user_by_protocol(self):
+		return self.objects.filter(fav_protocol = self.fav_protocol)
 
 
 
