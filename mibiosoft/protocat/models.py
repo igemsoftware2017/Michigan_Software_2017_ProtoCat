@@ -249,12 +249,23 @@ class ProtocolComment(models.Model):
 	protocol = models.ForeignKey(Protocol, related_name="comments_for_protocol")
 	upload_date = models.DateTimeField(auto_now_add = True)
 	note = models.TextField()
+	parent = models.ForeignKey("self", null = True, blank = True)
+
 
 	def __str__(self):
 		return self.note
 
 	def type(self):
 		return "Note"
+
+	def children(self): #replies
+		return ProtocolComment.filter(parent=self)
+
+	@property
+	def is_parent(self):
+		if self.parent is not None:
+			return False
+		return True
 
 class GithubId(models.Model):
 	name = models.TextField()

@@ -112,7 +112,7 @@ function multiply_everything(factor) {
 					&& reagents[comp_reagent_num].unit == reagents[reagent_num].unit
 					&& reagents[comp_reagent_num].reagent_type == reagents[reagent_num].reagent_type
 					&& comp_reagent_num != reagent_num) {
-					
+
 					// subtract the other reagents from the filler
 					reagents[reagent_num].amount -= reagents[comp_reagent_num].amount;
 				}
@@ -219,8 +219,8 @@ function update_visual_data() {
 			}
 			if (correct_reagent != null) {
 				console.log(correct_reagent.preserve_units)
-				this.innerHTML = (correct_reagent.amount / Math.pow(10, correct_reagent.preserve_units)).toPrecision(correct_reagent.significant_figures) 
-					+ " " + correct_reagent.prefix + correct_reagent.unit 
+				this.innerHTML = (correct_reagent.amount / Math.pow(10, correct_reagent.preserve_units)).toPrecision(correct_reagent.significant_figures)
+					+ " " + correct_reagent.prefix + correct_reagent.unit
 					+ " of <a href=\"/reagent/" + correct_reagent.reagent_id + "\">" + correct_reagent.reagent + "</a>";
 			}
 			else {
@@ -392,6 +392,28 @@ $(document).on('ready', function(){
 		});
 	});
 
+	$('#reply').submit(function(e) {
+		e.preventDefault();
+		$.ajax({
+			type: "POST",
+			url: "/submitcomment/",
+			data: $('#reply').serialize(),
+			success: function(){
+				console.log("it worked2")
+			},
+			failure: function(){
+				console.log("it failed")
+			}
+		})
+		.success(function(data) {
+			$('#comment_text>div').append(data);
+			$('[name="reply"]').val('');
+		})
+		.fail(function() {
+			alert("An error occured when submitting your comment");
+		});
+	});
+
 	$('#recalc_reactants').on('click', function() {
 		// limiting reagent calc
 		display_reactants = JSON.parse(JSON.stringify(display_reactants))
@@ -444,7 +466,7 @@ $(document).on('ready', function(){
 		else {
 			alert("Everything is constant or you don't have enough materials")
 		}
-		
+
 	});
 	$('#recalc_products').on('click', function() {
 		// batch calc
@@ -946,7 +968,26 @@ textarea[name=comment] {
 	<div class="row" id="all_comments">
 		<div>
 			{% for comment in comments %}
-			{% include 'repeated_parts/comment.html' %}
+			<div class="row" id="comment_text">
+				{% include 'repeated_parts/comment.html' %}
+			</div>
+			{% if current_profile_info != None %}
+			<form action="/submitcomment/" method="POST" id="reply">
+				<div class="col-sm-12">
+					<div id="comment-submit-text-div">
+						<textarea name="comment" class="form-control" placeholder="Add a comment"></textarea>
+					</div>
+				</div>
+				<div class="col-sm-12" id="comment-submit-div" style="margin-top:15px;">
+					<input type="submit" class="form-control" value="Post">
+				</div>
+				<input name="protocol_id" type="hidden" value="{{protocol.id}}">
+				{% csrf_token %}
+			</form>
+			{% else %}
+			<p style="text-align:center;font-size:24px;">Sign in to comment on any protocol!</p>
+			{% endif %}
+
 			{% endfor %}
 		</div>
 	</div>
