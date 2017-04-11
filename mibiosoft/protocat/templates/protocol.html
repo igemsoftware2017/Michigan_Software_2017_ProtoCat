@@ -642,6 +642,11 @@ h5{
 	border-width: 1px;
 	border-top-style: solid;
 }
+
+.border-left{
+	border-left-style: solid;
+}
+
 #comments {
 	margin-bottom: 7.5px;
 }
@@ -971,26 +976,10 @@ textarea[name=comment] {
 			<div class="row" id="comment_text">
 				{% include 'repeated_parts/comment.html' %}
 			</div>
-			{% if current_profile_info != None %}
-			<form action="/submitcomment/" method="POST" id="reply">
-				<div class="col-sm-12">
-					<div id="comment-submit-text-div">
-						<textarea name="comment" class="form-control" placeholder="Add a comment"></textarea>
-					</div>
-				</div>
-				<div class="col-sm-12" id="comment-submit-div" style="margin-top:15px;">
-					<input type="submit" class="form-control" value="Post">
-				</div>
-				<input name="protocol_id" type="hidden" value="{{protocol.id}}">
-				{% csrf_token %}
-			</form>
-			{% else %}
-			<p style="text-align:center;font-size:24px;">Sign in to comment on any protocol!</p>
-			{% endif %}
-
 			{% endfor %}
 		</div>
 	</div>
+
 </div>
 
 {% endblock %}
