@@ -724,7 +724,7 @@ class NewMessageView (FormView):
 
 	def get_initial(self):
 		initial = super(NewMessageView, self).get_initial()
-		if self.kwargs['recip_name'] != None:
+		if 'recip_name' in self.kwargs:
 			initial['recipient'] = self.kwargs['recip_name']
 		return initial
 
@@ -738,3 +738,14 @@ class NewMessageView (FormView):
 
 		models.Message.objects.create(sender=sender, recipient=recip, message=message)
 		return redirect('root_index')
+
+def inbox_view(request):
+	if request.user.is_anonymous:
+			return redirect('root_index')
+	else:
+		user = request.user
+	messages = models.Message.objects.filter(recipient=user)
+	context = {
+		'message_list': messages,
+	}
+	return render(request, 'inbox.html', context)
