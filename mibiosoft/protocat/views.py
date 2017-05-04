@@ -11,6 +11,8 @@ from django.conf import settings
 from django.views.decorators.cache import never_cache
 from django.http import JsonResponse
 from django.db.models import Max
+from django.views.generic import View, FormView
+from . import forms, models
 import bleach
 
 def index(request):
@@ -715,3 +717,24 @@ def github_post(request):
 	gh.name = request.POST['name']
 	gh.save()
 	return HttpResponseRedirect('/')
+
+class NewMessageView (FormView):
+	template_name = 'new_message.html'
+	form_class = forms.NewMessageForm
+
+	def get_initial(self):
+		initial = super(NewMessageView, self).get_initial()
+		if self.kwargs['recip_name'] != None:
+			initial['recipient'] = self.kwargs['recip_name']
+		return initial
+
+	def form_valid(self, form):
+		if self.request.user.is_anonymous:
+			return redirect('root_index')
+
+		sender = self.request.user
+		recip = User.objects.get(username = form.cleaned_data.get('recipient'))
+		message = form.cleaned_data.get('message')
+
+		models.Message.objects.create(sender=sender, recipient=recip, message=message)
+		return redirect('root_index')
