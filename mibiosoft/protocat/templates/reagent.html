@@ -3,26 +3,66 @@
 {% block content %}
 
 <style>
+
+.card {
+	display: none;
+	position: absolute;
+	width: 100%;
+	height: 150px;
+	border:2px solid #00274c;
+	border-radius: 11px;
+	box-shadow: 5px 5px 5px grey;
+	background-color: #fff;
+}
+
 </style>
+
+<script>
+
+$(document).ready(function (e) {
+	$("h4").hover(
+		function(){
+			position = $(this).position();
+			$(".card").show().css("top", position.bottom).css("left", position.left);
+		},
+		function(){
+			$(".card").hide();
+
+		});
+});
+
+</script>
 
 <div class="col-sm-12">
 	<div class="row">
-		<div class="col-xs-12 padded">
-			<div class="center-block" style="text-align:center;">
-				<h2>{{ reagent.name }}</h2>
-				<h4>{{ reagent.website|urlize }}</h4>
-			</div>
-		</div>
-	</div>
-</div>
-<br>
-<div class="col-sm-12">
-	{% if reagent.description != "" %}
-	{{ reagent.description|safe }}
-	<h5><a href="/editreagent/{{reagent.id}}">Edit this reagent</a></h5>
-	{% else %}
-	<h3 style="text-align:center">Looks like no one has written a description yet.<br> <a href="/editreagent/{{reagent.id}}">Edit this reagent</a></h3>
-	{% endif%}
+		<div class="col-sm-12 padded" style = "text-align: center">
+					<h2>{{ reagent.name }}</h2>
+					<h4>{{ reagent.website|urlize }}</h4>
+					<div class = "col-sm-4"></div>
+					<div class = "col-sm-4">
+					<div class = "card"></div>
+				</div>
+					</div>
+					</div>
+						{% if reagent.description != "" %}
+						{{ reagent.description|safe }}
+
+						{% else %}
+						<h5 style="text-align:left">Looks like no one has written a description yet.<br></h5>
+						{% endif%}
+
+	<a href = "/editreagent/{{reagent.id}}" class = "btn btn-primary" role = "button">
+		Edit this reagent</a>
+	<br>
+
+	<h4>sfjdkl</h4>
+
 </div>
 
+
+
 {% endblock %}
+
+<!--
+<div class = "btn-group inline pull-right apply_changes_btn"> == $0
+<button class = "btn" id = "edit_reactants"> Edit this reagent </button>
