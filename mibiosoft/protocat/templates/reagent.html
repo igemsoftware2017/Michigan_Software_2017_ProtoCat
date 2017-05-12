@@ -7,8 +7,9 @@
 .card {
 	display: none;
 	position: absolute;
-	width: 500px;
-	height: 150px;
+	width: 400px;
+	font-size: 10px;
+	height: auto;
 	border:2px solid #00274c;
 	border-radius: 11px;
 	box-shadow: 5px 5px 5px grey;
@@ -49,6 +50,7 @@ $(document).ready(function (e) {
 					display_text = display_text.replace(/\|.{1,3}}}/g, "")
 					display_text = display_text.replace(/\|/,"")
 					display_text = display_text.replace(/\[\[/g, "").replace(/]]/g,"") //Remove any remaining brackets
+					display_text = "<div style=\"padding:10px 5px;\"> " + display_text + " <\div>"
 					console.log(display_text);
 					$(".card").html(display_text);
 				},
