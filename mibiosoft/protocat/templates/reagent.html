@@ -34,8 +34,9 @@ $(document).ready(function (e) {
 			$.ajax({
 				method: "GET",
 				url: "https://en.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&format=json&titles=salt",
+				//url: "https://en.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&format=json&titles=black%20pepper", //Pepper URL test
 				success: function(data) {
-					var raw_text = data.query.pages[1605200].revisions["0"]["*"]
+					var raw_text = data.query.pages[1605200].revisions["0"]["*"] //Pepper document data at pages[150116]
 					var start_index = raw_text.indexOf("'''");
 					var end_index = raw_text.indexOf("\n",start_index);
 					var display_text = raw_text.substring(start_index, end_index); //Get the first paragraph of the wikipedia article
