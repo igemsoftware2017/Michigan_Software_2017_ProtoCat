@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django import forms
+import bleach
 # from django.contrib.auth import authenticate
 
 class NewMessageForm(forms.Form):
@@ -17,4 +18,6 @@ class NewMessageForm(forms.Form):
 		if self.cleaned_data.get('message').strip() == "":
 			raise forms.ValidationError("Message cannot be empty")
 
-		return super(NewMessageForm, self).clean(*args, **kwargs)
+		cleaned_data = super(NewMessageForm, self).clean(*args, **kwargs)
+		cleaned_data['message'] = bleach.clean(self.data['message'])
+		return cleaned_data

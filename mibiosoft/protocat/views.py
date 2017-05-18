@@ -719,7 +719,7 @@ def github_post(request):
 	return HttpResponseRedirect('/')
 
 class NewMessageView (FormView):
-	template_name = 'new_message.html'
+	template_name = 'protoChat/new_message.html'
 	form_class = forms.NewMessageForm
 
 	def get_initial(self):
@@ -729,7 +729,7 @@ class NewMessageView (FormView):
 		return initial
 
 	def form_valid(self, form):
-		if self.request.user.is_anonymous:
+		if self.request.user.is_anonymous():
 			return redirect('root_index')
 
 		sender = self.request.user
@@ -744,8 +744,8 @@ def inbox_view(request):
 			return redirect('root_index')
 	else:
 		user = request.user
-	messages = models.Message.objects.filter(recipient=user)
+	messages = models.Message.objects.filter(recipient=user).order_by('-timeSent')
 	context = {
 		'message_list': messages,
 	}
-	return render(request, 'inbox.html', context)
+	return render(request, 'protoChat/inbox.html', context)
