@@ -260,3 +260,13 @@ class GithubId(models.Model):
 	name = models.TextField()
 	def __str__(self):
 		return self.name
+
+class Message(models.Model):
+	sender = models.ForeignKey(User, related_name="sender_user")
+	recipient = models.ForeignKey(User, related_name="recip_user")
+	message = models.TextField()
+	timeSent = models.DateTimeField(null = True)
+
+	def __str__(self):
+		return self.sender.username + " to " + self.recipient.username
+
