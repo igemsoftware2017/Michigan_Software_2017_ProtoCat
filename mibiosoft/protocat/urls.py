@@ -30,5 +30,6 @@ urlpatterns = [
 	url(r'^updateprofile/$', views.update_profile, name="update_profile"),
 	url(r'^test/$', views.test, name="test"),
 	url(r'^github/$', views.github, name="github"),
+	url(r'^history/(?P<protocol_id>[0-9]+)/$', views.protocol_history, name="history"),
 	url(r'^postgithub/$', views.github_post, name="githubpost"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

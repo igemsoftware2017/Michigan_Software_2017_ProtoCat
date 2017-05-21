@@ -715,3 +715,20 @@ def github_post(request):
 	gh.name = request.POST['name']
 	gh.save()
 	return HttpResponseRedirect('/')
+
+def protocol_history(request, protocol_id):
+	current_profile_info = request.user
+	if (not current_profile_info.is_anonymous()):
+		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
+	else:
+		current_profile_info = None
+
+	protocols = Protocol.objects.all().filter(first_revision = protocol_id)
+	original_protocol = Protocol.objects.get(id = protocol_id)
+	context = {
+		'title': 'ProtoCat',
+		'current_profile_info': current_profile_info,
+		'protocols': protocols,
+		'original_protocol': original_protocol
+	}
+	return render(request, "history.html", context)
