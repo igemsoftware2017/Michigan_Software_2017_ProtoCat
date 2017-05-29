@@ -138,7 +138,6 @@
 		});
 
 		zoom.parent().on('mousewheel.focal', function (e) {
-			console.log("temp");
 			e.preventDefault();
 			var delta = e.delta || e.originalEvent.wheelDelta;
 			var zoomOut = delta ? delta < 0 : e.originalEvent.deltaY > 0;
@@ -148,8 +147,24 @@
 				focal: e
 			});
 		});
-	});
 
+
+
+
+		$('li > a').on("mousedown", function(e) {
+			//e.stopImmediatePropagation();
+		});
+
+		$('li > a').on("touchstart", function(e) {
+			//e.stopImmediatePropagation();
+			setTimeout(function() {
+				// held for a second
+				console.log("blah 2");
+
+			}, 1000);
+			console.log("blah");
+		});
+	});
 </script>
 <div id="panZoomContainer">
 	<div id="root" class="protocolTree">
