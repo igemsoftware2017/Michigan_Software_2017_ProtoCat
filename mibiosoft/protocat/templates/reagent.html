@@ -8,11 +8,19 @@
 		font-size: 10px;
 		height: auto;
 		border: 2px solid #00274c;
-		border-radius: 11px;
+		border-radius: 7px;
 		box-shadow: 5px 5px 5px grey;
 		background-color: #fff;
 		margin-top: 10px;
 		z-index: 10;
+	}
+
+	.triangle {
+		display: none;
+		position: absolute;
+		border-left: 15px solid transparent;
+		border-right: 15px solid transparent;
+		border-bottom: 10px solid #00274c;
 	}
 
 	#hovercard {
@@ -29,7 +37,8 @@
 				offset = $(this).offset();
 				//console.log(position);
 				//console.log(offset);
-				$(".card").css("display", "block").css("top",offset.top+5).css("left",offset.left);//.css("top", offset.top/2).css("left", offset.left).css("display",'flex');
+				$(".card").css("display", "block").css("top",offset.top+20).css("left",offset.left-5);//.css("top", offset.top/2).css("left", offset.left).css("display",'flex');
+				$(".triangle").css("display", "block").css("top", offset.top+20).css("left", offset.left+5);
 
 				$.ajax({
 					method: "GET",
@@ -73,6 +82,7 @@
 			},
 			function () {
 				$(".card").hide();
+				$(".triangle").hide();
 
 			});
 	});
@@ -101,6 +111,7 @@
 
 
 <div class="card"></div>
+<div class = "triangle"></div>
 
 {% endblock %}
 
