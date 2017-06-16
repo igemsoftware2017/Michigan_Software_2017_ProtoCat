@@ -1,111 +1,106 @@
-{% extends 'base.html' %}
-
-{% block content %}
+{% extends 'base.html' %} {% block content %}
 
 <style>
+	.card {
+		display: none;
+		position: absolute;
+		max-width: 400px;
+		font-size: 10px;
+		height: auto;
+		border: 2px solid #00274c;
+		border-radius: 11px;
+		box-shadow: 5px 5px 5px grey;
+		background-color: #fff;
+		margin-top: 10px;
+		z-index: 10;
+	}
 
-.card {
-	display: none;
-	position: absolute;
-	width: 400px;
-	font-size: 10px;
-	height: auto;
-	border:2px solid #00274c;
-	border-radius: 11px;
-	box-shadow: 5px 5px 5px grey;
-	background-color: #fff;
-	margin-top: 10px;
-	margin-bottom: 10px;
-}
-
-#hovercard {
-	background-color: #EAC;
-	position:relative;
-}
-
+	#hovercard {
+		background-color: #EAC;
+		position: relative;
+	}
 </style>
 
 <script>
+	$(document).ready(function (e) {
+		$("#hovercard").hover(
+			function () {
+				position = $(this).position();
+				offset = $(this).offset();
+				//console.log(position);
+				//console.log(offset);
+				$(".card").css("display", "block").css("top",offset.top+5).css("left",offset.left);//.css("top", offset.top/2).css("left", offset.left).css("display",'flex');
 
-$(document).ready(function (e) {
-	$("#hovercard").hover(
-		function(){
-			position = $(this).position();
-			console.log(position)
-			$(".card").show().css("top", position.top/2+5).css("left", -15*position.left);
-			
-			$.ajax({
-				method: "GET",
-				url: "https://en.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&format=json&titles=salt", //Salt
-				//url: "https://en.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&format=json&titles=black%20pepper", //Pepper URL test
-				//url: "https://en.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&format=json&titles=Great%20Pyramid%20of%20Giza",//Great Pyramid of Giza
-				//url: "https://en.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&format=json&titles=Glucose", //
-				success: function(data) {
-					var keys = Object.keys(data.query.pages)
-					var raw_text = data.query.pages[keys[0]].revisions["0"]["*"]
-					//var raw_text = data.query.pages[1605200].revisions["0"]["*"] //Pepper document data at pages[150116] salt at pages[1605200]
-					var start_index = raw_text.indexOf("'''");
-					var end_index = raw_text.indexOf("\n",start_index);
-					var display_text = raw_text.substring(start_index, end_index); //Get the first paragraph of the wikipedia article
+				$.ajax({
+					method: "GET",
+					//url: "https://en.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&format=json&titles=salt", //Salt
+					//url: "https://en.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&format=json&titles=black%20pepper", //Pepper URL test
+					//url: "https://en.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&format=json&titles=Great%20Pyramid%20of%20Giza",//Great Pyramid of Giza
+					//url: "https://en.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&format=json&titles=Glucose", //Glucose
+					url: "https://en.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&format=json&titles=pepper",
+					success: function (data) {
+						var keys = Object.keys(data.query.pages)
+						var raw_text = data.query.pages[keys[0]].revisions["0"]["*"]
 
-					if(display_text == ""){
-						//check where we gotta redirect
-						console.log("Foo bar")
+						//Do redirect checking here
+						if (display_text == "") {
+							//check where we gotta redirect
+							console.log(data.query);
+						}
+
+						//var raw_text = data.query.pages[1605200].revisions["0"]["*"] //Pepper document data at pages[150116] salt at pages[1605200]
+						var start_index = raw_text.indexOf("'''");
+						var end_index = raw_text.indexOf("\n", start_index);
+						var display_text = raw_text.substring(start_index, end_index); //Get the first paragraph of the wikipedia article
+
+						//Format the data nicely
+						display_text = display_text.replace(/'''/g, "") //Remove quotations around name
+						display_text = display_text.replace(/\[\[[^\[\]]*?\([^\[]*?\)\|/g, "") //Remove variable wikipedia formatting
+						display_text = display_text.replace(/\[\[[^\[\]]*?\|/g, "")//Remove variable wikipedia formatting
+						display_text = display_text.replace(/{{.*?\|/g, "")
+						display_text = display_text.replace(/\|.{1,3}}}/g, "")
+						display_text = display_text.replace(/\|/, "")
+						display_text = display_text.replace(/\[\[/g, "").replace(/]]/g, "") //Remove any remaining brackets
+						display_text = "<div style=\"padding:10px 5px;\"> " + display_text + " <\div>"
+						console.log(display_text);
+						$(".card").html(display_text);
+					},
+					failure: function () {
+						alert("Shit happens");
 					}
+				})
+				//$(".card").html(/*PUT THE HTML HERE*/"Words go here")
+			},
+			function () {
+				$(".card").hide();
 
-					//Format the data nicely
-					display_text = display_text.replace(/'''/g,"") //Remove quotations around name
-					display_text = display_text.replace(/\[\[[^\[\]]*?\([^\[]*?\)\|/g,"") //Remove variable wikipedia formatting
-					display_text = display_text.replace(/\[\[[^\[\]]*?\|/g, "")//Remove variable wikipedia formatting
-					display_text = display_text.replace(/{{.*?\|/g, "")
-					display_text = display_text.replace(/\|.{1,3}}}/g, "")
-					display_text = display_text.replace(/\|/,"")
-					display_text = display_text.replace(/\[\[/g, "").replace(/]]/g,"") //Remove any remaining brackets
-					display_text = "<div style=\"padding:10px 5px;\"> " + display_text + " <\div>"
-					console.log(display_text);
-					$(".card").html(display_text);
-				},
-				failure: function(){
-					alert("Shit happens");
-				}
-			})
-			//$(".card").html(/*PUT THE HTML HERE*/"Words go here")
-		},
-		function(){
-			$(".card").hide();
-
-		});
-});
+			});
+	});
 
 </script>
 
 <div class="col-sm-12">
 	<div class="row">
-		<div class="col-sm-12 padded" style = "text-align: center">
-					<h2>{{ reagent.name }}</h2>
-					<h4>{{ reagent.website|urlize }}</h4>
-					<div class = "col-sm-4"></div>
-					<div class = "col-sm-4">
-					<div class = "card"></div>
-				</div>
-					</div>
-					</div>
-						{% if reagent.description != "" %}
-						{{ reagent.description|safe }}
+		<div class="col-sm-12 padded" style="text-align: center">
+			<h2>{{ reagent.name }}</h2>
+			<h4>{{ reagent.website|urlize }}</h4>
+		</div>
+	</div>
+	{% if reagent.description != "" %} {{ reagent.description|safe }} {% else %}
+	<h5 style="text-align:left">Looks like no one has written a description yet.<br></h5>
+	{% endif%}
 
-						{% else %}
-						<h5 style="text-align:left">Looks like no one has written a description yet.<br></h5>
-						{% endif%}
-
-	<a href = "/editreagent/{{reagent.id}}" class = "btn btn-primary" role = "button">
+	<a href="/editreagent/{{reagent.id}}" class="btn btn-primary" role="button">
 		Edit this reagent</a>
+	<br>t</a>
 	<br>
 
-	<h4><span id="hovercard">Salt</span></h4>
+	<h4>This is for <span id="hovercard">Salt</span> and nothing else</h4>
 
 </div>
 
 
+<div class="card"></div>
 
 {% endblock %}
 
