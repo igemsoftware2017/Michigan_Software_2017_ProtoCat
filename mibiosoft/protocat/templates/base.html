@@ -220,6 +220,7 @@
 								{% endif %}
 							</a>
 							<!-- TODO have drop-down menu open by default on small devices -->
+
 							<ul class="dropdown-menu">
 								{% if not user.is_authenticated %}
 								<li><a href="/signup/">Sign up</a></li>
@@ -227,7 +228,7 @@
 								{% else %}
 								<li><a href="/upload/">Upload Protocol</a></li>
 								<li><a href="/user/{{ user.profileinfo.id }}">User Profile</a></li>
-								<li><a href="{% url 'inbox'%}">Inbox</a></li>
+								<li><a href="{% url 'inbox'%}">Inbox {% if numMessages > 0 %}({{numMessages}}){% endif %}</a></li>
 								<li><a href="/logoff/">Log out</a></li>
 								{% endif %}
 								<li role="separator" class="divider"></li>

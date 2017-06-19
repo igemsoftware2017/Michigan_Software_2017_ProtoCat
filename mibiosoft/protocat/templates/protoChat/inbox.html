@@ -9,35 +9,65 @@
 {% block content %}
 {% if user.is_authenticated %}
 
+<script>
+
+    function checkIfOne(){
+        var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        var checkedOne = Array.prototype.slice.call(checkboxes).some(x => x.checked);
+
+        if (checkedOne){
+            document.getElementById('btnDel').style.visibility = "visible";
+        }else{
+            document.getElementById('btnDel').style.visibility = "hidden";
+        }
+
+    }
+
+</script>
+
+<form method="post">
+{% csrf_token %}
+
+<button class="btn" type="button" id=newMessage onclick="location.href='{% url 'new_message' %}'">New Message</button>
+<button class="btn" id='btnDel' style="visibility: hidden">Delete</button>
+
 <hr class="hr-short">
 
+<table>
 {% for message in message_list %}
-    <!--<div class="row">
-        <div class="pull-left" style="width: 4%; padding-left:15px"><input type="checkbox" value=""></div>
-        <!--<div class="col-xs-0"><input type="checkbox" value=""></div>-->
-        <!--<div class="col-xs-2">{{message.sender.username}}</div>
-        <div class="col-xs-5"> {{message.subject}}</div>
-        <div class="col-xs-4 pull-right">{{message.timeSent}}</div>
-    </div>-->
 
-    <div>
-        <p>from: {{message.sender}}
-        <br>
-        {{message.timeSent}}
-        <br>
-        <a href="{% url 'new_message' recip_name=message.sender.username %}">Reply</a>
-        </p>
-        <div style="border-left: 1px solid lightgrey; padding-left:10px">
-            {{message.message | linebreaks}}
-        </div>
-    </div>
+    <tr>
+        <td valign="top">
+            <input type="checkbox" onchange="checkIfOne()" name='check{{message.id}}'>
+        </td>
 
-
-
-    <hr class="hr-short">
+        <td style="padding-left:10px">
+            <div>
+                <p>from: {{message.sender}}
+                <br>
+                {{message.timeSent}}
+                <br>
+                <a href="{% url 'new_message' recip_name=message.sender.user.username %}">Reply</a>
+                </p>
+                <div style="border-left: 1px solid lightgrey; padding-left:10px">
+                    {{message.message | linebreaks}}
+                </div>
+            </div>        
+        </td>
+    </tr>
+    <tr>
+        <td colspan=2>
+            <hr class="hr-short">
+        </td>
+    </tr>
+    
 {% endfor %}
+</table>
+
+</form>
 
 {% else %}
 <p>Must be logged in</p>
 {% endif %}
 {% endblock %}
+

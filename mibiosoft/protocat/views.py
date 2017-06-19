@@ -19,11 +19,16 @@ def index(request):
 	current_profile_info = request.user
 	if (not current_profile_info.is_anonymous()):
 		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
+
+		messages = models.Message.objects.filter(recipient = current_profile_info).filter(deleted = False)
+
 	else:
 		current_profile_info = None
+		messages = [];
 	context = {
 		'title': 'ProtoCat4.0',
 		'current_profile_info': current_profile_info,
+		'numMessages': len(messages),
 	}
 	return render(request, 'index.html', context)
 
@@ -732,19 +737,35 @@ class NewMessageView (FormView):
 		if self.request.user.is_anonymous():
 			return redirect('root_index')
 
-		sender = self.request.user
-		recip = User.objects.get(username = form.cleaned_data.get('recipient'))
+		sender = ProfileInfo.objects.get(user = self.request.user)
+		recip_user = User.objects.get(username = form.cleaned_data.get('recipient'))
+		recip = ProfileInfo.objects.get(user = recip_user)
 		message = form.cleaned_data.get('message')
 
 		models.Message.objects.create(sender=sender, recipient=recip, message=message)
 		return redirect('root_index')
 
 def inbox_view(request):
-	if request.user.is_anonymous:
+
+	
+	if request.method == "POST":
+
+		print ('here');
+
+		for key in request.POST:
+			if key[:5] == 'check':
+				id = key[5:]
+				tempMessage = models.Message.objects.get(id=id)
+				tempMessage.deleted = True
+				tempMessage.save()
+
+
+	if request.user.is_anonymous():
 			return redirect('root_index')
 	else:
-		user = request.user
-	messages = models.Message.objects.filter(recipient=user).order_by('-timeSent')
+		user = ProfileInfo.objects.get(user = request.user)
+	
+	messages = models.Message.objects.filter(recipient=user).filter(deleted=False).order_by('-timeSent')
 	context = {
 		'message_list': messages,
 	}
