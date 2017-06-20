@@ -1,15 +1,6 @@
 <div class="col-sm-12 comment-div">
 	<div class="row">
-		<div class="col-sm-12">
-			<div class="comment-picture-div">
-				<a href="/user/{{comment.author.id}}/">
-					{% if comment.author.profile_image != "" %}
-					<img src="{{ comment.author.profile_image.url }}" alt="Image not found" class="img-rounded comment-picture"/>
-					{% else %}
-					<img src="http://2014.igem.org/wiki/images/thumb/0/04/ChrisP.jpg/330px-ChrisP.jpg.png" alt="Image not found" class="img-rounded comment-picture"/>
-					{% endif %}
-				</a>
-			</div>
+		<div class="col-sm-12 border-left">
 			<div class="comment-text">
 				<p><a href="/user/{{comment.author.id}}/">{{comment.author}}</a> - {{comment.upload_date}}</p>
 				<p>{{comment.note}}</p>
