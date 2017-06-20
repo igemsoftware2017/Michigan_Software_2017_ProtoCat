@@ -581,6 +581,14 @@ def submit_comment(request):
 		comment = bleach.clean(request.POST['comment'])
 		protocol_id = bleach.clean(request.POST['protocol_id'])
 		protocol = Protocol.objects.get(id = protocol_id)
+		parent =  None
+
+		# trying to set parent from 'parent_id' in comment.html form
+		try:
+			parent_id = request.POST['parent_id']
+			parent = parent_id
+		except:
+			pass
 
 		try:
 			proto_comment = ProtocolComment(author = current_profile_info, protocol = protocol, note = comment)
@@ -593,8 +601,6 @@ def submit_comment(request):
 		'comment': proto_comment,
 	}
 	return render(request, 'repeated_parts/comment.html', context)
-
-
 
 def update_profile(request):
 	current_profile_info = request.user
@@ -690,7 +696,7 @@ def toggle_protocol(request):
 			protocol.save()
 			return JsonResponse({'success': True})
 		else:
-			return JsonResponse({'success': False}) 
+			return JsonResponse({'success': False})
 	except Exception as inst:
 		#print(inst)
 		#print("Update didn't work")

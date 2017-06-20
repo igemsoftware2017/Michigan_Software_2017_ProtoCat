@@ -376,12 +376,12 @@ $(document).on('ready', function(){
 			type: "POST",
 			url: "/submitcomment/",
 			data: $('#comment').serialize(),
-			success: function(){
-				console.log("it worked2")
-			},
-			failure: function(){
-				console.log("it failed")
-			}
+						success: function(){
+							console.log("it worked2")
+						},
+						failure: function(){
+							console.log("it failed")
+						}
 		})
 		.success(function(data) {
 			$('#all_comments>div').prepend(data);
@@ -392,21 +392,16 @@ $(document).on('ready', function(){
 		});
 	});
 
+// I tested with and without this, but its currently being referenced in comment.html; here for reference as well; I think Kuran had wrote this
 	$('#reply').submit(function(e) {
 		e.preventDefault();
 		$.ajax({
 			type: "POST",
 			url: "/submitcomment/",
 			data: $('#reply').serialize(),
-			success: function(){
-				console.log("it worked2")
-			},
-			failure: function(){
-				console.log("it failed")
-			}
 		})
 		.success(function(data) {
-			$('#comment_text>div').append(data);
+			$('#all_comments>div').prepend(data); //comment_text or all_comments...
 			$('[name="reply"]').val('');
 		})
 		.fail(function() {
@@ -585,6 +580,7 @@ $(document).on('ready', function() {
 		});
 	});
 });
+
 </script>
 <style>
 .protocol_title{
@@ -642,6 +638,11 @@ h5{
 	border-width: 1px;
 	border-top-style: solid;
 }
+/* EDDITTED
+.comment-div.replies {
+	margin-left: 15px
+}
+/* EDDITTED */
 #comments {
 	margin-bottom: 7.5px;
 }
@@ -965,29 +966,13 @@ textarea[name=comment] {
 		</div>
 	</div>
 
+
 	<div class="row" id="all_comments">
 		<div>
 			{% for comment in comments %}
 			<div class="row" id="comment_text">
 				{% include 'repeated_parts/comment.html' %}
 			</div>
-			{% if current_profile_info != None %}
-			<form action="/submitcomment/" method="POST" id="reply">
-				<div class="col-sm-12">
-					<div id="comment-submit-text-div">
-						<textarea name="comment" class="form-control" placeholder="Add a comment"></textarea>
-					</div>
-				</div>
-				<div class="col-sm-12" id="comment-submit-div" style="margin-top:15px;">
-					<input type="submit" class="form-control" value="Post">
-				</div>
-				<input name="protocol_id" type="hidden" value="{{protocol.id}}">
-				{% csrf_token %}
-			</form>
-			{% else %}
-			<p style="text-align:center;font-size:24px;">Sign in to comment on any protocol!</p>
-			{% endif %}
-
 			{% endfor %}
 		</div>
 	</div>

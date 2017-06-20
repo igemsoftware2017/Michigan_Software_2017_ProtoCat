@@ -251,16 +251,14 @@ class ProtocolComment(models.Model):
 	note = models.TextField()
 	parent = models.ForeignKey("self", null = True, blank = True)
 
-
 	def __str__(self):
 		return self.note
 
-	def type(self):
-		return "Note"
-
+    #Ignore for now
 	def children(self): #replies
-		return ProtocolComment.filter(parent=self)
+		return ProtocolComment.objects.filter(parent=self)
 
+    #Ignore for now
 	@property
 	def is_parent(self):
 		if self.parent is not None:

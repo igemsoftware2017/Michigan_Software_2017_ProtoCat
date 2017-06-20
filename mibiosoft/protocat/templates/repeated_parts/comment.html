@@ -14,9 +14,24 @@
 				<p><a href="/user/{{comment.author.id}}/">{{comment.author}}</a> - {{comment.upload_date}}</p>
 				<p>{{comment.note}}</p>
 			</div>
-
-
-
+			<!-- Adds a reply form to each comment -->
+			{% if current_profile_info != None %}
+			 			<form action="/submitcomment/" method="POST" id="reply"> <!-- id="comment"? or "reply"? -->
+			 				<div class="col-sm-12">
+			 					<div id="comment-submit-text-div">
+			 						<textarea name="comment" class="form-control" placeholder="Add a comment"></textarea>
+			 					</div>
+			 				</div>
+			 				<div class="col-sm-12" id="comment-submit-div" style="margin-top:15px;">
+			 					<input type="submit" class="form-control" value="Reply">
+			 				</div>
+			 				<input name="protocol_id" type="hidden" value="{{protocol.id}}">
+							<input name="parent_id" type="hidden" value="{{comment.id}}"> <!-- trying to get parent_id; might not have access from here though?? -->
+			 				{% csrf_token %}
+			 			</form>
+			 			{% else %}
+			 			<p style="text-align:center;font-size:24px;">Sign in to comment on any protocol!</p>
+			 			{% endif %}
 		</div>
 	</div>
 </div>
