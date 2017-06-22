@@ -20,7 +20,7 @@ def index(request):
 	if (not current_profile_info.is_anonymous()):
 		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
 
-		messages = models.Message.objects.filter(recipient = current_profile_info).filter(deleted = False)
+		messages = models.Message.objects.filter(recipient = current_profile_info).filter(read = False).filter(deleted = False)
 
 	else:
 		current_profile_info = None
@@ -766,6 +766,11 @@ def inbox_view(request):
 		user = ProfileInfo.objects.get(user = request.user)
 	
 	messages = models.Message.objects.filter(recipient=user).filter(deleted=False).order_by('-timeSent')
+
+	for message in messages:
+		message.read = True
+		message.save()
+
 	context = {
 		'message_list': messages,
 	}
