@@ -42,19 +42,21 @@
 
 				$.ajax({
 					method: "GET",
-					//url: "https://en.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&format=json&titles=salt", //Salt
+					url: "https://en.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&format=json&titles=salt", //Salt
 					//url: "https://en.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&format=json&titles=black%20pepper", //Pepper URL test
 					//url: "https://en.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&format=json&titles=Great%20Pyramid%20of%20Giza",//Great Pyramid of Giza
 					//url: "https://en.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&format=json&titles=Glucose", //Glucose
-					url: "https://en.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&format=json&titles=pepper",
+					//url: "https://en.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&format=json&titles=pepper",
 					success: function (data) {
 						var keys = Object.keys(data.query.pages)
 						var raw_text = data.query.pages[keys[0]].revisions["0"]["*"]
 
 						//Do redirect checking here
-						if (display_text == "") {
-							//check where we gotta redirect
-							console.log(data.query);
+						if (raw_text.startsWith("#REDIRECT")) {
+						    var page_redir = raw_text.match(/#REDIRECT \[\[(.*?)\]\]/)
+                            page_redir = String(page_redir).replace("#REDIRECT [[", "").replace("]]", "").replace(/,.+/,"")
+                            new_url = "https://en.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&format=json&titles=" + page_redir.replace(" ", "%20")
+                            console.log(new_url)
 						}
 
 						//var raw_text = data.query.pages[1605200].revisions["0"]["*"] //Pepper document data at pages[150116] salt at pages[1605200]
