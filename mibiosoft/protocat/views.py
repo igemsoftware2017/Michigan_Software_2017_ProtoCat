@@ -292,7 +292,7 @@ def search(request):
 
 	order = sort_direction + order
 
-	results = Protocol.objects.filter(Q(title__icontains = text_filter) | Q(description__icontains = text_filter) | Q(materials__icontains = text_filter) | Q(protocol_step__action__icontains = text_filter) | Q(reagentforprotocol__display_name__icontains = text_filter))
+	results = Protocol.objects.filter(Q(title__icontains = text_filter) | Q(description__icontains = text_filter) | Q(materials__icontains = text_filter) | Q(protocol_step__action__icontains = text_filter) | Q(reagentforprotocol__display_name__icontains = text_filter)).distinct()
 
 	try:
 		search_hidden = (request.POST['search-hidden'] == "on")
