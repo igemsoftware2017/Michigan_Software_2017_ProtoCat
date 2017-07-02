@@ -3,15 +3,12 @@
 	color: #777!important;
 }
 
-.description > p{
-	<!-- white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis; -->	
+.description > p{	
 	overflow: hidden;
 	text-overflow: ellipsis;
 	display: -webkit-box;
 	-webkit-box-orient: vertical;
-	-webkit-line-clamp: 2; <!-- number of lines to show -->
+	-webkit-line-clamp: 2; 
 }
 
 .title{
@@ -25,9 +22,24 @@
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
+.protocol-profile-image-container {
+	display: inline-block;
+    position: relative;
+    width: 100%;
+}
+.dummy {
+	margin-top: 100%;
+}
+.protocol-profile-image {
+	position: absolute;
+    top: 0;
+    left: 0;
+	width: 100%;
+	height: 100%;
+}
 </style>
 
-<div class="col-sm-6">
+<div class="col-sm-6 col-md-4">
 	<div class="well well-sm protocol_div" onclick="location.href='/protocol/{{ protocol.id }}/'">
 		<div class="row">
 			<div class="col-sm-7 fix-margin-left">
@@ -47,11 +59,14 @@
 				<div class="text-muted max-lines description"> {{ protocol.description|safe }} </div>
 			</div>
 			<div class="col-sm-4 hidden-xs protocol-author-picture fix-margin-top pull-right">
-				{% if protocol.author.profile_image != "" %}
-				<img src="{{ protocol.author.profile_image.url }}" width=75 height=75 alt="Image not found" class="img-circle center-block"/>
-				{% else %}
-				<img src="http://2014.igem.org/wiki/images/thumb/0/04/ChrisP.jpg/330px-ChrisP.jpg.png" width=75 height=75 alt="Image not found" class="img-circle center-block"/>
-				{% endif %}
+				<div class="protocol-profile-image-container">
+					<div class="dummy"></div>
+					{% if protocol.author.profile_image != "" %}
+					<img src="{{ protocol.author.profile_image.url }}" alt="Image not found" class="img-circle center-block protocol-profile-image"/>
+					{% else %}
+					<img src="http://2014.igem.org/wiki/images/thumb/0/04/ChrisP.jpg/330px-ChrisP.jpg.png" alt="Image not found" class="img-circle center-block protocol-profile-image"/>
+					{% endif %}
+				</div>
 				<h5 style="text-align:center;"><a class="username" href="/user/{{ protocol.author.id }}/">{{ protocol.author }}</a></h5>
 				{% if protocol.get_average_ratings == "N/A" %}
 				<h2 class="small" style="text-align:center;margin-top:0px;height:40px;">Be the first to rate this</h2>

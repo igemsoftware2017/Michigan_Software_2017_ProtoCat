@@ -3,18 +3,16 @@ $(document).on('ready', function() {
     $.ajaxSetup({
 		headers: { "X-CSRFToken": getCookie("csrftoken") }
 	});
-    $('#edit-category-modal').find('[name="title"]').val(parent_title);
-    $('#edit-category-modal').find('[name="description"]').val(parent_description);
 
 	$('#save_edit_category').on('click', function() {
 		var data = {
 			'title': $('#edit-category-modal').find('[name="title"]').val(),
 			'description': $('#edit-category-modal').find('[name="description"]').val(),
-            'parent_category': parent_parent_id
+            'parent_category': current_parent_id
 		};
 		$.ajax({
 			type: 'PUT',
-			url: "/api/category/" + category_id + "/",
+			url: "/api/category/" + current_category_id + "/",
 			data: data,
 			success: function() {
 				$('#edit-category-modal').modal('hide');
