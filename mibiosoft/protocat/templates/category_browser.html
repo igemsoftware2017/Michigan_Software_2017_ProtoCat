@@ -1,6 +1,4 @@
-{% extends 'base.html' %}
-
-{% block content %}
+{% extends 'base.html' %} {% block content %}
 <style>
 	.category_title {
 		text-overflow: ellipsis;
@@ -10,11 +8,13 @@
 		margin-top: 0px;
 		margin-bottom: 0px;
 	}
+
 	.category_expander {
 		float: right;
 		font-size: 14pt;
 		transition: all 500ms ease-in-out;
 	}
+
 	.description_container {
 		line-height: 1em;
 		text-overflow: ellipsis;
@@ -26,14 +26,17 @@
 		transform-origin: top;
 		perspective: 1000px;
 	}
+
 	.category {
 		background-color: #f5f5f5;
 		border: 1px solid #e3e3e3;
 	}
+
 	.category_item {
 		white-space: nowrap;
 	}
-	#current_category > h3 {
+
+	#current_category>h3 {
 		margin-top: 10px;
 	}
 </style>
@@ -45,17 +48,25 @@
 </a>
 
 <script>
-	var current_category_id = "";
-	var current_parent_id = "";
-	var current_title = "";
-	var current_description = "";
-	$(document).on('ready', function() {
-		$('#add-category').on('click', function() {
+	var current_category_info = {
+		"id": "",
+		"parent_id": "",
+		"title": "",
+		"description": ""
+	};
+	var new_category_info = {
+		"id": "",
+		"parent_id": "",
+		"title": "",
+		"description": ""
+	};
+	$(document).on('ready', function () {
+		$('#add-category').on('click', function () {
 			$('#add-category-modal').modal('show');
 		});
-		$('#edit-category').on('click', function() {
-			$('#edit-category-modal').find('[name="title"]').val(current_title);
-    		$('#edit-category-modal').find('[name="description"]').val(current_description);
+		$('#edit-category').on('click', function () {
+			$('#edit-category-modal').find('[name="title"]').val(current_category_info["title"]);
+			$('#edit-category-modal').find('[name="description"]').val(current_category_info["description"]);
 			$('#edit-category-modal').modal('show');
 		});
 		get_category_children();
@@ -63,68 +74,71 @@
 
 	function get_category_children() {
 		var url;
-		if (current_category_id != "") {
-			url = "/api/categorybrowser/?parent_id=" + current_category_id;
+		if (new_category_info["id"] != "") {
+			url = "/api/categorybrowser/?parent_id=" + new_category_info["id"];
 		}
 		else {
 			url = "/api/categorybrowser/";
 		}
-		
+
 		$.ajax({
 			type: 'GET',
 			url: url,
-			success: function(data) {
-				$('#show-categories>div>ul').children().not(':first').remove();
-				for (var i = 0; i < data.length; ++i) {
-					var new_category = $('#template').clone();
-					new_category.find('.list-group-item-heading').html(data[i].title);
-					new_category.find('.list-group-item-text').html(data[i].description);
-					new_category.attr('data-target', data[i].id);
-					new_category.on('click', onCategoryClick);
-					new_category.css('display', 'block');
-					$("#show-categories>div>ul").append(new_category);
-				}
+			success: function (categoryData) {
 				$.ajax({
 					type: 'GET',
-					url: "/getcategoryprotocols/" + current_category_id + "/",
-					success: function(data) {
-						$("#protocols>div").html(data);
-						if (current_category_id == "") {
+					url: "/getcategoryprotocols/" + new_category_info["id"] + "/",
+					success: function (protocolData) {
+						$('#show-categories>div>ul').children().not(':first').remove();
+						for (var i = 0; i < categoryData.length; ++i) {
+							var new_category = $('#template').clone();
+							new_category.find('.list-group-item-heading').html(categoryData[i].title);
+							new_category.find('.list-group-item-text').html(categoryData[i].description);
+							new_category.attr('data-target', categoryData[i].id);
+							new_category.on('click', onCategoryClick);
+							new_category.css('display', 'block');
+							$("#show-categories>div>ul").append(new_category);
+						}
+
+						$("#protocols>div").html(protocolData);
+						if (new_category_info["id"] == "") {
 							$("#edit-category").hide();
 						}
 						else {
 							$("#edit-category").show();
 						}
+						current_category_info = new_category_info;
 					},
-					failure: function() {
+					failure: function () {
 						alert("Failed");
 					}
 				});
 			},
-			failure: function() {
+			failure: function () {
 				alert("Failed");
 			}
 		});
 	}
 
-	function onCategoryClick(element) {
-		current_category_parent = current_category_id;
-		current_category_id = $(this).attr('data-target');
-		current_title = $(this).find('h4').html();
-		current_description = $(this).find('p').html();
-		$('#current_category').children().append('<span> &gt; <a onclick="back_category_click(this)" data-target="' 
+	function onCategoryClick() {
+		new_category_info["id"] = $(this).attr('data-target');
+		new_category_info["title"] = $(this).find('h4').html();
+		new_category_info["description"] = $(this).find('p').html();
+		new_category_info["parent_id"] = current_category_info["id"];
+		$('#current_category').children().append('<span> &gt; <a onclick="back_category_click(this)" data-target="'
 			+ $(this).attr('data-target') + '" data-description="' + $(this).find('p').html() + '">' + $(this).find('.list-group-item-heading').html() + '</a></span>');
 		get_category_children();
 	}
 
 	function back_category_click(element) {
-		current_category_parent = current_category_id;
-		current_category_id = $(element).attr('data-target');
-		current_title = $(this).find('h4').val();
-		current_description = $(this).attr('data-description');
+		new_category_info["id"] = $(element).attr('data-target');
+		new_category_info["title"] = $(element).html();
+		new_category_info["description"] = $(element).attr('data-description');
+		new_category_info["parent_id"] = $(element).parent().prev().find('a').attr('data-target');
 		$(element).parent().nextAll().remove();
 		get_category_children();
 	}
+
 </script>
 
 <div id="categories" class="col-sm-3 col-xs-12">
@@ -157,6 +171,4 @@
 	</div>
 </div>
 
-{% include 'repeated_parts/add_category.html' %}
-{% include 'repeated_parts/edit_category.html' %}
-{% endblock %}
+{% include 'repeated_parts/add_category.html' %} {% include 'repeated_parts/edit_category.html' %} {% endblock %}

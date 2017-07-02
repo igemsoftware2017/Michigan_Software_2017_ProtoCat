@@ -1,29 +1,28 @@
 <script>
-$(document).on('ready', function() {
-    $.ajaxSetup({
-		headers: { "X-CSRFToken": getCookie("csrftoken") }
-	});
+	$(document).on('ready', function() {
+		$.ajaxSetup({
+			headers: { "X-CSRFToken": getCookie("csrftoken") }
+		});
 
-	$('#save_edit_category').on('click', function() {
-		var data = {
-			'title': $('#edit-category-modal').find('[name="title"]').val(),
-			'description': $('#edit-category-modal').find('[name="description"]').val(),
-            'parent_category': current_parent_id
-		};
-		$.ajax({
-			type: 'PUT',
-			url: "/api/category/" + current_category_id + "/",
-			data: data,
-			success: function() {
-				$('#edit-category-modal').modal('hide');
-			},
-			failure: function() {
-				console.log("Failed to edit categories")
-			}
+		$('#save_edit_category').on('click', function() {
+			var data = {
+				'title': $('#edit-category-modal').find('[name="title"]').val(),
+				'description': $('#edit-category-modal').find('[name="description"]').val(),
+				'parent_category': current_category_info['parent_id']
+			};
+			$.ajax({
+				type: 'PUT',
+				url: "/api/category/" + current_category_info["id"] + "/",
+				data: data,
+				success: function() {
+					$('#edit-category-modal').modal('hide');
+				},
+				failure: function() {
+					console.log("Failed to edit categories")
+				}
+			});
 		});
 	});
-});
-
 </script>
 
 <style>
