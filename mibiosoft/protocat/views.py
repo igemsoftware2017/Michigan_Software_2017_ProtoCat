@@ -726,6 +726,11 @@ def github_post(request):
 class NewMessageView (FormView):
 	template_name = 'protoChat/new_message.html'
 	form_class = forms.NewMessageForm
+	
+	def get_context_data(self, **kwargs):
+		context = super().get_context_data(**kwargs)
+		context['title'] = 'New Message'
+		return context
 
 	def get_initial(self):
 		initial = super(NewMessageView, self).get_initial()
@@ -747,10 +752,7 @@ class NewMessageView (FormView):
 
 def inbox_view(request):
 
-	
 	if request.method == "POST":
-
-		print ('here');
 
 		for key in request.POST:
 			if key[:5] == 'check':
@@ -772,6 +774,7 @@ def inbox_view(request):
 		message.save()
 
 	context = {
+		'title': 'Inbox',
 		'message_list': messages,
 	}
 	return render(request, 'protoChat/inbox.html', context)

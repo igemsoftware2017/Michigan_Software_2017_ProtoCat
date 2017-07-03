@@ -1,13 +1,14 @@
 
+
+{% extends 'base.html' %}
+{% block content %}
+{% if user.is_authenticated %}
+
 <style>
     .hr-short{
         margin: 5px; 
     }
 </style>
-
-{% extends 'base.html' %}
-{% block content %}
-{% if user.is_authenticated %}
 
 <script>
 
