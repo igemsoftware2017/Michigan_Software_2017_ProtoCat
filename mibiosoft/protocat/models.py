@@ -25,6 +25,7 @@ class ProfileInfo(models.Model):
 	about = models.TextField(blank = True, null = True)
 	contact_info = models.TextField(blank = True, null = True)
 	meows = models.IntegerField(default = 0)
+    #orginaziation = models.ForeignKey(Orginaziation, on_delete = models.CASCADE)
 
 
 	def __str__(self):
@@ -147,10 +148,12 @@ class Favourite_Protocol(models.Model):
 	def get_user_by_protocol(self):
 		return self.objects.filter(fav_protocol = self.fav_protocol)
 
-
-
-
-
+#Add Group
+#Each User can only be in one group
+class Orginaziation(models.Model):
+    name = models.TextField();
+    description = models.TextField();
+    orginaziation_image = models.ImageField(blank = True, null = True, upload_to = "media")
 
 # the data for each protocol step
 class ProtocolStep(models.Model):
