@@ -3,15 +3,27 @@
 		display: none;
 		position: absolute;
 		max-width: 400px;
+		max-height: 150px;
 		font-size: 10px;
-		height: auto;
+		overflow-y: scroll;
 		border: 2px solid #00274c;
 		border-radius: 7px;
 		box-shadow: 5px 5px 5px grey;
 		background-color: #fff;
 		margin-top: 10px;
-		z-index: 10;
+		z-index: 1;
 	}
+
+	.cardrange {
+		display: none;
+		position: absolute;
+		max-width: 400px;
+		height: 10px;
+		background-color: #000;
+		z-index: 1;
+		opacity: 0;
+	}
+
 	.triangle {
 		display: none;
 		position: absolute;
@@ -19,6 +31,7 @@
 		border-right: 15px solid transparent;
 		border-bottom: 10px solid #00274c;
 	}
+
 	#hovercard {
 		background-color: #EAC;
 		position: relative;
@@ -26,70 +39,141 @@
 </style>
 
 <script>
-    function getData(url_in) {
-        $.ajax({
-            method: "GET",
-            url: url_in,
-            success: function (data) {
-                var keys = Object.keys(data.query.pages)
-                var raw_text = data.query.pages[keys[0]].revisions["0"]["*"]
-                //Do redirect checking here
-                if (raw_text.startsWith("#REDIRECT")) {
-                    console.log("Redirect URL")
-                    var page_redir = raw_text.match(/#REDIRECT \[\[(.*?)\]\]/)
-                    page_redir = String(page_redir).replace("#REDIRECT [[", "").replace("]]", "").replace(/,.+/, "")
-                    new_url = "https://en.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&format=json&titles=" + page_redir.replace(" ", "%20")
-                    //console.log(new_url)
-                    getData(new_url)
-                } else {
-                    console.log("Valid URL")
-                    //var raw_text = data.query.pages[1605200].revisions["0"]["*"] //Pepper document data at pages[150116] salt at pages[1605200]
-                    var start_index = raw_text.indexOf("'''");
-                    var end_index = raw_text.indexOf("\n", start_index);
-                    var display_text = raw_text.substring(start_index, end_index); //Get the first paragraph of the wikipedia article
-                    //Format the data nicely
-                    display_text = display_text.replace(/'''/g, "") //Remove quotations around name
-                    display_text = display_text.replace(/\[\[[^\[\]]*?\([^\[]*?\)\|/g, "") //Remove variable wikipedia formatting
-                    display_text = display_text.replace(/\[\[[^\[\]]*?\|/g, "")//Remove variable wikipedia formatting
-                    display_text = display_text.replace(/{{.*?\|/g, "")
-                    display_text = display_text.replace(/\|.{1,3}}}/g, "")
-                    display_text = display_text.replace(/\|/, "")
-                    display_text = display_text.replace(/<ref>.*?<\/ref>/g,"") //Remove <ref> tags for references
-                    display_text = display_text.replace(/\[\[/g, "").replace(/]]/g, "") //Remove any remaining brackets
-                    display_text = display_text.replace(/ .{1,2}(\|[^|]{1,2})+[^,]{1,3}/g, "") //Remove pronunciation markings
-                    console.log(display_text);
-                    display_text = "<div style=\"padding:10px 5px;\"> " + display_text + " <\/div>"
-                    $(".card").html(display_text);
-                }
-            },
-            failure: function () {
-                alert("Shit happens");
-                return "Failure"
-            }
-        })
-    }
-    $(document).ready(
-        function (e) {
-		    $("#hovercard").hover(
-			    function () {
-				    position = $(this).position();
-				    offset = $(this).offset();
+	function getData(url_in) {
+		$.ajax({
+			method: "GET",
+			url: url_in,
+			success: function(data) {
+				var keys = Object.keys(data.query.pages)
+				var raw_text = data.query.pages[keys[0]].revisions["0"]["*"]
+				//Do redirect checking here
+				if (raw_text.startsWith("#REDIRECT")) {
+					console.log("Redirect URL")
+					var page_redir = raw_text.match(/#REDIRECT \[\[(.*?)\]\]/)
+					page_redir = String(page_redir).replace("#REDIRECT [[", "").replace("]]", "").replace(/,.+/, "")
+					new_url = "https://en.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&format=json&titles=" + page_redir.replace(" ", "%20")
+					//console.log(new_url)
+					getData(new_url)
+				} else {
+					console.log("Valid URL")
+					//var raw_text = data.query.pages[1605200].revisions["0"]["*"] //Pepper document data at pages[150116] salt at pages[1605200]
+					var start_index = raw_text.indexOf("'''");
+					var end_index = raw_text.indexOf("\n", start_index);
+					var display_text = raw_text.substring(start_index, end_index); //Get the first paragraph of the wikipedia article
+					//Format the data nicely
+					display_text = display_text.replace(/'''/g, "") //Remove quotations around name
+					display_text = display_text.replace(/\[\[[^\[\]]*?\([^\[]*?\)\|/g, "") //Remove variable wikipedia formatting
+					display_text = display_text.replace(/\[\[[^\[\]]*?\|/g, "") //Remove variable wikipedia formatting
+					display_text = display_text.replace(/{{.*?\|/g, "")
+					display_text = display_text.replace(/\|.{1,3}}}/g, "")
+					display_text = display_text.replace(/\|/, "")
+					display_text = display_text.replace(/<ref>.*?<\/ref>/g, "") //Remove <ref> tags for references
+					display_text = display_text.replace(/\[\[/g, "").replace(/]]/g, "") //Remove any remaining brackets
+					display_text = display_text.replace(/ .{1,2}(\|[^|]{1,2})+[^,]{1,3}/g, "") //Remove pronunciation markings
+					console.log(display_text);
+					display_text = "<div style=\"padding:10px 5px;\"> " + display_text + " <\/div>"
+					$(".card").html(display_text);
+				}
+			},
+			failure: function() {
+				alert("Shit happens");
+				return "Failure"
+			}
+		})
+	}
 
-				    $(".card").css("display", "block").css("top",offset.top+20).css("left",offset.left-5);//.css("top", offset.top/2).css("left", offset.left).css("display",'flex');
-				    $(".triangle").css("display", "block").css("top", offset.top + 20).css("left", offset.left + 5);
-			        /*
+	$(document).ready(
+		function(e) {
+
+			// cardrange is the little rectangular area above the appearing hovercard,
+			// allowing the user to keep the hovercard visible when moving cursor onto the hovercard
+			$(".cardrange").mouseenter(
+				function() {
+					$(this).css("display", "inline-block");
+					$(".card").css("display", "block");
+					$(".triangle").css("display", "block");
+				});
+			$(".cardrange").mouseleave(
+				function() {
+					$(this).hide()
+					$(".card").hide();
+					$(".triangle").hide()
+				});
+
+			// maintain visibility on the hovercard once cursor reaches the card itself
+			$(".card").mouseenter(
+				function() {
+					$(this).css("display", "inline-block");
+					$(".cardrange").css("display", "block");
+					$(".triangle").css("display", "block");
+				});
+			$(".card").mouseleave(
+				function() {
+					$(this).hide()
+					$(".cardrange").hide();
+					$(".triangle").hide()
+				});
+
+			$("#hovercard").hover(
+				function() {
+					position = $(this).position();
+					offset = $(this).offset();
+
+					var windowHeight = window.innerHeight;
+					var windowWidth = window.innerWidth;
+					var maxHeight = 150;
+					var maxWidth = 400;
+
+					var cardOffsetTop = offset.top + 20;
+					var cardOffsetLeft = offset.left - 5;
+					var triangleOffsetTop = offset.top + 20;
+					var triangleOffsetLeft = offset.left
+					var botPadding = 5
+					var scrollBarWidth = 15
+
+					// if height is going past the bottom of the window
+					// or window can fit a bigger card, but not quite max size
+					if (((cardOffsetTop + $(".cardrange").height() + $(".card").height()) > (windowHeight + botPadding)) ||
+						((maxHeight + cardOffsetTop + $(".cardrange").height()) > (windowHeight + botPadding))) {
+						$(".card").height(windowHeight - cardOffsetTop + botPadding)
+						console.log("set height: "+$(".card").height())
+						// if window is longer than card at max size
+					} else {
+						$(".card").height(maxHeight)
+						console.log("set max height")
+					}
+
+					// if width is going past the right of the window
+					// or window can fit a bigger card, but not quite max size
+					if (((cardOffsetLeft + $(".card").width()) >= (windowWidth - scrollBarWidth)) ||
+						((cardOffsetLeft + maxWidth) > (windowWidth - scrollBarWidth))) {
+						$(".card").width(windowWidth - cardOffsetLeft - scrollBarWidth)
+						$(".cardrange").width(windowWidth - cardOffsetLeft - scrollBarWidth)
+						console.log("set width: "+$(".cardrange").width())
+						// if window is wider than card at max size
+					} else {
+						$(".card").width(maxWidth)
+						$(".cardrange").width(maxWidth)
+						console.log("set max width")
+					}
+
+					$(".cardrange").css("display", "inline-block").css("top", cardOffsetTop).css("left", cardOffsetLeft);
+					$(".card").css("display", "block").css("top", cardOffsetTop).css("left", cardOffsetLeft); //.css("top", offset.top/2).css("left", offset.left).css("display",'flex');
+					$(".triangle").css("display", "block").css("top", triangleOffsetTop).css("left", triangleOffsetLeft);
+					/*
 					    url: "https://en.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&format=json&titles=salt", //Salt
 					    url: "https://en.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&format=json&titles=black%20pepper", //Pepper URL test
 					    url: "https://en.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&format=json&titles=Great%20Pyramid%20of%20Giza",//Great Pyramid of Giza
 					    url: "https://en.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&format=json&titles=Glucose", //Glucose
 			            url = "https://en.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&format=json&titles=salt", //Salt
                     */
-				    url = "https://en.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&format=json&titles=salt"
-                    getData(url)
-			    },
-			    function () {
-				    $(".card").hide();
-				    $(".triangle").hide();
-			    });
-	    });
+					url = "https://en.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&format=json&titles=salt"
+					getData(url)
+				},
+				function() {
+					$(".cardrange").hide();
+					$(".card").hide();
+					$(".triangle").hide();
+				});
+		});
 </script>

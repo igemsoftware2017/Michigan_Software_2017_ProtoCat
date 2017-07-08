@@ -8,8 +8,7 @@
 		</div>
 	</div>
 	{% if reagent.description != "" %} {{ reagent.description|safe }} {% else %}
-	<h5 style="text-align:left">Looks like no one has written a description yet.<br></h5>
-	{% endif%}
+	<h5 style="text-align:left">Looks like no one has written a description yet.<br></h5> {% endif%}
 
 	<a href="/editreagent/{{reagent.id}}" class="btn btn-primary" role="button">
 		Edit this reagent</a>
@@ -20,12 +19,11 @@
 
 </div>
 
-
+<div class="cardrange"></div>
 <div class="card"></div>
-<div class = "triangle"></div>
+<div class="triangle"></div>
 
-{% include 'repeated_parts/hovercard.html' %}
-{% endblock %}
+{% include 'repeated_parts/hovercard.html' %} {% endblock %}
 
 <!--
 <div class = "btn-group inline pull-right apply_changes_btn"> == $0
