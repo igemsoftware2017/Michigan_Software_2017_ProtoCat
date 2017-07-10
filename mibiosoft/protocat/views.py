@@ -728,8 +728,12 @@ class NewMessageView (FormView):
 	form_class = forms.NewMessageForm
 	
 	def get_context_data(self, **kwargs):
-		context = super().get_context_data(**kwargs)
+		context = super(NewMessageView, self).get_context_data(**kwargs)
 		context['title'] = 'New Message'
+		if (self.request.user.is_anonymous()):
+			context['current_profile_info'] = None
+		else:
+			context['current_profile_info'] = self.request.user.profileinfo
 		return context
 
 	def get_initial(self):
@@ -751,9 +755,7 @@ class NewMessageView (FormView):
 		return redirect('root_index')
 
 def inbox_view(request):
-
 	if request.method == "POST":
-
 		for key in request.POST:
 			if key[:5] == 'check':
 				id = key[5:]
@@ -761,9 +763,8 @@ def inbox_view(request):
 				tempMessage.deleted = True
 				tempMessage.save()
 
-
 	if request.user.is_anonymous():
-			return redirect('root_index')
+		return redirect('root_index')
 	else:
 		user = ProfileInfo.objects.get(user = request.user)
 	
@@ -777,4 +778,8 @@ def inbox_view(request):
 		'title': 'Inbox',
 		'message_list': messages,
 	}
+	if (request.user.is_anonymous()):
+		context['current_profile_info'] = None
+	else:
+		context['current_profile_info'] = request.user.profileinfo
 	return render(request, 'protoChat/inbox.html', context)
