@@ -25,7 +25,7 @@ class ProfileInfo(models.Model):
 	about = models.TextField(blank = True, null = True)
 	contact_info = models.TextField(blank = True, null = True)
 	meows = models.IntegerField(default = 0)
-    #orginaziation = models.ForeignKey(Orginaziation, on_delete = models.CASCADE)
+        orginaziation = models.ForeignKey(Orginaziation, related_name='user_orginaziation')
 
 
 	def __str__(self):
