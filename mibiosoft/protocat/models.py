@@ -25,7 +25,6 @@ class ProfileInfo(models.Model):
 	about = models.TextField(blank = True, null = True)
 	contact_info = models.TextField(blank = True, null = True)
 	meows = models.IntegerField(default = 0)
-        orginaziation = models.ForeignKey(Orginaziation, related_name='user_orginaziation')
 
 
 	def __str__(self):
@@ -150,10 +149,20 @@ class Favourite_Protocol(models.Model):
 
 #Add Group
 #Each User can only be in one group
-class Orginaziation(models.Model):
+class Organization(models.Model):
+    #TODO:orginaziation many to many field
     name = models.TextField();
     description = models.TextField();
-    orginaziation_image = models.ImageField(blank = True, null = True, upload_to = "media")
+    organization_image = models.ImageField(blank = True, null = True, upload_to = "media")
+    members = models.ManyToManyField(
+        ProfileInfo,
+        through = 'Membership',
+        through_fields = ('organization', 'profileinfo'),
+    )
+
+class Membership(models.Model):
+    organization = models.ForeignKey(Organization, on_delete = models.CASCADE)
+    profileinfo = models.ForeignKey(ProfileInfo, on_delete = models.CASCADE)
 
 # the data for each protocol step
 class ProtocolStep(models.Model):
