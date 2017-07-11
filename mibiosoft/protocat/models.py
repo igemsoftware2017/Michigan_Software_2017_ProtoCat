@@ -157,12 +157,23 @@ class Organization(models.Model):
     members = models.ManyToManyField(
         ProfileInfo,
         through = 'Membership',
-        through_fields = ('organization', 'profileinfo'),
+        through_fields = ('organization', 'user'),
     )
+    def __str__(self):
+        return str(self.name)
+    def get_members(self):
+        users = Membership.objects.filter(organization = self)
+        resultArray = []
+        for x in users:
+            resultArray.append(str(x.user))
+        return resultArray
+
 
 class Membership(models.Model):
     organization = models.ForeignKey(Organization, on_delete = models.CASCADE)
-    profileinfo = models.ForeignKey(ProfileInfo, on_delete = models.CASCADE)
+    user = models.ForeignKey(ProfileInfo, on_delete = models.CASCADE)
+    def __str__(self):
+        return str(self.user)
 
 # the data for each protocol step
 class ProtocolStep(models.Model):
