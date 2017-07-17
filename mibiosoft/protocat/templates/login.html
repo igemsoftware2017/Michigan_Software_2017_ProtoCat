@@ -20,11 +20,14 @@
 	-webkit-transform: translate(-50%, -50%);
 	transform: translate(-50%, -50%);
 }
+#password_recover_link {
+        margin-top: 15px;
+}
 #to_sign_up {
 	text-align: center;
 }
 #image_holder {
-	text-align: center;
+        text-align: center;
 }
 #login_image {
 	display: block;
@@ -72,7 +75,7 @@ $(document).on('ready', function() {
 
 <div id="login_page" class="row">
 	<div id="login_form">
-		<div class="col-sm-4 col-sm-offset-2 col-xs-12">
+		<div class="col-sm-4 col-sm-offset-4 col-xs-12">
 			<h2 id="login_title">Log in to ProtoCat</h2>
 			<form id="submit-poster" action="/submitlogin/" method="post">
 				{% csrf_token %}
@@ -80,15 +83,18 @@ $(document).on('ready', function() {
 				<input type="password" name="password" class="form-control" placeholder="Password"><br>
 				<input type="submit" class="form-control" value="Log in">
 			</form>
-		</div>
-		<div id="img_holder" class="col-sm-4 hidden-xs">
-			<img id="login_image" src="/static/images/protocat.png" />
+                        <div id="password_recover_link">
+			    <a href="/password/reset/">Forgot your password?</a>
+                        </div>
 		</div>
 		<div id="to_sign_up" class="col-sm-8 col-sm-offset-2 col-xs-12">
 			<div>
 				<a id="sign_up_link" href="/signup/"> Sign up if you don't have an account</a>
 			</div>
 		</div>
+                <div id="img_holder" class="col-sm-4 col-sm-offset-4 hidden-xs">
+                    <img id="login_image" src="/static/images/protocat.png" />
+                </div>
 	</div>
 </div>
 {% endblock %}

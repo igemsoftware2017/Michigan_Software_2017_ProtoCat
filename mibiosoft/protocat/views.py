@@ -11,7 +11,19 @@ from django.conf import settings
 from django.views.decorators.cache import never_cache
 from django.http import JsonResponse
 from django.db.models import Max
+from .forms import *
+from functions import send_email
 import bleach
+
+import os, sys
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from django.template.loader import get_template
+from django.template import Context
+import base64
+import django.middleware.csrf
+from django.core import signing
+import uuid
 
 def index(request):
 	current_profile_info = request.user
@@ -705,7 +717,7 @@ def github(request):
 	else:
 		current_profile_info = None
 	context = {
-		'title': 'ProtoCat',
+                'title': 'ProtoCat',
 		'current_profile_info': current_profile_info,
 	}
 	return render(request, "github.html", context)
@@ -713,5 +725,82 @@ def github(request):
 def github_post(request):
 	gh = GithubId()
 	gh.name = request.POST['name']
-	gh.save()
+        gh.save()
 	return HttpResponseRedirect('/')
+
+def password_reset(request):
+        if request.method == 'POST':
+                form = PasswordResetForm(request.POST)
+                if form.is_valid():
+                        data = form.cleaned_data
+                        recipient = data['email']
+                        try:
+                                current_user = User.objects.get(email=recipient)
+                        except:
+                                return render(request, 'invalid_email.html')
+                        user_uid = str(uuid.uuid4())
+                        try:
+                                current_profile_info = current_user.profileinfo
+                        except:
+                                current_profile_info = ProfileInfo(user = current_user)
+                        current_profile_info.once_id = user_uid
+                        current_profile_info.save()
+                        #TODO: change these values before pushing to repo
+                        protocol = 'http' #change me for prod!
+                        domain = 'localhost:8000' #change me for prod!
+                        sender = #'example@gmail.com'
+                        pwd  = #'password' 
+                        subject = 'Protocat Password Reset'
+                        html = get_template('registration/password_reset_email.html')
+                        d = Context({ 
+                                'user': current_user, 
+                                'uid':user_uid, 
+                                'protocol':protocol,
+                                'domain':domain
+                                })
+                        body = html.render(d)
+                        send_email(sender, pwd, recipient, subject, body)
+                        return render(request, 'thanks.html')
+        else:
+                form = PasswordResetForm()
+                return render(request, 'registration/password_reset_form.html', {'form': form})
+
+def password_reset_done(request):
+        return render(request, "password_reset_done")
+
+def password_reset_confirm(request, uid):
+        try:
+                current_profile_info = ProfileInfo.objects.get(once_id=str(uid))
+        except:
+                return redirect('root_index')
+        if request.method =='POST':
+                form = NewPasswordForm(request.POST)
+                if form.is_valid():
+                        data = form.cleaned_data
+                        password_one = data['new_password1']
+                        password_two = data['new_password2']
+                        if password_one == password_two:
+                                #clear once_id and save
+                                current_profile_info.once_id = None
+                                current_profile_info.save()
+                                #get user object, change password, save
+                                user = current_profile_info.user
+                                user.set_password(password_one)
+                                user.save()
+                                return render(request, "registration/password_reset_complete.html")
+                        else:
+                                return render(request, "registration/password_reset_invalid_email.html") #TODO: give warning! How?
+                else:
+                    return HttpResponseRedirect('/')
+        else:
+                form = NewPasswordForm()
+                return render(request, 'registration/password_reset_confirm.html', {'form':form})
+
+def password_reset_complete(request):
+        return render(request, "password_reset_complete")
+
+def thanks(request, name):
+        return render(request, 'thanks.html', {'name': name})
+
+def invalid_email(request):
+        return render (request, 'invalid_email')

@@ -24,6 +24,7 @@ class ProfileInfo(models.Model):
 	profile_image = models.ImageField(blank = True, null = True, upload_to = "media")
 	about = models.TextField(blank = True, null = True)
 	contact_info = models.TextField(blank = True, null = True)
+        once_id = models.TextField(blank = True, null = True)
 	meows = models.IntegerField(default = 0)
 
 
@@ -38,6 +39,7 @@ class ProfileInfo(models.Model):
 
 	def date_joined(self):
 		return self.user.date_joined
+
 
 # data containing the name of the category and the category it is contained in
 class Category(models.Model):

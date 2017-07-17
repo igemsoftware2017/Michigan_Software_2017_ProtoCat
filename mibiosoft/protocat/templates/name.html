@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}Reset Password{% endblock %}
+
+{% block content %}
+<p>Please specify your email address to receive instructions 
+        for resetting your password</p>
+
+<form action="/user/password/reset/" method="post">
+        {% csrf_token %}
+        {{ form }}
+        <input type="submit" value="Submit" />
+</form>
+{% endblock %}

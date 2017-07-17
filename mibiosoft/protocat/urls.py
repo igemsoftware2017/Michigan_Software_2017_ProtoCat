@@ -31,4 +31,6 @@ urlpatterns = [
 	url(r'^test/$', views.test, name="test"),
 	url(r'^github/$', views.github, name="github"),
 	url(r'^postgithub/$', views.github_post, name="githubpost"),
+	url(r'^password/reset/$', views.password_reset, name="password_reset"),
+        url(r'^password/reset/(?P<uid>[0-9A-Za-z_\-]+)/$', views.password_reset_confirm, name='password_reset_confirm'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
