@@ -28,7 +28,6 @@ urlpatterns = [
 	url(r'^toggleprotocol/$', views.toggle_protocol, name="toggle_page"),
 	url(r'^submitcomment/$', views.submit_comment, name="submit_comment_page"),
 	url(r'^updateprofile/$', views.update_profile, name="update_profile"),
-	url(r'^test/$', views.test, name="test"),
 	url(r'^github/$', views.github, name="github"),
 	url(r'^postgithub/$', views.github_post, name="githubpost"),
 	url(r'^password/reset/$', views.password_reset, name="password_reset"),

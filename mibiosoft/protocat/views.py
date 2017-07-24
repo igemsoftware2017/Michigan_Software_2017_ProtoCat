@@ -14,15 +14,8 @@ from django.db.models import Max
 from .forms import *
 from functions import send_email
 import bleach
-
 import os, sys
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
 from django.template.loader import get_template
-from django.template import Context
-import base64
-import django.middleware.csrf
-from django.core import signing
 import uuid
 
 def index(request):
@@ -576,8 +569,6 @@ def submit_upload(request):
 		protocol.save()
 
 	except Exception as e:
-		#print('error2')
-		#print(e)
 		pass
 
 	context = {
@@ -612,7 +603,6 @@ def update_profile(request):
 	current_profile_info = request.user
 	if (not current_profile_info.is_anonymous()):
 		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
-		#print(current_profile_info)
 	else:
 		current_profile_info = None
 
@@ -669,15 +659,12 @@ def update_profile(request):
 			#print("Done!")
 			return JsonResponse({'success': True})
 	except Exception as inst:
-		#print(inst)
-		#print("Update didn't work")
 		return JsonResponse({'success': False})
 
 def test(request):
 	current_profile_info = request.user
 	if (not current_profile_info.is_anonymous()):
 		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
-		#print(current_profile_info)
 	else:
 		current_profile_info = None
 
@@ -692,7 +679,6 @@ def toggle_protocol(request):
 	current_profile_info = request.user
 	if (not current_profile_info.is_anonymous()):
 		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
-		#print(current_profile_info)
 	else:
 		current_profile_info = None
 	try:
@@ -704,8 +690,6 @@ def toggle_protocol(request):
 		else:
 			return JsonResponse({'success': False}) 
 	except Exception as inst:
-		#print(inst)
-		#print("Update didn't work")
 		return JsonResponse({'success': False})
 
 
@@ -713,7 +697,6 @@ def github(request):
 	current_profile_info = request.user
 	if (not current_profile_info.is_anonymous()):
 		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
-		#print(current_profile_info)
 	else:
 		current_profile_info = None
 	context = {
@@ -737,7 +720,7 @@ def password_reset(request):
                         try:
                                 current_user = User.objects.get(email=recipient)
                         except:
-                                return render(request, 'invalid_email.html')
+                                return render(request, 'registration/password_reset_invalid_email.html')
                         user_uid = str(uuid.uuid4())
                         try:
                                 current_profile_info = current_user.profileinfo
@@ -745,28 +728,25 @@ def password_reset(request):
                                 current_profile_info = ProfileInfo(user = current_user)
                         current_profile_info.once_id = user_uid
                         current_profile_info.save()
-                        #TODO: change these values before pushing to repo
-                        protocol = 'http' #change me for prod!
-                        domain = 'localhost:8000' #change me for prod!
-                        sender = #'example@gmail.com'
-                        pwd  = #'password' 
+                        protocol = 'http' 
+                        #modify to localhost:8000 if on local machine
+                        domain = 'protocat.org' 
+                        sender = os.environ.get('MAIL_USR')
+                        pwd  = os.environ.get('PASSWORD')
                         subject = 'Protocat Password Reset'
                         html = get_template('registration/password_reset_email.html')
-                        d = Context({ 
+                        d = { 
                                 'user': current_user, 
                                 'uid':user_uid, 
                                 'protocol':protocol,
                                 'domain':domain
-                                })
+                            }
                         body = html.render(d)
                         send_email(sender, pwd, recipient, subject, body)
-                        return render(request, 'thanks.html')
+                        return render(request, 'registration/password_reset_thanks.html')
         else:
                 form = PasswordResetForm()
                 return render(request, 'registration/password_reset_form.html', {'form': form})
-
-def password_reset_done(request):
-        return render(request, "password_reset_done")
 
 def password_reset_confirm(request, uid):
         try:
@@ -780,27 +760,16 @@ def password_reset_confirm(request, uid):
                         password_one = data['new_password1']
                         password_two = data['new_password2']
                         if password_one == password_two:
-                                #clear once_id and save
                                 current_profile_info.once_id = None
                                 current_profile_info.save()
-                                #get user object, change password, save
                                 user = current_profile_info.user
                                 user.set_password(password_one)
                                 user.save()
                                 return render(request, "registration/password_reset_complete.html")
                         else:
-                                return render(request, "registration/password_reset_invalid_email.html") #TODO: give warning! How?
+                                return render(request, "registration/password_reset_passwords_no_match.html") #TODO: give warning instead of new page
                 else:
                     return HttpResponseRedirect('/')
         else:
                 form = NewPasswordForm()
                 return render(request, 'registration/password_reset_confirm.html', {'form':form})
-
-def password_reset_complete(request):
-        return render(request, "password_reset_complete")
-
-def thanks(request, name):
-        return render(request, 'thanks.html', {'name': name})
-
-def invalid_email(request):
-        return render (request, 'invalid_email')
