@@ -39,12 +39,20 @@
 	#current_category>h3 {
 		margin-top: 10px;
 	}
+	.overflowing-category {
+		text-overflow: ellipsis;
+		overflow: hidden;
+	}
+	.text-muted.max-lines.description {
+		height: 90px;
+		overflow: hidden;
+	}
 </style>
 
 
 <a href="#" id="template" data-target="" class="list-group-item category_item" style="display: none; cursor: pointer;">
 	<h4 class="list-group-item-heading">Heading</h4>
-	<p class="list-group-item-text">Text</p>
+	<p class="list-group-item-text overflowing-category">Text</p>
 </a>
 
 <script>
@@ -87,7 +95,7 @@
 			success: function (categoryData) {
 				$.ajax({
 					type: 'GET',
-					url: "/getcategoryprotocols/" + new_category_info["id"] + "/",
+					url: "/getcategoryprotocols/" + new_category_info["id"],
 					success: function (protocolData) {
 						$('#show-categories>div>ul').children().not(':first').remove();
 						for (var i = 0; i < categoryData.length; ++i) {

@@ -721,7 +721,7 @@ def get_protocols_from_category(request, category_id):
 		category_id = None
 	else:
 		category_id = int(category_id)
-	protocols = Protocol.objects.all().filter(category = category_id)
+	protocols = Protocol.objects.all().filter(category = category_id).filter(searchable = True)
 	context = {
 		'protocols': protocols
 	}
