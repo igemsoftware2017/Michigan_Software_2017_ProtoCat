@@ -715,3 +715,14 @@ def github_post(request):
 	gh.name = request.POST['name']
 	gh.save()
 	return HttpResponseRedirect('/')
+
+def get_protocols_from_category(request, category_id):
+	if (category_id == ""):
+		category_id = None
+	else:
+		category_id = int(category_id)
+	protocols = Protocol.objects.all().filter(category = category_id)
+	context = {
+		'protocols': protocols
+	}
+	return render(request, "category_browser_protocols.html", context)
