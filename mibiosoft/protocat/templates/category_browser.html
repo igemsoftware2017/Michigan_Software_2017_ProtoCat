@@ -115,6 +115,9 @@
 						else {
 							$("#edit-category").show();
 						}
+						$('.input-2').rating({
+							displayOnly: true,
+						});
 						current_category_info = new_category_info;
 					},
 					failure: function () {
