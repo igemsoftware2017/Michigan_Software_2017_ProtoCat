@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<style>
+
+.star {
+	margin-left: 1.5px !important;
+	margin-right: 1.5px !important;
+}
+.star > i {
+	font-size: 14px;
+}
+.left-side-ratings {
+	margin-top:-15px;
+	height:40px;
+}
+.max-lines {
+	display: block; /* or inline-block */
+	text-overflow: ellipsis;
+	word-wrap: break-word;
+	overflow: hidden;
+	max-height: 2.856em;
+}
+
+#pill-tab-heading {
+	padding-bottom: 0px;
+}
+
+.mce-class {
+	color:black;
+}
+
+.main-title {
+	margin-bottom: 15px;
+}
+
+.make-padding-work {
+	padding-left: 30px;
+	padding-right: 30px;
+}
+.individual-step {
+	position: relative;
+	transition: top 2s, opacity 1s;
+	top: 0px;
+}
+.translucent {
+	opacity: 0.25;
+}
+.cannot-click {
+	pointer-events: none;
+}
+.add_step, .remove_step, .add_reagent {
+	white-space: normal;
+}
+
+.hide-warning {
+	padding: 0px;
+	height: 0px;
+	overflow: hidden;
+}
+.bottom-left-corner {
+	position: absolute;
+	right: 0px;
+	bottom: 0px;
+	margin-right: 15px;
+	cursor: pointer;
+}
+.bottom-left-corner > h4{
+	display: inline-block;
+}
+
+.action-holder {
+	position: relative;
+	padding-bottom: 30px;
+}
+
+.disabled-hide {
+	color: gray;
+}
+
+</style>
+<h2>IMPORT A PROTOCOL FROM protocols.io</h2>
+
+<label class="btn btn-default btn-file">
+    Upload File <input type="file" style="display: none;">
+</label>
+
+{% endblock %}

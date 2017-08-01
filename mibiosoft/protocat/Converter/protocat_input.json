@@ -1,0 +1,22 @@
+{
+    "protocol_steps": [
+        {
+            "title": "pewpew1",
+            "step_number": 1,
+            "time": null,
+            "action": "<p>pewpew1 desc</p>",
+            "warning": "<p>epwpew1 warning</p>",
+            "time_scaling": 2,
+            "reagents": []
+        },
+        {
+            "title": "pewpew2",
+            "step_number": 2,
+            "time": null,
+            "action": "<p>pewpew2 desc</p>",
+            "warning": "",
+            "time_scaling": 2,
+            "reagents": []
+        }
+    ]
+}
