@@ -1,18 +1,4 @@
-﻿# -*- coding: utf-8 -*-
-import json
-import requests
-
-"""
-    get the file from protocols.io, however that works?
-"""
-def load_protocols_io(message_id):
-    pass
-
-"""
-    submit protocol to protocat's API in order to upload it
-"""
-def submit_to_protocat():
-    pass
+﻿import json
 
 class convertor():
     def __init__(self):
@@ -89,21 +75,3 @@ class convertor():
         cat_json['change-log'] = ""
         cat_json['previous_revision']: "-1"
         return cat_json
-
-protocols_io_file_ = open("protocols_output.json", 'rb')
-
-conv = convertor()
-source = "http://localhost:8000"
-
-protocat_auth_url = source + "/api/token"
-auth_body = {}
-r = requests.post(protocat_auth_url, data=auth_body)
-print(r)
-
-protocols_io_json = json.load(protocols_io_file_)
-protocat_upload_url = source + "/api/protocol/"
-headers = {}
-if protocols_io_json:
-    cat_json = conv.convert_io_to_cat(protocols_io_json)
-    r = requests.post(protocat_upload_url, data=cat_json, headers=headers)
-    print(r)
