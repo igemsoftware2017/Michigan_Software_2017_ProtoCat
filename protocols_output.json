@@ -1,0 +1,391 @@
+{
+  "api_version": "1",
+  "is_new_mode": "1",
+  "protocol_name": "In vitro digestion of DNA with Cas9 Nuclease, S. pyogenes (M0386)",
+  "last_modified": "1494540727",
+  "type_id": "1",
+  "link": "https://www.neb.com/protocols/2014/05/01/in-vitro-digestion-of-dna-with-cas9-nuclease-s-pyogenes-m0386",
+  "fork_id": "",
+  "public_fork_note": "",
+  "number_of_steps": "8",
+  "uri": "in-vitro-digestion-of-dna-with-cas9-nuclease-s-pyo-hwkb7cw",
+  "has_versions": "1",
+  "first_published_date": "2017-05-10 06:07:24",
+  "publish_date": "2017-05-10 06:07:24",
+  "documents": null,
+  "have_protocol_in_step": "1",
+  "is_protocol_in_step": "0",
+  "vendor_name": "Contributed by users",
+  "vendor_link": "https://www.protocols.io",
+  "vendor_logo": "/img/vendors/1.png",
+  "mod_mins": "-28",
+  "mod_secs": "56",
+  "description": "Cas9 Nuclease,&nbsp;<em>S. pyogenes&nbsp;</em>(Cas9), is a double-stranded DNA endonuclease that is guided to its target by sequence complementarity of a small RNA loaded into the protein. This protocol describes how to digest double-stranded DNA&nbsp;in vitro&nbsp;using Cas9 and a single guide RNA (sgRNA).",
+  "is_bookmarked": "0",
+  "can_reassign": "0",
+  "before_start": "We strongly recommend wearing gloves and using nuclease-free tubes and reagents to avoid RNase contamination. Further recommendations for avoiding ribonuclease contamination can be found&nbsp;<a href=\"https://www.neb.com/tools-and-resources/usage-guidelines/avoiding-ribonuclease-contamination\" target=\"_blank\">here</a>.",
+  "has_guidelines": "1",
+  "materials": [ ],
+  "warning": "",
+  "is_prepublished": "0",
+  "public": "1",
+  "is_owner": "0",
+  "is_original_owner": "0",
+  "created_on": "1494396269",
+  "authors": "",
+  "protocol_affiliation": "",
+  "steps": [
+    {
+      "guid": "3C12D99819294B9ABEDEE09EE7365A7E",
+      "previous_guid": null,
+      "components": [
+        {
+          "component_type_id": "1",
+          "name": "Description",
+          "data": "Prepare 300nM sgRNA by diluting the stock with nuclease-free water on ice.",
+          "data_id": "0"
+        }
+      ]
+    },
+    {
+      "guid": "ED2192DB26F94D26810A5155052AE266",
+      "previous_guid": "3C12D99819294B9ABEDEE09EE7365A7E",
+      "components": [
+        {
+          "component_type_id": "1",
+          "name": "Description",
+          "data": "Prepare 30nM substrate DNA with a single target sequence by diluting the stock with nuclease-free water on ice.",
+          "data_id": "0"
+        }
+      ]
+    },
+    {
+      "guid": "DB3DEB8D592C445FB6F79C84082BBC6E",
+      "previous_guid": "ED2192DB26F94D26810A5155052AE266",
+      "components": {
+        "0": {
+          "component_type_id": "1",
+          "name": "Description",
+          "data": "Assemble the reaction at room temperature in the following order (total volume&nbsp;<strong>30 &micro;l</strong>)",
+          "data_id": "0"
+        },
+        "4": {
+          "component_type_id": "18",
+          "name": "Protocol",
+          "data": null,
+          "data_id": "283",
+          "source_data": {
+            "api_version": "1",
+            "is_new_mode": "1",
+            "protocol_id": "283",
+            "protocol_name": "Cas9 M0386 Mixture",
+            "last_modified": "1493272803",
+            "views": "82",
+            "downloads": "2",
+            "type_id": "2",
+            "link": "https://www.neb.com/protocols/2014/05/01/in-vitro-digestion-of-dna-with-cas9-nuclease-s-pyogenes-m0386",
+            "fork_id": "",
+            "public_fork_note": null,
+            "number_of_steps": "4",
+            "uri": "Cas9-M0386-Mixture-imst8m",
+            "vendor_id": "2",
+            "has_versions": "0",
+            "first_published_date": "2014-10-07 23:14:37",
+            "publish_date": "2014-10-07 23:14:37",
+            "documents": null,
+            "have_protocol_in_step": "0",
+            "is_protocol_in_step": "1",
+            "vendor_name": "New England Biolabs",
+            "vendor_link": "https://www.neb.com/",
+            "vendor_logo": "/img/vendors/2.png",
+            "mod_mins": "-40",
+            "mod_secs": "52",
+            "description": "",
+            "is_bookmarked": "0",
+            "can_make_private": "0",
+            "can_add_version": "0",
+            "can_reassign": "0",
+            "show_version": "0",
+            "before_start": "",
+            "has_guidelines": "0",
+            "materials": [ ],
+            "warning": "",
+            "is_prepublished": "0",
+            "public": "1",
+            "is_owner": "0",
+            "is_original_owner": "0",
+            "created_on": "1412713166",
+            "authors": null,
+            "protocol_affiliation": null,
+            "steps": [
+              {
+                "id": "124106",
+                "is_changed": "0",
+                "original_id": "0",
+                "guid": "1C032FB6A7F44BE8BE11A5607ADCA1A6",
+                "previous_guid": null,
+                "components": [
+                  {
+                    "component_type_id": "1",
+                    "name": "Description",
+                    "data": "Nuclease-free water&nbsp;<strong>20 &micro;l</strong>",
+                    "data_id": "0"
+                  }
+                ]
+              },
+              {
+                "id": "124107",
+                "is_changed": "0",
+                "original_id": "0",
+                "guid": "AFEFF18577D64F50BBEA39CBCC385A4A",
+                "previous_guid": "1C032FB6A7F44BE8BE11A5607ADCA1A6",
+                "components": [
+                  {
+                    "component_type_id": "1",
+                    "name": "Description",
+                    "data": "10X Cas9 Nuclease Reaction Buffer&nbsp;<strong>3 &micro;l</strong>",
+                    "data_id": "0"
+                  }
+                ]
+              },
+              {
+                "id": "124108",
+                "is_changed": "0",
+                "original_id": "0",
+                "guid": "A59629CD08254C9B81AD8A19BCC8C496",
+                "previous_guid": "AFEFF18577D64F50BBEA39CBCC385A4A",
+                "components": [
+                  {
+                    "component_type_id": "1",
+                    "name": "Description",
+                    "data": "300nM sgRNA&nbsp;<strong>3 &micro;l</strong> (30nM final)",
+                    "data_id": "0"
+                  }
+                ]
+              },
+              {
+                "id": "124109",
+                "is_changed": "0",
+                "original_id": "0",
+                "guid": "414E2143CD054E44960E2E89023B8968",
+                "previous_guid": "A59629CD08254C9B81AD8A19BCC8C496",
+                "components": [
+                  {
+                    "component_type_id": "1",
+                    "name": "Description",
+                    "data": "1 &micro;M Cas9 Nuclease, S.pyogenes&nbsp;(~30nM final)",
+                    "data_id": "0"
+                  },
+                  {
+                    "component_type_id": "3",
+                    "name": "Amount",
+                    "data": "1",
+                    "data_id": "0"
+                  },
+                  {
+                    "component_type_id": "14",
+                    "name": "Unit",
+                    "data": null,
+                    "data_id": "1"
+                  },
+                  {
+                    "component_type_id": "20",
+                    "name": "Reagents",
+                    "data": null,
+                    "data_id": "1136",
+                    "source_data": {
+                      "product_type_id": "1",
+                      "reagent_id": "1136",
+                      "reagent_mol_weight": "0.00",
+                      "reagent_name": "Cas9 Nuclease, S. pyogenes - 50 pmols",
+                      "reagent_linfor": "",
+                      "reagent_vendor_id": "2",
+                      "reagent_vendor_logo": "/img/vendors/2.png",
+                      "reagent_vendor_link": "https://www.neb.com/",
+                      "reagent_vendor_name": "New England Biolabs",
+                      "reagent_url": "https://www.neb.com/M0386",
+                      "reagent_sku": "M0386S",
+                      "reagent_public": "1",
+                      "can_edit": "0"
+                    }
+                  }
+                ]
+              }
+            ],
+            "doi": null,
+            "doi_status": "0",
+            "version_id": "0",
+            "changed_fork_steps": null,
+            "profile_url": "NEB-13y27413",
+            "protocol_img": "https://s3.amazonaws.com/pr-journal/caybvew.png",
+            "profile_image": "https://s3.amazonaws.com/pr-journal/caybvew.png",
+            "full_name": "NEB ",
+            "private_link": null,
+            "original_img": "1",
+            "username": "neb",
+            "is_retracted": "0",
+            "retraction_reason": null,
+            "plos_id": null,
+            "manuscript_citation": null,
+            "is_transfer_pending": null,
+            "first_name": "NEB",
+            "last_name": "",
+            "affiliation": "New England Biolabs",
+            "created_by": "NEB",
+            "forks_count": {
+              "public": "0",
+              "private": "0"
+            },
+            "versions": [ ],
+            "groups": [
+              {
+                "group_id": "194",
+                "group_uri": "new-england-biolabs-neb",
+                "group_name": "New England Biolabs (NEB)",
+                "group_logo": "https://s3.amazonaws.com/pr-journal/d6ubvew.png"
+              }
+            ],
+            "big_protocol_img": "https://s3.amazonaws.com/pr-journal/caxbvew.png",
+            "big_protocol_img_ofn": "neb.png",
+            "number_of_comments": 0,
+            "number_of_shared_runs": 0,
+            "tags": [ ],
+            "ownership_history": [ ],
+            "collections": [ ],
+            "keywords": "",
+            "contact_badges": [ ],
+            "banner": null,
+            "transfer_to_user": null,
+            "sub_transfer": false
+          }
+        }
+      }
+    },
+    {
+      "guid": "CBDD2E2FD6FA43A09495502606EB63A5",
+      "previous_guid": "DB3DEB8D592C445FB6F79C84082BBC6E",
+      "components": [
+        {
+          "component_type_id": "1",
+          "name": "Description",
+          "data": "<p>Pre-incubate for 10 minutes at 25 ⁰C</p>",
+          "data_id": "0"
+        },
+        {
+          "component_type_id": "4",
+          "name": "Duration / Timer",
+          "data": "600",
+          "data_id": "0"
+        }
+      ]
+    },
+    {
+      "guid": "9F55D4E1F496475BB40FA17DF05ACF0E",
+      "previous_guid": "CBDD2E2FD6FA43A09495502606EB63A5",
+      "components": [
+        {
+          "component_type_id": "1",
+          "name": "Description",
+          "data": "Add 30nM substrate DNA",
+          "data_id": "0"
+        }
+      ]
+    },
+    {
+      "guid": "3768F6793201478A82FC53130ED9529A",
+      "previous_guid": "9F55D4E1F496475BB40FA17DF05ACF0E",
+      "components": [
+        {
+          "component_type_id": "1",
+          "name": "Description",
+          "data": "Mix thoroughly.",
+          "data_id": "0"
+        }
+      ]
+    },
+    {
+      "guid": "CDF80509EBCB4F878AECEC73394BB94C",
+      "previous_guid": "3768F6793201478A82FC53130ED9529A",
+      "components": [
+        {
+          "component_type_id": "1",
+          "name": "Description",
+          "data": "Incubate at 37&deg;C for 1 hour.",
+          "data_id": "0"
+        },
+        {
+          "component_type_id": "4",
+          "name": "Duration / Timer",
+          "data": "3600",
+          "data_id": "0"
+        }
+      ]
+    },
+    {
+      "guid": "59AD7D185647401A9C25BD7DE17DCEC7",
+      "previous_guid": "CDF80509EBCB4F878AECEC73394BB94C",
+      "components": [
+        {
+          "component_type_id": "1",
+          "name": "Description",
+          "data": "Proceed with fragment analysis.",
+          "data_id": "0"
+        }
+      ]
+    }
+  ],
+  "doi": "dx.doi.org/10.17504/protocols.io.hwkb7cw",
+  "doi_status": "2",
+  "version_id": "1",
+  "changed_fork_steps": null,
+  "profile_url": "NEB-13y27413",
+  "protocol_img": "https://s3.amazonaws.com/pr-journal/caybvew.png",
+  "profile_image": "https://s3.amazonaws.com/pr-journal/caybvew.png",
+  "full_name": "NEB ",
+  "private_link": null,
+  "original_img": "1",
+  "username": "neb",
+  "is_retracted": "0",
+  "retraction_reason": null,
+  "plos_id": null,
+  "manuscript_citation": null,
+  "is_transfer_pending": null,
+  "first_name": "NEB",
+  "last_name": "",
+  "affiliation": "New England Biolabs",
+  "created_by": "NEB",
+  "groups": [
+    {
+      "group_id": "194",
+      "group_uri": "new-england-biolabs-neb",
+      "group_name": "New England Biolabs (NEB)",
+      "group_logo": "https://s3.amazonaws.com/pr-journal/d6ubvew.png"
+    }
+  ],
+  "big_protocol_img": "https://s3.amazonaws.com/pr-journal/caxbvew.png",
+  "big_protocol_img_ofn": "neb.png",
+  "number_of_comments": 0,
+  "number_of_shared_runs": 0,
+  "tags": [
+    {
+      "tag_id": "77",
+      "tag_name": "CRISPR/Cas9"
+    },
+    {
+      "tag_id": "249",
+      "tag_name": "sgRNA"
+    },
+    {
+      "tag_id": "250",
+      "tag_name": "Cas9"
+    }
+  ],
+  "ownership_history": [ ],
+  "collections": [ ],
+  "keywords": "",
+  "contact_badges": [ ],
+  "banner": null,
+  "transfer_to_user": null,
+  "sub_transfer": false,
+  "guidelines": "<p><strong>OVERVIEW</strong>:<br />Cas9 Nuclease, S. pyogenes, (Cas9) is a double-stranded DNA endonuclease that is guided to its target by sequence complementarity of a small RNA loaded into the protein. This protocol describes how to digest double-stranded DNA in vitro using Cas9 and a single guide RNA (sgRNA). <br /><br /><strong>REQUIRED MATERIALS:</strong></p>\n<ul style=\"list-style-type: disc;\">\n<li>Cas9 Nuclease, S. pyogenes (NEB <a href=\"https://www.neb.com/products/m0386-cas9-nuclease-s-pyogenes\" target=\"_blank\">#M0386</a>)</li>\n<li>10X Cas9 Nuclease Reaction Buffer</li>\n<li>Nuclease-free water</li>\n<li>sgRNA containing the targeting sequence in the region of interest</li>\n<li> sgRNAs can be generated by in vitro transcription using the HiScribe T7 Quick High-Yield RNA synthesis Kit (NEB <a href=\"https://www.neb.com/products/e2050-hiscribe-t7-quick-high-yield-rna-synthesis-kit\" target=\"_blank\">#E2050</a>) using linearized plasmid, PCR products, or oligonucleotides as templates</li>\n<li>sgRNAs must contain sequence complementary to the target DNA (1,2)For information on design of sgRNA transcription templates please visit <a href=\"http://www.addgene.org/CRISPR/guide/#Design\" target=\"_blank\" data-ga-category=\"External Link\" data-ga-action=\"https://www.neb.com/protocols/2014/05/01/in-vitro-digestion-of-dna-with-cas9-nuclease-s-pyogenes-m0386\" data-ga-label=\"http://www.addgene.org/CRISPR/guide/#Design\">Addgene</a></li>\n<li>DNA substrate containing the target sequence</li>\n<li>The substrate DNA can be circular or linearized plasmid, PCR products, or synthesized oligonucleotides</li>\n</ul>\n<p><br /><strong>OPTIONAL MATERIALS</strong>:<br />Apparatus and reagents for DNA fragment analysis </p>\n<ul style=\"list-style-type: disc;\">\n<li>E. g. Agarose gel electrophoresis apparatus</li>\n<li>DNA Loading Dye (e.g. Gel Loading Dye, Purple (6X) NEB <a href=\"https://www.neb.com/products/b7024-gel-loading-dye-purple-6x\" target=\"_blank\">#B7024S</a>)</li>\n<li>E.g. Agilent Bioanlyzer or similar</li>\n</ul>\n<p><br /><strong>BEFORE YOU START</strong>:<br />We strongly recommend wearing gloves and using nuclease-free tubes and reagents to avoid RNase contamination. Further recommendations for avoiding ribonuclease contamination can be found <a href=\"https://www.neb.com/tools-and-resources/usage-guidelines/avoiding-ribonuclease-contamination\" target=\"_blank\">here</a>.<br />Reactions are typically 30 μl but can be scaled up as needed. Reactions should be assembled in nuclease-free microfuge tubes or PCR strip tubes.<br />It is essential to keep the molar ratio of Cas9 and sgRNA per target site at 10:10:1 or higher to obtain the best cleavage efficiency. A calculator can be found <a href=\"http://nebiocalculator.neb.com/\" target=\"_blank\">here</a>.<br />Prepare 300nM sgRNA by diluting the stock with nuclease-free water on ice.<br />Prepare 30nM substrate DNA with a single target sequence by diluting the stock with nuclease-free water on ice.<br /><br /><strong>PROCEDURE:</strong><br />1. Assemble the reaction at room temperature in the following order:</p>\n<table>\n<tbody>\n<tr class=\"border\">\n<td><strong>Component</strong></td>\n<td><strong>Volume</strong> (for 30 µl reaction)</td>\n</tr>\n<tr class=\"border\">\n<td>Nuclease-free water</td>\n<td>20 µl</td>\n</tr>\n<tr class=\"border\">\n<td>10X Cas9 Nuclease Reaction Buffer</td>\n<td>3 µl</td>\n</tr>\n<tr class=\"border\">\n<td>300nM sgRNA</td>\n<td>3 µl (30nM final)</td>\n</tr>\n<tr class=\"border\">\n<td>1 µM Cas9 Nuclease, S.pyogenes (<a href=\"https://www.neb.com/products/m0386-cas9-nuclease-s-pyogenes\" target=\"_blank\">M0386S</a>)</td>\n<td>1 µl (~30nM final)</td>\n</tr>\n<tr class=\"border\">\n<td>Reaction volume</td>\n<td>27 µl</td>\n</tr>\n<tr class=\"border\">\n<th colspan=\"2\">Pre-incubate for 10 minutes at 25⁰C</th>\n</tr>\n<tr class=\"border\">\n<td>30nM substrate DNA</td>\n<td>3 µl (3nM final)</td>\n</tr>\n<tr class=\"border\">\n<td>Total reaction volume</td>\n<td>30 µl</td>\n</tr>\n</tbody>\n</table>\n<p>*The substrate DNA and sgRNA, and nuclease-free water are not included. <br /><br />2. Mix thoroughly and pulse-spin in a microfuge.<br />3. Incubate at 37°C for 1 hour.<br />4. Proceed with fragment analysis.<br /><br /><strong>REFERENCES</strong>:<br />1. Jinek et al. (2012) Science 337 (6096) 816-821.<br />2. Larson et al. (2013) Nature Protocol 8 (2180-2196).<br />3. Mali et al. (2013) Science 339 (6121): 823-826.</p>"
+}
