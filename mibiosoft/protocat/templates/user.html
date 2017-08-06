@@ -14,8 +14,11 @@
 
 <div class="col-sm-12">
 	<div class="row hidden-xs">
-		<div class="col-sm-2 col-sm-offset-1">
+		<div class="col-sm-2 col-sm-offset-1" style="text-align:center;">
 			<img {% if profile_info.profile_image != "" %}src="{{ profile_info.profile_image.url }}"{% else %}src="/static/images/basic_picture.png"{% endif %} width=200 height=200 alt="Image not found" class="center-block img-responsive img-circle profile_image"/>
+			{% if user.is_authenticated %}
+			<span><a href="{% url 'new_message' recip_name=profile_info.user %}">Send Message</a></span>	
+			{% endif %}
 		</div>
 		<div class="col-sm-4 padded">
 			<h2>{{ profile_info.user }}<br/>

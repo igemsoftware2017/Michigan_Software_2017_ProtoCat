@@ -32,4 +32,7 @@ urlpatterns = [
 	url(r'^test/$', views.test, name="test"),
 	url(r'^github/$', views.github, name="github"),
 	url(r'^postgithub/$', views.github_post, name="githubpost"),
+	url(r'^newmessage/(?P<recip_name>\w+)$', views.NewMessageView.as_view(), name="new_message"),
+	url(r'^newmessage/$', views.NewMessageView.as_view(), name="new_message"),
+	url(r'^inbox/$', views.inbox_view, name="inbox"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
