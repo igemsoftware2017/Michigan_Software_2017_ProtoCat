@@ -299,7 +299,7 @@ def search(request):
 
 	order = sort_direction + order
 
-	results = Protocol.objects.filter(Q(title__icontains = text_filter) | Q(description__icontains = text_filter))
+	results = Protocol.objects.filter(Q(title__icontains = text_filter) | Q(description__icontains = text_filter) | Q(materials__icontains = text_filter) | Q(protocol_step__action__icontains = text_filter) | Q(reagentforprotocol__display_name__icontains = text_filter)).distinct()
 
 	try:
 		search_hidden = (request.POST['search-hidden'] == "on")
@@ -316,7 +316,7 @@ def search(request):
 		revision_start_date = map(int, revision_start_date)
 		my_datetime = datetime.date(revision_start_date[2], revision_start_date[0], revision_start_date[1])
 		# try to make timezone aware
-		results = results.exclude(upload_date__lt=my_datetime)
+		results = results.exclude(upload_date__lt = my_datetime)
 	except:
 		pass
 
@@ -553,7 +553,7 @@ def submit_upload(request):
 				num_steps = num_steps + 1
 			except:
 				# Means that the name doesn't exist
-				#print('error1')
+				# print('error1')
 				pass
 
 		protocol.num_steps = num_steps
@@ -697,7 +697,7 @@ def toggle_protocol(request):
 			protocol.save()
 			return JsonResponse({'success': True})
 		else:
-			return JsonResponse({'success': False}) 
+			return JsonResponse({'success': False})
 	except Exception as inst:
 		#print(inst)
 		#print("Update didn't work")
@@ -783,3 +783,14 @@ def inbox_view(request):
 	else:
 		context['current_profile_info'] = request.user.profileinfo
 	return render(request, 'protoChat/inbox.html', context)
+
+def get_protocols_from_category(request, category_id):
+	if (category_id == ""):
+		category_id = None
+	else:
+		category_id = int(category_id)
+	protocols = Protocol.objects.all().filter(category = category_id).filter(searchable = True)
+	context = {
+		'protocols': protocols
+	}
+	return render(request, "category_browser_protocols.html", context)
