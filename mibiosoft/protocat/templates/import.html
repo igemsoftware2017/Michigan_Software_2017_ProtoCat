@@ -3,18 +3,6 @@
 	$(document).ready(function () {
 		function handleFileSelect(evt) {
 			if (window.File && window.FileReader && window.FileList && window.Blob) {
-				var files = evt.target.files; // FileList object
-
-				fr = new FileReader()
-				for (var i = 0, f; f = files[i]; i++) {
-					fr.onload = (function(theFile) {
-						return function(e) {
-							localStorage.setItem("json_input", e.target.result)
-							console.log(localStorage.getItem("json_input"))
-						};
-					})(f);
-					data = fr.readAsText(f);
-				}
 				console.log("Enabling Submit")
 				$('input[id="submit-button"]').prop("disabled", false)
 			} else {
@@ -26,7 +14,7 @@
 	});
 
 	function submit() {
-		var form_data = {};
+		var form_data = $('#submitForm').serializeArray();
 		form_data["Data"] = "tosend";
 		form_data["csrfmiddlewaretoken"] = $('input[name="csrfmiddlewaretoken"]').val();
 		form_data["protocol_data"] = JSON.stringify(localStorage.getItem("json_input"));
@@ -66,7 +54,7 @@
 <form id="submit-form" method="POST" action="/importprotocol/" enctype="multipart/form-data" accept-charset="utf-8">
 	{% csrf_token %}
 	<label class="btn btn-default btn-file" for="upload-button">
-    	<input type="file" id="files" name="files[]" accept=".json"/>
+    	<input type="file" id="files" name="files[]" accept=".json, .txt"/>
 	</label>
 	<div class="col-sm-12">
 		<div id="submit_div" class="row">

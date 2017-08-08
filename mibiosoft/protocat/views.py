@@ -753,9 +753,9 @@ def submit_import(request):
 	
 	try:
 		# get main data for the Protocol model
-		protocol_title = bleach.clean(cat_json['title'])
-		protocol_desc = bleach.clean(cat_json['description'])
-		protocol_changes = bleach.clean(cat_json['change-log'])
+		protocol_title = cat_json['title']
+		protocol_desc = cat_json['description']
+		protocol_changes = cat_json['change-log']
 
 		protocol = Protocol(change_log = protocol_changes, title = protocol_title, description = protocol_desc, author = current_profile_info)
 		
@@ -795,5 +795,5 @@ def submit_import(request):
 		'title': 'ProtoCat - Submit Upload',
 		'current_profile_info': current_profile_info,
 	}
-	return HttpResponseRedirect('/import/')
+	return HttpResponseRedirect('/')
 		

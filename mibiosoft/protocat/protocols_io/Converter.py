@@ -20,7 +20,11 @@ class converter():
         else:
             cat_json['description'] = "No Description provided"       
         protocol_url = 'https://www.protocols.io/view/' + io_json['uri']
-        cat_json['description'] += '\n\nTaken from <a href=' + protocol_url + '>' + protocol_url + '</a>'
+        
+        if cat_json['description']:
+            cat_json['description'] += '\n\nTaken from <a href=' + protocol_url + '>' + protocol_url + '</a>'
+        else:
+            cat_json['description'] = '\n\nTaken from <a href=' + protocol_url + '>' + protocol_url + '</a>'
 
         if 'materials' in io_json and len(io_json['materials']) > 0:
             cat_json['materials'] = "<br/>".join(io_json['materials'])
@@ -37,6 +41,7 @@ class converter():
                 #print(step['components'],'\n####################')
                 descr = ""
                 for comp in step['components']:
+                    print(comp)
                     if 'name' in comp and comp['name'] == "Description":
                         cat_step['action'] = comp['data']
                         descr = ""
@@ -45,15 +50,17 @@ class converter():
                         descr = ""
                     else:
                         try:
-                            if step['components'][comp]['name'] == "Description":
-                                descr += step['components'][comp]['data']
-                            elif step['components'][comp]['name'] == "Protocol":
+                            if comp['name'] == "Description":
+                                descr += comp['data']
+                            elif comp['name'] == "Protocol":
                                 #print(step['components'][comp])
-                                descr += " https://www.protocols.io/view/" + step['components'][comp]['source_data']['uri']
+                                descr += " https://www.protocols.io/view/" + comp['source_data']['uri']
+                            elif comp['name'] == "Section":
+                                continue
                             else:
                                 raise Exception
-                        except:
-                            print("Unknown how to handle this",comp)
+                        except Exception as e:
+                            print(e, "Unknown how to handle this", comp)
                             descr = "Error ocurred while parsing"
                         cat_step['action'] = descr
                 if "title" not in cat_step:
