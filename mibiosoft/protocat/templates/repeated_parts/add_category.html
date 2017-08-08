@@ -1,7 +1,6 @@
 <script>
 var categories = [];
 $(document).on('ready', function() {
-
 	$('#save_category').on('click', function() {
 		var data = {
 			'title': $('#add-category-modal').find('[name="title"]').val(),
@@ -15,6 +14,8 @@ $(document).on('ready', function() {
 			data: data,
 			success: function() {
 				$('#add-category-modal').modal('hide');
+				get_category_children();
+				LoadCategories();
 			},
 			failure: function() {
 				console.log("Failed to submit categories")
@@ -22,6 +23,11 @@ $(document).on('ready', function() {
 		});
 	});
 
+	LoadCategories();
+});
+
+
+function LoadCategories() {
 	$.ajax({
 		type: "GET",
 		url: "/api/category/",
@@ -45,7 +51,7 @@ $(document).on('ready', function() {
 			console.log("Failed to load categories")
 		}
 	});
-});
+}
 
 </script>
 

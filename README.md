@@ -1,6 +1,6 @@
 # ProtoCat - Protocol Database Software by Michigan Software 2016
 
-If you would like to avoid the hassle of installing your own version of Protocat, simply go to [protocat.org](protocat.org) for our version on the web.
+If you would like to avoid the hassle of installing your own version of Protocat, simply go to [protocat.org](http://protocat.org) for our version on the web.
 
 If you have are planning to run this on a Ubuntu development computer, you must install additional packages in order to get the Pip package Pillow. To do this, enter into your terminal:
 ```
