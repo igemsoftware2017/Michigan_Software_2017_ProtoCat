@@ -38,33 +38,27 @@ class converter():
                 cat_step = {}
                 cat_step['step_number'] = step_number
                 step_number += 1
-                #print(step['components'],'\n####################')
-                descr = ""
+                print(step['components'],'\n####################')
+                cat_step['action'] = ""
                 for comp in step['components']:
-                    print(comp)
-                    if 'name' in comp and comp['name'] == "Description":
-                        cat_step['action'] = comp['data']
-                        descr = ""
-                    elif 'name' in comp and comp['name'] == 'Duration / Timer':
-                        cat_step['time'] = comp['data']
-                        descr = ""
-                    else:
-                        try:
-                            if comp['name'] == "Description":
-                                descr += comp['data']
-                            elif comp['name'] == "Protocol":
-                                #print(step['components'][comp])
-                                descr += " https://www.protocols.io/view/" + comp['source_data']['uri']
-                            elif comp['name'] == "Section":
-                                continue
-                            else:
-                                raise Exception
-                        except Exception as e:
-                            print(e, "Unknown how to handle this", comp)
-                            descr = "Error ocurred while parsing"
-                        cat_step['action'] = descr
+                    try:
+                        if comp['name'] == "Description":
+                            cat_step['action'] += comp['data']
+                        elif comp['name'] == "Protocol":
+                            #print(step['components'][comp])
+                            cat_step['action'] += " https://www.protocols.io/view/" + comp['source_data']['uri']
+                        elif comp['name'] == "Section":
+                            cat_step['title'] = comp['data']
+                        elif comp['name'] == 'Duration / Timer':
+                            cat_step['time'] = comp['data']
+                        else:
+                            raise Exception
+                    except Exception as e:
+                        print(e, "Unknown how to handle this", comp)
+                        cat_step['action'] += "\n\nError ocurred while parsing"
+                print(cat_step)
                 if "title" not in cat_step:
-                    cat_step['title'] = ""
+                    cat_step['title'] = "TEST HERE"
                 if "time" not in cat_step:
                     cat_step['time'] = -1
                 if "warning" not in cat_step:

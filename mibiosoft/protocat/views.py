@@ -774,7 +774,7 @@ def submit_import(request):
 		protocol.save()
 		
 		for step in cat_json['protocol_steps']:
-			ps = ProtocolStep(action = step['action'], warning = step['warning'],\
+			ps = ProtocolStep(title=step['title'], action = step['action'], warning = step['warning'],\
 				step_number = step['step_number'], time = step['time'], protocol = protocol)
 			ps.save()
 		protocol.num_steps = len(cat_json['protocol_steps'])
