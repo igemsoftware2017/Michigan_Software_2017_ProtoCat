@@ -27,7 +27,12 @@ class converter():
             cat_json['description'] = '\n\nTaken from <a href=' + protocol_url + '>' + protocol_url + '</a>'
 
         if 'materials' in io_json and len(io_json['materials']) > 0:
-            cat_json['materials'] = "<br/>".join(io_json['materials'])
+            reagent_list = []
+            for dict_ in io_json['materials']:
+                name = dict_['reagent_name']
+                name = "<a href='" + dict_['reagent_url'] + "'>" + name + "</a>"
+                reagent_list.append(name)
+            cat_json['materials'] = "<br/>".join(reagent_list)
         else:
             cat_json['materials'] = "No Materials Provided"
 
@@ -38,7 +43,7 @@ class converter():
                 cat_step = {}
                 cat_step['step_number'] = step_number
                 step_number += 1
-                print(step['components'],'\n####################')
+                #print(step['components'],'\n####################')
                 cat_step['action'] = ""
                 for comp in step['components']:
                     try:
@@ -56,7 +61,7 @@ class converter():
                     except Exception as e:
                         print(e, "Unknown how to handle this", comp)
                         cat_step['action'] += "\n\nError ocurred while parsing"
-                print(cat_step)
+                #print(cat_step)
                 if "title" not in cat_step:
                     cat_step['title'] = "TEST HERE"
                 if "time" not in cat_step:
