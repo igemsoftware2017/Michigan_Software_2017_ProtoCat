@@ -739,9 +739,11 @@ def import_page(request):
 		return render(request, 'import.html', context)
 
 def submit_import(request):
-	print(request.POST)
 	conv = converter()
-	cat_json = conv.convert_io_to_cat(request.POST.get('protocol_data'))
+	pio_data = request.FILES['files[]'].file.getvalue()
+
+	pio_json = json.loads(pio_data)
+	cat_json = conv.convert_io_to_cat(pio_json)
 	
 	current_profile_info = request.user
 	if (not current_profile_info.is_anonymous()):
