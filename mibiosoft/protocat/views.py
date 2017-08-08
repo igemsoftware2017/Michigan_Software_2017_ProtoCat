@@ -739,18 +739,13 @@ def import_page(request):
 		return render(request, 'import.html', context)
 
 def submit_import(request):
-	protocols_io_file_ = open("protocat/protocols_io/protocols_output.json", 'rb')
+	print(request.POST)
 	conv = converter()
-	protocols_io_json = json.load(protocols_io_file_)
-	if protocols_io_json:
-		cat_json = conv.convert_io_to_cat(protocols_io_json)
-	else:
-		pass
+	cat_json = conv.convert_io_to_cat(request.POST.get('protocol_data'))
 	
 	current_profile_info = request.user
 	if (not current_profile_info.is_anonymous()):
 		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
-		#print(current_profile_info)
 	else:
 		current_profile_info = None
 	
@@ -772,10 +767,8 @@ def submit_import(request):
 			pass
 
 		# associate new protocol with previous revision if necessary
-		try:
-			previous_protocol_id = -1
-		except:
-			pass
+		previous_protocol_id = -1
+
 		protocol.save()
 		
 		for step in cat_json['protocol_steps']:
@@ -784,7 +777,6 @@ def submit_import(request):
 			ps.save()
 		protocol.num_steps = len(cat_json['protocol_steps'])
 		
-		# get any written-in reagents and save them
 		try:
 			protocol.materials = bleach.clean(cat_json['materials'])
 		except:

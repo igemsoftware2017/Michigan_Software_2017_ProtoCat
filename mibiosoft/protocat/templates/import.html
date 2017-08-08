@@ -1,54 +1,80 @@
 {% extends 'base.html' %} {% block content %}
 <script>
-    function submit() {
-	$('input[name="size"]').val(1);
-	var form_data = new FormData();
-	form_data.append("Data", "tosend");
-	form_data.append("csrfmiddlewaretoken", $('input[name="csrfmiddlewaretoken"]').val());
-	$.ajax({
-		type: "POST",
-		url: "/importprotocol/",
-		contentType: false,
-		processData: false,
-		//data: form_data,
-		success: function(){
-			if (data.success) {
-				console.log("it worked")
+	$(document).ready(function () {
+		function handleFileSelect(evt) {
+			if (window.File && window.FileReader && window.FileList && window.Blob) {
+				var files = evt.target.files; // FileList object
+
+				fr = new FileReader()
+				for (var i = 0, f; f = files[i]; i++) {
+					fr.onload = (function(theFile) {
+						return function(e) {
+							localStorage.setItem("json_input", e.target.result)
+							console.log(localStorage.getItem("json_input"))
+						};
+					})(f);
+					data = fr.readAsText(f);
+				}
+				console.log("Enabling Submit")
+				$('input[id="submit-button"]').prop("disabled", false)
+			} else {
+				alert('The File APIs are not fully supported in this browser.');
 			}
-			else {
-				alert("Unable to import protocol - please try again.")
-			}
-		},
-		failure: function(){
-			alert("Unable to connect to the server - please try again.")
 		}
+
+		$('#files').get(0).addEventListener('change', handleFileSelect, false);
 	});
-}
+
+	function submit() {
+		var form_data = {};
+		form_data["Data"] = "tosend";
+		form_data["csrfmiddlewaretoken"] = $('input[name="csrfmiddlewaretoken"]').val();
+		form_data["protocol_data"] = JSON.stringify(localStorage.getItem("json_input"));
+		$.ajax({
+			type: "POST",
+			url: "/importprotocol/",
+			dataType: 'json',
+			data: JSON.stringify(form_data),
+			success: function () {
+				if (data.success) {
+					console.log("it worked")
+				}
+				else {
+					alert("Unable to import protocol - please try again.")
+				}
+			},
+			failure: function () {
+				alert("Unable to connect to the server - please try again.")
+			}
+		});
+	}
+
 </script>
 <style>
-    body {
-        text-align: center;
-    }
+	body {
+		text-align: center;
+	}
 
-    label #upload-button {
-        display: inline-block;
-        color: red;
-    }
+	div {
+		margin-top: 5px;
+	}
+
 </style>
 
 <h2>Import a protocol from <a href="https://www.protocols.io">protocols.io</a></h2>
 
 <form id="submit-form" method="POST" action="/importprotocol/" enctype="multipart/form-data" accept-charset="utf-8">
 	{% csrf_token %}
-    <label class="btn btn-default btn-file" for="upload-button">
-        Upload File <input id="upload-button" type="file" style="display:none;" onchange="enable_submit();"> 
-    </label>
-<div class="col-sm-12">
-	<div id="submit_div" class="row">
-		<div style="display: inline-block;">
-			<input type="button" class="form-control" onclick="submit()" value="Upload">
+	<label class="btn btn-default btn-file" for="upload-button">
+    	<input type="file" id="files" name="files[]" accept=".json"/>
+	</label>
+	<div class="col-sm-12">
+		<div id="submit_div" class="row">
+			<div style="display: inline-block;">
+				<input type="button" id="submit-button" class="form-control" onclick="submit();" value="Import" disabled="true" disabled>
+			</div>
 		</div>
 	</div>
-</div>
 </form>
+
 {% endblock %}
