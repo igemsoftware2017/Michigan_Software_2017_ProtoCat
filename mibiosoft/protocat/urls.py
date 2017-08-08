@@ -31,4 +31,5 @@ urlpatterns = [
 	url(r'^test/$', views.test, name="test"),
 	url(r'^github/$', views.github, name="github"),
 	url(r'^postgithub/$', views.github_post, name="githubpost"),
+	url(r'^togglefavorite/(?P<protocol_id>[0-9]+)/$', views.toggle_protocol_favorite, name="toggle_favorite"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

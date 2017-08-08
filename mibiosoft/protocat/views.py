@@ -81,6 +81,10 @@ def protocol(request, protocol_id):
 	except:
 		rating = None
 
+	if (current_profile_info == None):
+		is_favorite = None
+	else:
+		is_favorite = current_profile_info.favorites.filter(id = protocol.id).exists()
 
 	context = {
 		'title': protocol.title,
@@ -92,6 +96,7 @@ def protocol(request, protocol_id):
 		'aggregated_reagents': aggregated_reagents,
 		'user_rating': rating,
 		'current_profile_info': current_profile_info,
+		'is_favorite': is_favorite
 	}
 
 	return render(request, 'protocol.html', context)
@@ -715,3 +720,11 @@ def github_post(request):
 	gh.name = request.POST['name']
 	gh.save()
 	return HttpResponseRedirect('/')
+
+def toggle_protocol_favorite(request, protocol_id):
+	if (request.user.profileinfo.favorites.filter(id = protocol_id)):
+		request.user.profileinfo.favorites.remove(protocol_id)
+		return JsonResponse({'success': True})
+	else:
+		request.user.profileinfo.favorites.add(protocol_id)
+		return JsonResponse({'success': False})

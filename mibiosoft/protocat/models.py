@@ -25,7 +25,7 @@ class ProfileInfo(models.Model):
 	about = models.TextField(blank = True, null = True)
 	contact_info = models.TextField(blank = True, null = True)
 	meows = models.IntegerField(default = 0)
-
+	favorites = models.ManyToManyField('Protocol', blank = True)
 
 	def __str__(self):
 		return str(self.user)

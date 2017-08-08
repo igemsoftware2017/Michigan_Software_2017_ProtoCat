@@ -323,7 +323,7 @@ function get_time_total(i) {
 		.format('HH:mm:ss.S');
 }
 
-$(document).on('ready', function(){
+$(document).on('ready', function() {
 	multiply_everything(1);
 	$('.timer').each(function(index) {
 		if (steps[index].time_scaling != 0 && steps[index].time != -1) {
@@ -563,12 +563,33 @@ $(document).on('ready', function() {
 		});
 	});
 });
+
+function toggle_favorite() {
+	$(".toggle_fav").toggleClass("glyphicon-heart-empty");
+	$(".toggle_fav").toggleClass("glyphicon-heart");
+	if ($(".toggle_fav").first().hasClass("glyphicon-heart")) {
+		$(".fav_text").html("Remove from Favs");
+	}
+	else {
+		$(".fav_text").html("Add to Favs");
+	}
+	$.ajax({
+		type: "GET",
+		url: "/togglefavorite/{{ protocol.id }}",
+		failure: function() {
+			$(".toggle_fav").toggleClass("glyphicon-heart-empty");
+			$(".toggle_fav").toggleClass("glyphicon-heart");
+			if ($(".toggle_fav").first().hasClass("glyphicon-heart")) {
+				$(".fav_text").text(" Remove from Favs");
+			}
+			else {
+				$(".fav_text").text(" Add to Favs");
+			}
+		}
+	});
+}
 </script>
 <style>
-.protocol_title{
-	/*background-color:#CCC;
-	Change this*/
-}
 .protocol-author-picture {
 	padding: 0px;
 	margin-right: 15px;
@@ -726,6 +747,13 @@ textarea[name=comment] {
 	width: 100%;
 }
 
+.toggle_fav {
+	color: red;
+}
+.fav_parent_div {
+	text-align: center;
+}
+
 </style>
 {% if protocol.author == current_profile_info %}
 <div class="col-sm-12">
@@ -745,6 +773,9 @@ textarea[name=comment] {
 					{% csrf_token %}
 					<label style="position:relative;top:-27px;left:87px"> - {{ protocol.get_number_ratings }} ratings</label>
 				</form>
+				{% if current_profile_info != None %}
+				<span class="visible-xs fav_parent_span"><span onclick="toggle_favorite()" class="toggle_fav glyphicon {% if is_favorite %}glyphicon-heart{% else %}glyphicon-heart-empty{% endif %}"><br /></span><span class="fav_text small"> {% if is_favorite %}Remove from Favs{% else %}Add to Favs{% endif %}</span></span>
+				{% endif %}
 				<h5>Category: <a href="/browse/{{ protocol.category.id }}">{{ protocol.category }}</a></h5>
 				<a href="/upload/{{protocol.id}}">
 					<i class="fa fa-code-fork" id="fork"></i> Branch this protocol
@@ -765,6 +796,11 @@ textarea[name=comment] {
 					{% csrf_token %}
 				</form>
 				<h2 class="small" style="text-align:center;margin-top:0px;">{{ protocol.get_number_ratings }} ratings</h2>
+				{% if current_profile_info != None %}
+				<div class="fav_parent_div">
+					<span><span onclick="toggle_favorite()" class="toggle_fav glyphicon {% if is_favorite %}glyphicon-heart{% else %}glyphicon-heart-empty{% endif %}"></span><br /><span class="fav_text small"> {% if is_favorite %}Remove from Favs{% else %}Add to Favs{% endif %}</span></span>
+				</div>
+				{% endif %}
 			</div>
 		</div>
 	</div>
@@ -786,8 +822,6 @@ textarea[name=comment] {
 		</ul>
 	</div>
 </div>
-
-
 
 <div class="col-xs-12 col-sm-10">
 	<div class="row">
