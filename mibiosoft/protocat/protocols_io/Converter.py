@@ -1,6 +1,6 @@
 ﻿import json
 
-class convertor():
+class converter():
     def __init__(self):
         pass
     
@@ -19,9 +19,10 @@ class convertor():
             cat_json['description'] = io_json['description']
         else:
             cat_json['description'] = "No Description provided"       
-        cat_json['description'] += '<br/>Taken from https://www.protocols.io/view/' + io_json['uri']
+        protocol_url = 'https://www.protocols.io/view/' + io_json['uri']
+        cat_json['description'] += '\n\nTaken from <a href=' + protocol_url + '>' + protocol_url + '</a>'
 
-        if 'materials' in io_json:
+        if 'materials' in io_json and len(io_json['materials']) > 0:
             cat_json['materials'] = "<br/>".join(io_json['materials'])
         else:
             cat_json['materials'] = "No Materials Provided"
@@ -58,7 +59,7 @@ class convertor():
                 if "title" not in cat_step:
                     cat_step['title'] = ""
                 if "time" not in cat_step:
-                    cat_step['time'] = None
+                    cat_step['time'] = -1
                 if "warning" not in cat_step:
                     cat_step['warning'] = ""
                 if "time_scaling" not in cat_step:

@@ -12,7 +12,8 @@ from django.views.decorators.cache import never_cache
 from django.http import JsonResponse
 from django.db.models import Max
 import bleach
-from protocat.Converter import converter
+from protocat.protocols_io.Converter import converter
+import json
 
 def index(request):
 	current_profile_info = request.user
@@ -730,7 +731,6 @@ def import_page(request):
 	context = {
 		'title': 'ProtoCat - Upload Protocol',
 		'current_profile_info': current_profile_info,
-		'categories': categories,
 	}
 	#print(len(connection.queries))
 	if (current_profile_info == None):
@@ -739,33 +739,33 @@ def import_page(request):
 		return render(request, 'import.html', context)
 
 def import_protocol(request):
-	protocols_io_file_ = open("Converter/protocols_output.json", 'rb')
-	conv = convertor()
+	protocols_io_file_ = open("protocat/protocols_io/protocols_output.json", 'rb')
+	conv = converter()
 	protocols_io_json = json.load(protocols_io_file_)
 	if protocols_io_json:
 		cat_json = conv.convert_io_to_cat(protocols_io_json)
 	else:
 		pass
-
+	
 	current_profile_info = request.user
 	if (not current_profile_info.is_anonymous()):
 		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
 		#print(current_profile_info)
 	else:
 		current_profile_info = None
-
+	
 	try:
 		# get main data for the Protocol model
-		protocol_title = bleach.clean(protocols_io_json['title'])
-		protocol_desc = bleach.clean(protocols_io_json['description'])
-		protocol_changes = bleach.clean(protocols_io_json['change-log'])
+		protocol_title = bleach.clean(cat_json['title'])
+		protocol_desc = bleach.clean(cat_json['description'])
+		protocol_changes = bleach.clean(cat_json['change-log'])
 
 		protocol = Protocol(change_log = protocol_changes, title = protocol_title, description = protocol_desc, author = current_profile_info)
-
+		
 		protocol_cat = ""
 		try:
 			# get category and associate it with protocol
-			protocol_cat = bleach.clean(protocols_io_json['category'])
+			protocol_cat = bleach.clean(cat_json['category'])
 			cat = Category.objects.get(title = protocol_cat)
 			protocol.category = cat
 		except:
@@ -773,84 +773,33 @@ def import_protocol(request):
 
 		# associate new protocol with previous revision if necessary
 		try:
-			previous_protocol_id = bleach.clean(protocols_io_json['BranchFrom'])
-
-			if (previous_protocol_id != -1):
-				# set up previous revisions and first revision for new protocol
-				prev_protocol = Protocol.objects.get(id = previous_protocol_id)
-				protocol.previous_revision = prev_protocol
-				if (prev_protocol.first_revision != None):
-					protocol.first_revision = prev_protocol.first_revision
-				else:
-					protocol.first_revision = prev_protocol
+			previous_protocol_id = -1
 		except:
 			pass
 		protocol.save()
-
-
-		# save the steps now
-		num_steps = 0
-
-		# go over each available step
-		number_to_check = int(bleach.clean(request.POST['number_to_check']))
-		for x in range(0, number_to_check + 1):
-			try:
-				prefix = 'step' + str(x)
-				number = int(bleach.clean(request.POST[prefix + '[number]']))
-				description = bleach.clean(request.POST[prefix + '[description]'])
-
-				time = 0
-				warning = ""
-				title = ""
-
-				# try to pick up each individual part of each step
-				try:
-					warning = bleach.clean(request.POST[prefix + '[warning]'])
-					#print('found warning')
-				except:
-					warning = ""
-
-				try:
-					time = int(bleach.clean(request.POST[prefix + '[time]']))
-				except:
-					time = -1
-				#print(warning)
-				ps = ProtocolStep(action = description, warning = warning, step_number = number, time = time, protocol = protocol)
-				try:
-					title = bleach.clean(request.POST[prefix + '[title]'])
-					ps.title = title
-				except:
-					pass
-
-				ps.save()
-				num_steps = num_steps + 1
-			except:
-				# Means that the name doesn't exist
-				# print('error1')
-				pass
-
-		protocol.num_steps = num_steps
-
-
+		
+		for step in cat_json['protocol_steps']:
+			ps = ProtocolStep(action = step['action'], warning = step['warning'],\
+				step_number = step['step_number'], time = step['time'], protocol = protocol)
+			ps.save()
+		protocol.num_steps = len(cat_json['protocol_steps'])
+		
 		# get any written-in reagents and save them
-		protocol_rea = ""
 		try:
-			protocol_rea = bleach.clean(request.POST['text-reagents'])
+			protocol.materials = bleach.clean(cat_json['materials'])
 		except:
-			pass
-
-		protocol.materials = protocol_rea
+			protocol.materials = ""
 
 		protocol.save()
 
 	except Exception as e:
 		#print('error2')
-		#print(e)
+		print(e)
 		pass
 
 	context = {
 		'title': 'ProtoCat - Submit Upload',
 		'current_profile_info': current_profile_info,
 	}
-	return HttpResponseRedirect('/')
+	return HttpResponseRedirect('/import/')
 		
