@@ -32,5 +32,5 @@ urlpatterns = [
 	url(r'^github/$', views.github, name="github"),
 	url(r'^postgithub/$', views.github_post, name="githubpost"),
 	url(r'^import/$', views.import_page, name="import_page"),
-	url(r'^importprotocol/$', views.import_protocol, name="PLACEHOLDER")
+	url(r'^importprotocol/$', views.submit_import, name="submit_import_page")
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

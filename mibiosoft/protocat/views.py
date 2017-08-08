@@ -738,7 +738,7 @@ def import_page(request):
 	else:
 		return render(request, 'import.html', context)
 
-def import_protocol(request):
+def submit_import(request):
 	protocols_io_file_ = open("protocat/protocols_io/protocols_output.json", 'rb')
 	conv = converter()
 	protocols_io_json = json.load(protocols_io_file_)
