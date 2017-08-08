@@ -11,6 +11,8 @@ from django.conf import settings
 from django.views.decorators.cache import never_cache
 from django.http import JsonResponse
 from django.db.models import Max
+from django.views.generic import View, FormView
+from . import forms, models
 import bleach
 from protocat.protocols_io.Converter import converter
 import json
@@ -19,11 +21,16 @@ def index(request):
 	current_profile_info = request.user
 	if (not current_profile_info.is_anonymous()):
 		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
+
+		messages = models.Message.objects.filter(recipient = current_profile_info).filter(read = False).filter(deleted = False)
+
 	else:
 		current_profile_info = None
+		messages = [];
 	context = {
-		'title': 'ProtoCat',
+		'title': 'ProtoCat4.0',
 		'current_profile_info': current_profile_info,
+		'numMessages': len(messages),
 	}
 	return render(request, 'index.html', context)
 
@@ -83,6 +90,10 @@ def protocol(request, protocol_id):
 	except:
 		rating = None
 
+	if (current_profile_info == None):
+		is_favorite = None
+	else:
+		is_favorite = current_profile_info.favorites.filter(id = protocol.id).exists()
 
 	context = {
 		'title': protocol.title,
@@ -94,6 +105,7 @@ def protocol(request, protocol_id):
 		'aggregated_reagents': aggregated_reagents,
 		'user_rating': rating,
 		'current_profile_info': current_profile_info,
+		'is_favorite': is_favorite
 	}
 
 	return render(request, 'protocol.html', context)
@@ -797,3 +809,83 @@ def submit_import(request):
 	}
 	return HttpResponseRedirect('/')
 		
+def toggle_protocol_favorite(request, protocol_id):
+	if (request.user.profileinfo.favorites.filter(id = protocol_id)):
+		request.user.profileinfo.favorites.remove(protocol_id)
+		return JsonResponse({'success': True})
+	else:
+		request.user.profileinfo.favorites.add(protocol_id)
+		return JsonResponse({'success': False})
+
+class NewMessageView (FormView):
+	template_name = 'protoChat/new_message.html'
+	form_class = forms.NewMessageForm
+	
+	def get_context_data(self, **kwargs):
+		context = super(NewMessageView, self).get_context_data(**kwargs)
+		context['title'] = 'New Message'
+		if (self.request.user.is_anonymous()):
+			context['current_profile_info'] = None
+		else:
+			context['current_profile_info'] = self.request.user.profileinfo
+		return context
+
+	def get_initial(self):
+		initial = super(NewMessageView, self).get_initial()
+		if 'recip_name' in self.kwargs:
+			initial['recipient'] = self.kwargs['recip_name']
+		return initial
+
+	def form_valid(self, form):
+		if self.request.user.is_anonymous():
+			return redirect('root_index')
+
+		sender = ProfileInfo.objects.get(user = self.request.user)
+		recip_user = User.objects.get(username = form.cleaned_data.get('recipient'))
+		recip = ProfileInfo.objects.get(user = recip_user)
+		message = form.cleaned_data.get('message')
+
+		models.Message.objects.create(sender=sender, recipient=recip, message=message)
+		return redirect('root_index')
+
+def inbox_view(request):
+	if request.method == "POST":
+		for key in request.POST:
+			if key[:5] == 'check':
+				id = key[5:]
+				tempMessage = models.Message.objects.get(id=id)
+				tempMessage.deleted = True
+				tempMessage.save()
+
+	if request.user.is_anonymous():
+		return redirect('root_index')
+	else:
+		user = ProfileInfo.objects.get(user = request.user)
+	
+	messages = models.Message.objects.filter(recipient=user).filter(deleted=False).order_by('-timeSent')
+
+	for message in messages:
+		message.read = True
+		message.save()
+
+	context = {
+		'title': 'Inbox',
+		'message_list': messages,
+	}
+	if (request.user.is_anonymous()):
+		context['current_profile_info'] = None
+	else:
+		context['current_profile_info'] = request.user.profileinfo
+	return render(request, 'protoChat/inbox.html', context)
+
+def get_protocols_from_category(request, category_id):
+	if (category_id == ""):
+		category_id = None
+	else:
+		category_id = int(category_id)
+	protocols = Protocol.objects.all().filter(category = category_id).filter(searchable = True)
+	context = {
+		'protocols': protocols
+	}
+	return render(request, "category_browser_protocols.html", context)
+

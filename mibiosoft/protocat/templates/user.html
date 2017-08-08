@@ -14,8 +14,11 @@
 
 <div class="col-sm-12">
 	<div class="row hidden-xs">
-		<div class="col-sm-2 col-sm-offset-1">
+		<div class="col-sm-2 col-sm-offset-1" style="text-align:center;">
 			<img {% if profile_info.profile_image != "" %}src="{{ profile_info.profile_image.url }}"{% else %}src="/static/images/basic_picture.png"{% endif %} width=200 height=200 alt="Image not found" class="center-block img-responsive img-circle profile_image"/>
+			{% if user.is_authenticated %}
+			<span><a href="{% url 'new_message' recip_name=profile_info.user %}">Send Message</a></span>	
+			{% endif %}
 		</div>
 		<div class="col-sm-4 padded">
 			<h2>{{ profile_info.user }}<br/>
@@ -56,6 +59,7 @@
 			<li class="active"><a data-toggle="tab" href="#Protocols">Protocols</a></li>
 			<li><a data-toggle="tab" href="#Notes">Notes</a></li>
 			<li><a data-toggle="tab" href="#Ratings">Ratings</a></li>
+			<li><a data-toggle="tab" href="#Favorites">Favorites</a></li>
 		</ul>
 
 		<div class="panel-body">
@@ -73,6 +77,11 @@
 				<div id="Ratings" class="tab-pane fade">
 					{% for rating in user_rated_protocols %}
 					<a href="/protocol/{{ rating.protocol.id }}">{{ rating.protocol.title }}</a>, gave a {{ rating.score }} <br />
+					{% endfor %}
+				</div>
+				<div id="Favorites" class="tab-pane fade">
+					{% for favorite in profile_info.favorites.all %}
+					<a href="/protocol/{{ favorite.id }}">{{ favorite.title }}</a>, by <a href="/user/{{ favorite.author.id }}">{{ favorite.author.user }}</a><br />
 					{% endfor %}
 				</div>
 			</div>
