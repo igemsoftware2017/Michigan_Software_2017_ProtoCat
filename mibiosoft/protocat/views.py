@@ -14,7 +14,7 @@ from django.db.models import Max
 from django.views.generic import View, FormView
 from . import forms, models
 import bleach
-from protocat.protocols_io.Converter import converter
+from protocat.converter.Converter import converter
 import json
 
 def index(request):
