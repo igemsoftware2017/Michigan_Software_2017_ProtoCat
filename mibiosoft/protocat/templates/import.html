@@ -43,8 +43,8 @@
 		text-align: center;
 	}
 
-	div {
-		margin-top: 5px;
+	div #submit-box {
+		margin-top: 7px;
 	}
 
 </style>
@@ -53,10 +53,10 @@
 
 <form id="submit-form" method="POST" action="/importprotocol/" enctype="multipart/form-data" accept-charset="utf-8">
 	{% csrf_token %}
-	<label class="btn btn-default btn-file" for="upload-button">
+	<label class="btn btn-default btn-file" id="import-button" for="upload-button">
     	<input type="file" id="files" name="files[]" accept=".json, .txt"/>
 	</label>
-	<div class="col-sm-12">
+	<div class="col-sm-12" id="submit-box">
 		<div id="submit_div" class="row">
 			<div style="display: inline-block;">
 				<input type="button" id="submit-button" class="form-control" onclick="submit();" value="Import" disabled="true" disabled>
