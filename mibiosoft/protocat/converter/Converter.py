@@ -63,7 +63,7 @@ class converter():
                         cat_step['action'] += "\n\nError ocurred while parsing"
                 #print(cat_step)
                 if "title" not in cat_step:
-                    cat_step['title'] = "TEST HERE"
+                    cat_step['title'] = ""
                 if "time" not in cat_step:
                     cat_step['time'] = -1
                 if "warning" not in cat_step:
