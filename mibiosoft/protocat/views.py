@@ -14,6 +14,8 @@ from django.db.models import Max
 from django.views.generic import View, FormView
 from . import forms, models
 import bleach
+from protocat.converter.Converter import converter
+import json
 
 def index(request):
 	current_profile_info = request.user
@@ -728,6 +730,85 @@ def github_post(request):
 	gh.save()
 	return HttpResponseRedirect('/')
 
+def import_page(request):
+	current_profile_info = request.user
+	if (not current_profile_info.is_anonymous()):
+		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
+		#print(current_profile_info)
+	else:
+		current_profile_info = None
+
+	categories = Category.objects.all()
+
+	context = {
+		'title': 'ProtoCat - Upload Protocol',
+		'current_profile_info': current_profile_info,
+	}
+	#print(len(connection.queries))
+	if (current_profile_info == None):
+		return HttpResponseRedirect('/')
+	else:
+		return render(request, 'import.html', context)
+
+def submit_import(request):
+	conv = converter()
+	pio_data = request.FILES['files[]'].file.getvalue()
+
+	pio_json = json.loads(pio_data)
+	cat_json = conv.convert_io_to_cat(pio_json)
+	
+	current_profile_info = request.user
+	if (not current_profile_info.is_anonymous()):
+		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
+	else:
+		current_profile_info = None
+	
+	try:
+		# get main data for the Protocol model
+		protocol_title = cat_json['title']
+		protocol_desc = cat_json['description']
+		protocol_changes = cat_json['change-log']
+
+		protocol = Protocol(change_log = protocol_changes, title = protocol_title, description = protocol_desc, author = current_profile_info)
+		
+		protocol_cat = ""
+		try:
+			# get category and associate it with protocol
+			protocol_cat = bleach.clean(cat_json['category'])
+			cat = Category.objects.get(title = protocol_cat)
+			protocol.category = cat
+		except:
+			pass
+
+		# associate new protocol with previous revision if necessary
+		previous_protocol_id = -1
+
+		protocol.save()
+		
+		for step in cat_json['protocol_steps']:
+			ps = ProtocolStep(title=step['title'], action = step['action'], warning = step['warning'],\
+				step_number = step['step_number'], time = step['time'], protocol = protocol)
+			ps.save()
+		protocol.num_steps = len(cat_json['protocol_steps'])
+		
+		try:
+			protocol.materials = bleach.clean(cat_json['materials'])
+		except:
+			protocol.materials = ""
+
+		protocol.save()
+
+	except Exception as e:
+		#print('error2')
+		print(e)
+		pass
+
+	context = {
+		'title': 'ProtoCat - Submit Upload',
+		'current_profile_info': current_profile_info,
+	}
+	return HttpResponseRedirect('/')
+		
 def toggle_protocol_favorite(request, protocol_id):
 	if (request.user.profileinfo.favorites.filter(id = protocol_id)):
 		request.user.profileinfo.favorites.remove(protocol_id)
@@ -807,3 +888,4 @@ def get_protocols_from_category(request, category_id):
 		'protocols': protocols
 	}
 	return render(request, "category_browser_protocols.html", context)
+

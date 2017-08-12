@@ -1,0 +1,68 @@
+{% extends 'base.html' %} {% block content %}
+<script>
+	$(document).ready(function () {
+		function handleFileSelect(evt) {
+			if (window.File && window.FileReader && window.FileList && window.Blob) {
+				console.log("Enabling Submit")
+				$('input[id="submit-button"]').prop("disabled", false)
+			} else {
+				alert('The File APIs are not fully supported in this browser.');
+			}
+		}
+
+		$('#files').get(0).addEventListener('change', handleFileSelect, false);
+	});
+
+	function submit() {
+		var form_data = $('#submitForm').serializeArray();
+		form_data["Data"] = "tosend";
+		form_data["csrfmiddlewaretoken"] = $('input[name="csrfmiddlewaretoken"]').val();
+		form_data["protocol_data"] = JSON.stringify(localStorage.getItem("json_input"));
+		$.ajax({
+			type: "POST",
+			url: "/importprotocol/",
+			dataType: 'json',
+			data: JSON.stringify(form_data),
+			success: function () {
+				if (data.success) {
+					console.log("it worked")
+				}
+				else {
+					alert("Unable to import protocol - please try again.")
+				}
+			},
+			failure: function () {
+				alert("Unable to connect to the server - please try again.")
+			}
+		});
+	}
+
+</script>
+<style>
+	body {
+		text-align: center;
+	}
+
+	div #submit-box {
+		margin-top: 7px;
+	}
+
+</style>
+
+<h2>Import a protocol from <a href="https://www.protocols.io">protocols.io</a></h2>
+
+<form id="submit-form" method="POST" action="/importprotocol/" enctype="multipart/form-data" accept-charset="utf-8">
+	{% csrf_token %}
+	<label class="btn btn-default btn-file" id="import-button" for="upload-button">
+    	<input type="file" id="files" name="files[]" accept=".json, .txt"/>
+	</label>
+	<div class="col-sm-12" id="submit-box">
+		<div id="submit_div" class="row">
+			<div style="display: inline-block;">
+				<input type="button" id="submit-button" class="form-control" onclick="submit();" value="Import" disabled="true" disabled>
+			</div>
+		</div>
+	</div>
+</form>
+
+{% endblock %}
