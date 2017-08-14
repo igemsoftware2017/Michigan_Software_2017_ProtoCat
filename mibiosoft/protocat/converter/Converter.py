@@ -80,5 +80,5 @@ class converter():
             
         cat_json['category'] = None 
         cat_json['change-log'] = ""
-        cat_json['previous_revision']: "-1"
+        cat_json['previous_revision'] = "-1"
         return cat_json
