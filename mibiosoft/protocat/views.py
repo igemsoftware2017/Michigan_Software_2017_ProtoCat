@@ -723,12 +723,12 @@ def protocol_history(request, protocol_id):
 	else:
 		current_profile_info = None
 
-	protocols = Protocol.objects.all().filter(first_revision = protocol_id)
-	original_protocol = Protocol.objects.get(id = protocol_id)
+	current_protocol = Protocol.objects.all().get(id = protocol_id)
+	protocols = Protocol.objects.all().filter(first_revision = current_protocol.first_revision)
 	context = {
 		'title': 'ProtoCat',
 		'current_profile_info': current_profile_info,
 		'protocols': protocols,
-		'original_protocol': original_protocol
+		'original_protocol': current_protocol
 	}
 	return render(request, "history.html", context)

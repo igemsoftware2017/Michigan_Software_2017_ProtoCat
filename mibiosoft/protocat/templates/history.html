@@ -99,17 +99,18 @@
 			title: "{{ protocol.title }}",
 			description: "{{ protocol.description }}",
 			id: "{{ protocol.id }}",
-			parent_id: "{{ protocol.previous_revision.id }}"
+			parent_id: "{% if protocol.previous_revision != None %}{{ protocol.previous_revision.id }}{% else %}root{% endif %}"
 		},
 		{% endfor %}
 	];
+	
+	var to_add = [];
 
-	var to_add = [{
-		title: "{{ original_protocol.title }}",
-		description: "{{ protocol.description }}",
-		id: "{{ original_protocol.id }}",
-		parent_id: "root"
-	}];
+	for (var i = 0; i < protocols.length; ++i) {
+		if (protocols[i].parent_id == 'root') {
+			to_add.push(protocols[i]);
+		}
+	}
 
 	function addToMe(data) {
 		$("#" + data.parent_id).children("ul").first().html($("#" + data.parent_id).children("ul").first().html().trim() + '<li id=' + data.id + '><a href="/protocol/' + data.id + '"><svg width="30" height="30"><circle fill="#555" r="15" cx="15" cy="15" /></svg></a><ul></ul></li>');

@@ -150,7 +150,9 @@ class ProtocolViewSet(viewsets.ModelViewSet):
 												styles = ACCEPTABLE_STYLES)
 			try:
 				if (request.data['previous_revision'] != None and request.data['previous_revision'] != "-1"):
-					protocol.previous_revision = Protocol.objects.get(id = request.data['previous_revision'])
+					previous_protocol = Protocol.objects.get(id = request.data['previous_revision'])
+					protocol.previous_revision = previous_protocol
+					protocol.first_revision = previous_protocol.first_revision
 			except:
 				protocol.previous_revision = None
 			protocol.author = request.user.profileinfo
@@ -216,6 +218,10 @@ class ProtocolViewSet(viewsets.ModelViewSet):
 			protocol.num_steps = i
 			#print(i)
 			protocol.save()
+			if protocol.first_revision == None:
+				protocol.first_revision = protocol
+				protocol.save()
+
 			# save each step and each reagent
 			for step in step_list:
 				step.protocol = protocol
