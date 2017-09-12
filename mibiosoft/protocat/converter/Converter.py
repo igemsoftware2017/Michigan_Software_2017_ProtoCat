@@ -48,25 +48,26 @@ class converter():
                 for comp in step['components']:
                     if not isinstance(comp, dict):
                         #case where we have a dict here
+                        comp = step['components'][comp]
+
+                    try:
+                        if comp['name'] == "Description":
+                            cat_step['action'] += comp['data']
+                        elif comp['name'] == "Protocol":
+                            #print(step['components'][comp])
+                            url_ = "https://www.protocols.io/view/{}".format(comp['source_data']['uri'])
+                            cat_step['action'] += """ <a href="{}">{}</a> """.format(url_, url_)
+                        elif comp['name'] == "Section":
+                            cat_step['title'] = comp['data']
+                        elif comp['name'] == 'Duration / Timer':
+                            cat_step['time'] = comp['data']
+                        else:
+                            raise Exception
+                    except Exception as e:
                         print(step['components'][comp])
-                    else:
-                        try:
-                            if comp['name'] == "Description":
-                                cat_step['action'] += comp['data']
-                            elif comp['name'] == "Protocol":
-                                #print(step['components'][comp])
-                                cat_step['action'] += " https://www.protocols.io/view/" + comp['source_data']['uri']
-                            elif comp['name'] == "Section":
-                                cat_step['title'] = comp['data']
-                            elif comp['name'] == 'Duration / Timer':
-                                cat_step['time'] = comp['data']
-                            else:
-                                raise Exception
-                        except Exception as e:
-                            print(step['components'][comp])
-                            print(e, "Unknown how to handle this", comp)
-                            cat_step['action'] += "\n\nError ocurred while parsing"
-                print(cat_step)
+                        print(e, "Unknown how to handle this", comp)
+                        cat_step['action'] += "\n\nError ocurred while parsing"
+                #print(cat_step)
                 if "title" not in cat_step or cat_step['title'] is None:
                     cat_step['title'] = ""
                 if "time" not in cat_step:
