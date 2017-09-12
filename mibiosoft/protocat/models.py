@@ -148,17 +148,13 @@ class Favourite_Protocol(models.Model):
 		return self.objects.filter(fav_protocol = self.fav_protocol)
 
 #Add Group
-#Each User can only be in one group
+#Each User can be in multiple groups
 class Organization(models.Model):
     #TODO:orginaziation many to many field
-    name = models.TextField();
-    description = models.TextField();
+    name = models.TextField()
+    description = models.TextField()
     organization_image = models.ImageField(blank = True, null = True, upload_to = "media")
-    members = models.ManyToManyField(
-        ProfileInfo,
-        through = 'Membership',
-        through_fields = ('organization', 'user'),
-    )
+    protocols = models.ManyToManyField(Protocol, blank = True)
     def __str__(self):
         return str(self.name)
     def get_members(self):
@@ -167,11 +163,13 @@ class Organization(models.Model):
         for x in users:
             resultArray.append(str(x.user))
         return resultArray
-
+    def get_protocols(self):
+        return self.protocols
 
 class Membership(models.Model):
-    organization = models.ForeignKey(Organization, on_delete = models.CASCADE)
-    user = models.ForeignKey(ProfileInfo, on_delete = models.CASCADE)
+    organization = models.ForeignKey(Organization)
+    user = models.ForeignKey(ProfileInfo)
+    isAdmin = models.BooleanField()
     def __str__(self):
         return str(self.user)
 
