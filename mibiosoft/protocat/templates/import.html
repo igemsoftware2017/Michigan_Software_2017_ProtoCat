@@ -47,6 +47,21 @@
 		margin-top: 7px;
 	}
 
+	h3 {
+		border-bottom-style: solid;
+		border-bottom-width: 5px;
+	}
+
+	.image-dimension {
+		height: 300px;
+		width: auto;
+		background-position: center;
+	}
+
+	li {
+		text-align: left;
+	}
+
 </style>
 
 <h2>Import a protocol from <a href="//www.protocols.io">protocols.io</a></h2>
@@ -61,6 +76,24 @@
 			<div style="display: inline-block;">
 				<input type="button" id="submit-button" class="form-control" onclick="submit();" value="Import" disabled="true" disabled>
 			</div>
+		</div>
+	</div>
+
+	<div class="col-sm-12">
+		<div class="row">
+			<h3>How To Import</h3>
+		</div>
+		<div class="row">
+			<ol>
+				<li>Navigate to <a href="//www.protocols.io">protocols.io</a>.</li>
+				<li>Find the desired protocol. There will be an export option in the site's menu. Select Export as JSON. </li>
+				<div class="row">
+					<img class="image-dimension" src="/static/images/HowToImport.png"/>
+				</div>
+				<li>The protocol will download onto your device. Select <b>Choose File</b> on this page to select the protocol
+					from where it was saved.</li>
+					<li>Click <b>Import</b> to import to Protocat.</li>
+			</ol>
 		</div>
 	</div>
 </form>
