@@ -47,6 +47,10 @@
 		margin-top: 7px;
 	}
 
+	div #panel-box {
+		margin-top: 20px;
+	}
+
 	.image-dimension {
 		height: 300px;
 		width: auto;
@@ -61,6 +65,9 @@
 
 <h2>Import a protocol from <a href="//www.protocols.io">protocols.io</a></h2>
 
+<div class="container">
+	<div class="col-sm-12 col-sm-offest-6">
+		<div class="row">
 <form id="submit-form" method="POST" action="/importprotocol/" enctype="multipart/form-data" accept-charset="utf-8">
 	{% csrf_token %}
 	<label class="btn btn-default btn-file" id="import-button" for="upload-button">
@@ -74,10 +81,10 @@
 		</div>
 	</div>
 	</form>
+</div>
 
-	<br/>
-
-			<div class="panel panel-default">
+		<div class="row">
+			<div class="panel panel-default" id="panel-box">
 				<div class="panel-heading">
 					<h3 class="panel-title">
 						<a data-toggle="collapse" href="#collapseOne">How to Import</a>
@@ -101,6 +108,8 @@
 			</div>
 
 	</div>
-
+</div>
+</div>
+</div>
 
 {% endblock %}
