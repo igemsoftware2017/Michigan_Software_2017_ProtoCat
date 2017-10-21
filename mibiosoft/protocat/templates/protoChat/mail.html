@@ -1,0 +1,27 @@
+
+
+{% extends 'base.html' %}
+{% block content %}
+{% if user.is_authenticated %}
+
+<ul class="nav nav-tabs">
+    <li class="active"><a data-toggle="pill" href="#inbox">Home</a></li>
+    <li><a data-toggle="pill" href="#sent">Menu 1</a></li>
+    <li><a href={% url 'new_message' %}>newmessage</a></li>
+</ul>
+
+<div class="tab-content">
+    <div id="inbox">
+        {% include 'protoChat/inbox.html' %}
+    </div>
+    <div id="sent">
+        
+    </div>
+    <div id="new">
+        
+    </div>
+</div>
+
+{% endif %}
+{% endblock %}
+

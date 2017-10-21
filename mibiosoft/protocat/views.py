@@ -862,21 +862,37 @@ def inbox_view(request):
 	else:
 		user = ProfileInfo.objects.get(user = request.user)
 	
-	messages = models.Message.objects.filter(recipient=user).filter(deleted=False).order_by('-timeSent')
+	messages = models.Message.objects.filter(Q(recipient=user) | Q(sender=user)).filter(deleted=False).order_by('-timeSent')
+
+	message_chain_dict = {}
 
 	for message in messages:
-		message.read = True
-		message.save()
+		if message.recipient == user:
+			message.read = True
+			message.save()
+
+			if message.sender in message_chain_dict:
+				message_chain_dict[message.sender].append(message)
+			else:
+				message_chain_dict[message.sender] = [message]
+		else:
+			if message.sender in message_chain_dict:
+				message_chain_dict[message.sender].append(message)
+
+	the_list = message_chain_dict.values()
+	print("HELLO")
+	print(the_list)
+
 
 	context = {
 		'title': 'Inbox',
-		'message_list': messages,
+		'message_list': the_list,
 	}
 	if (request.user.is_anonymous()):
 		context['current_profile_info'] = None
 	else:
 		context['current_profile_info'] = request.user.profileinfo
-	return render(request, 'protoChat/inbox.html', context)
+	return render(request, 'protoChat/mail.html', context)
 
 def get_protocols_from_category(request, category_id):
 	if (category_id == ""):
