@@ -511,43 +511,48 @@ $(document).on('ready', function() {
 		$('#add-reagent-modal').modal('hide');
 	});
 
-	$(".question_types>li>a").on("click", function(){
-		var new_str = $(this).html();
-		$(this).parent().parent().siblings('button').children('span').first().html(new_str);
-		$(this).parent().parent().siblings('input').val(new_str);
-
-		if (new_str === "Poll"){
-			$(this).parent().parent().parent().siblings('div.options_div').children('button').trigger("click").trigger("click");
-			$(this).parent().parent().parent().siblings('div.options_div').show();
-		} else {
-			// Clear the options div
-			$(this).parent().parent().parent().siblings('div.options_div').children('div').html("");
-			$(this).parent().parent().parent().siblings('div.options_div').hide();
-		}
-	});
-
-	$(".add_option_btn").on("click", function(){
-		$(this).siblings('div').append('<div class="input-group"> \
-			<span class="input-group-btn"> \
-				<button type="button" class="btn btn-default minus_button" disabled> \
-					<span class="glyphicon glyphicon-minus"></span> \
-				</button> \
-			</span> \
-			<input name="" class="form-control" type="text" placeholder="Poll Option" /> \
-		</div>');
-
-		if ($(this).siblings('div').children().length > 2) {
-			$(this).siblings('div').find('.minus_button').prop('disabled', false);
-		}
+	$(".add_question_btn").on("click", function() {
+		var new_question = $("#hidden_question").clone().show();
+		$(this).siblings('div#question_holder').append(new_question);
 		
-		$(this).siblings('div').children().last().find(".minus_button").on('click', function() {
-			if ($(this).parent().parent().siblings().length <= 2) {
-				// Disable buttons if there are only 2 options left
-				$(this).parent().parent().siblings('div').find('.minus_button').prop('disabled', true);
-			}
+		new_question.find(".question_types>li>a").on("click", function(){
+			var new_str = $(this).html();
+			$(this).parent().parent().siblings('button').children('span').first().html(new_str);
+			$(this).parent().parent().siblings('input').val(new_str);
 
-			// Remove the just-removed option
-			$(this).parent().parent().remove();
+			if (new_str === "Poll"){
+				$(this).parent().parent().parent().siblings('div.options_div').children('button').trigger("click").trigger("click");
+				$(this).parent().parent().parent().siblings('div.options_div').show();
+			} else {
+				// Clear the options div
+				$(this).parent().parent().parent().siblings('div.options_div').children('div').html("");
+				$(this).parent().parent().parent().siblings('div.options_div').hide();
+			}
+		});
+
+		new_question.find(".add_option_btn").on("click", function(){
+			$(this).siblings('div').append('<div class="input-group"> \
+				<span class="input-group-btn"> \
+					<button type="button" class="btn btn-default minus_button" disabled> \
+						<span class="glyphicon glyphicon-minus"></span> \
+					</button> \
+				</span> \
+				<input name="" class="form-control" type="text" placeholder="Poll Option" /> \
+			</div>');
+
+			if ($(this).siblings('div').children().length > 2) {
+				$(this).siblings('div').find('.minus_button').prop('disabled', false);
+			}
+			
+			$(this).siblings('div').children().last().find(".minus_button").on('click', function() {
+				if ($(this).parent().parent().siblings().length <= 2) {
+					// Disable buttons if there are only 2 options left
+					$(this).parent().parent().siblings('div').find('.minus_button').prop('disabled', true);
+				}
+
+				// Remove the just-removed option
+				$(this).parent().parent().remove();
+			});
 		});
 	});
 });
@@ -761,14 +766,10 @@ $(document).on('ready', function() {
 
 	<input type="hidden" name="number_to_check" id="number_to_check"/>
 
-	<div id="question_holder">
-	</div>
-
-
-	<div class="metrics col-sm-12">
+	<div id="hidden_question" style="display: none;" class="metrics col-sm-12" hidden>
 		<div class="row">
 			<div class="col-sm-10">
-				<textarea  name="question_text"></textarea>
+				<textarea name="question_text"></textarea>
 			</div>
 			<div class="col-sm-2">
 				<button class="btn btn-default dropdown-toggle question_type_dropdown" type="button"  data-toggle="dropdown">
@@ -787,7 +788,12 @@ $(document).on('ready', function() {
 				<button type="button" class="btn btn-default add_option_btn">Add Option</button>
 			</div>
 		</div>
+		<hr />
 	</div>
+	
+	<div id="question_holder">
+	</div>	
+	<button type="button" class="btn btn-default add_question_btn">Add Question</button>
 	
 	<div class="col-sm-12">
 		<button type="submit" class="btn btn-primary btn-block" style="margin-bottom:15px;">Submit Protocol</button>
