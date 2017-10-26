@@ -290,7 +290,7 @@ class MetricResponse(models.Model):
 	user = models.ForeignKey(ProfileInfo)
 
 class MetricEnumQuestion(models.Model):
-	protocol = models.ForeignKey(Protocol, related_name="metric_questions")
+	protocol = models.ForeignKey(Protocol, related_name="metric_enum_questions")
 	question_text = models.TextField()
 
 class MetricEnumOption(models.Model):
