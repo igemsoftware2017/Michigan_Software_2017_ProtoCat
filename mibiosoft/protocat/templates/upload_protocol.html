@@ -384,8 +384,13 @@ $(document).on('ready', function() {
 			'materials': $('[name="text-reagents"]').val(),
 			'change_log': $('[name="change-log"]').val(),
 			'previous_revision': $('[name="BranchFrom"]').val(),
-			'protocol_steps': []
+			'protocol_steps': [],
+			'protocol_questions': []
 		};
+		$('#form').children("#question_holder").children().each(function(child_ind){
+			console.log($(this));
+		});
+		return;
 		$('#form').children('#step_holder').children('.individual-step:not(#empty-holder)').each(function() {
 			var step = {
 				"title": $(this).find('.title').val(),
