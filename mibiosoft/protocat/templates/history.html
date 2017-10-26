@@ -109,11 +109,12 @@
 	for (var i = 0; i < protocols.length; ++i) {
 		if (protocols[i].parent_id == 'root') {
 			to_add.push(protocols[i]);
+			break;
 		}
 	}
 
 	function addToMe(data) {
-		$("#" + data.parent_id).children("ul").first().html($("#" + data.parent_id).children("ul").first().html().trim() + '<li id=' + data.id + '><a href="/protocol/' + data.id + '"><svg width="30" height="30"><circle fill="#555" r="15" cx="15" cy="15" /></svg></a><ul></ul></li>');
+		$("#" + data.parent_id).children("ul").first().html($("#" + data.parent_id).children("ul").first().html().trim() + '<li id=' + data.id + '><a href="/protocol/' + data.id + '"><svg width="30" height="30"><circle title="' + data.title + '" data-toggle="popover" data-container="body" data-trigger="hover" data-content="Whatever" fill="#555" r="15" cx="15" cy="15" /></svg></a><ul></ul></li>');
 	}
 
 	$(document).on('ready', function () {
@@ -152,19 +153,10 @@
 
 
 
-		$('li > a').on("mousedown", function(e) {
+		$('li > a').on("hover", function(e) {
 			//e.stopImmediatePropagation();
 		});
-
-		$('li > a').on("touchstart", function(e) {
-			//e.stopImmediatePropagation();
-			setTimeout(function() {
-				// held for a second
-				console.log("blah 2");
-
-			}, 1000);
-			console.log("blah");
-		});
+		$('[data-toggle="popover"]').popover();
 	});
 </script>
 <div id="panZoomContainer">
