@@ -84,10 +84,6 @@
 		top: 1px;
 	}
 
-	.protocolTree circle:hover {
-		fill: #777;
-	}
-
 	#root {
 		height: 90vh;
 	}
@@ -99,7 +95,8 @@
 			title: "{{ protocol.title }}",
 			description: "{{ protocol.description }}",
 			id: "{{ protocol.id }}",
-			parent_id: "{% if protocol.previous_revision != None %}{{ protocol.previous_revision.id }}{% else %}root{% endif %}"
+			parent_id: "{% if protocol.previous_revision != None %}{{ protocol.previous_revision.id }}{% else %}root{% endif %}",
+			avg_rating: "{{ protocol.avg_rating }}"
 		},
 		{% endfor %}
 	];
@@ -114,7 +111,25 @@
 	}
 
 	function addToMe(data) {
-		$("#" + data.parent_id).children("ul").first().html($("#" + data.parent_id).children("ul").first().html().trim() + '<li id=' + data.id + '><a href="/protocol/' + data.id + '"><svg width="30" height="30"><circle title="' + data.title + '" data-toggle="popover" data-container="body" data-trigger="hover" data-content="Whatever" fill="#555" r="15" cx="15" cy="15" /></svg></a><ul></ul></li>');
+		var newText = Math.round(data.avg_rating * 100) / 100;
+		color = "#555"; 
+		colorGreen = "#1c6625";
+		colorLightGreen = "#39ba49";
+		colorRed = "#e82406";
+		colorYellow = "#ede912";
+		if (newText > 4) {
+			color = colorGreen;
+		} else if (newText > 3) {
+			color = colorLightGreen;
+		} else if (newText > 2) {
+			color = colorYellow;
+		} else if (newText > 0) {
+			color = colorRed;
+		} 
+		newText = "rating: " + newText;  
+		$("#" + data.parent_id).children("ul").first()
+			.html($("#" + data.parent_id).children("ul").first()
+			.html().trim() + '<li id=' + data.id + '><a href="/protocol/' + data.id + '"><svg width="30" height="30"><circle title="' + data.title + '" data-toggle="popover" data-container="body" data-trigger="hover" data-content="' +  newText + '" fill="' + hue + '" r="15" cx="15" cy="15" /></svg></a><ul></ul></li>');
 	}
 
 	$(document).on('ready', function () {
