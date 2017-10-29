@@ -732,7 +732,11 @@ def organization(request):
 		protocols = []
 		for x in range(number_of_org):
 			protocols.append((user_orgs[x].organization.name,user_orgs[x].organization.protocols))
-		return HttpResponse(user_orgs)
+		context = {
+			'title': 'ProtoCat',
+			'current_profile_info': current_profile_info,
+		}
+		return render(request, 'organization.html', context)
 	else:
 		current_profile_info = None
 		context = {
