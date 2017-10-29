@@ -388,9 +388,23 @@ $(document).on('ready', function() {
 			'protocol_questions': []
 		};
 		$('#form').children("#question_holder").children().each(function(child_ind){
-			console.log($(this));
+			// console.log($(this));
+			var question = {
+				"question_text": $(this).find('[name="question_text"]').val(),
+				"type": $(this).find(".selected_type").text(),
+				"options": [],
+			}
+
+			if(question["type"] === "Poll"){
+				$(this).find(".question_list").children().each(function(option_ind){
+					$(this).find(".form-control").val()
+					question["options"].push($(this).find(".form-control").val());
+				});
+			}
+			submit_data["protocol_questions"].push(question);
 		});
-		return;
+		console.log(submit_data["protocol_questions"]);
+		return
 		$('#form').children('#step_holder').children('.individual-step:not(#empty-holder)').each(function() {
 			var step = {
 				"title": $(this).find('.title').val(),
@@ -788,7 +802,7 @@ $(document).on('ready', function() {
 				</ul>
 			</div>
 			<div class="col-sm-12 options_div">
-				<div>
+				<div class="question_list">
 				</div>
 				<button type="button" class="btn btn-default add_option_btn">Add Option</button>
 			</div>
