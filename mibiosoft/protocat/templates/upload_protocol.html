@@ -403,8 +403,6 @@ $(document).on('ready', function() {
 			}
 			submit_data["protocol_questions"].push(question);
 		});
-		console.log(submit_data["protocol_questions"]);
-		return
 		$('#form').children('#step_holder').children('.individual-step:not(#empty-holder)').each(function() {
 			var step = {
 				"title": $(this).find('.title').val(),
