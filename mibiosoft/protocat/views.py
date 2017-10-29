@@ -52,6 +52,26 @@ def category_browser(request, current_parent):
 	}
 	return render(request, 'category_browser.html', context)
 
+def protocol_by_organization(request, organization_id):
+	current_profile_info = request.user
+	if (not current_profile_info.is_anonymous()):
+		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
+	else:
+		current_profile_info = None
+	organization = Organization.objects.filter(id = organization_id).first()
+	protocols = organization.protocols.all()
+	print(organization)
+	text = 'ProtoCat'
+	context = {
+		'title': 'ProtoCat - Browse Categories by Organization',
+		'parent_category': None,
+		'categories': None,
+		'protocols': protocols,
+		'current_profile_info': current_profile_info,
+	}
+	return render(request, 'category_browser.html', context)
+
+
 def protocol(request, protocol_id):
 	current_profile_info = request.user
 	if (not current_profile_info.is_anonymous()):
