@@ -690,7 +690,7 @@ def toggle_protocol(request):
 			protocol.save()
 			return JsonResponse({'success': True})
 		else:
-			return JsonResponse({'success': False}) 
+			return JsonResponse({'success': False})
 	except Exception as inst:
 		#print(inst)
 		#print("Update didn't work")
@@ -715,3 +715,28 @@ def github_post(request):
 	gh.name = request.POST['name']
 	gh.save()
 	return HttpResponseRedirect('/')
+
+def organization_create(request):
+	#create a new organization
+	return HttpResponseRedirect('/')
+
+def organization(request):
+	current_profile_info = request.user
+	if (not current_profile_info.is_anonymous()):
+		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
+		try:
+			user_orgs = Membership.objects.filter(user = current_profile_info)
+		except:
+			return HttpResponse("No active organization")
+		number_of_org = user_orgs.count()
+		protocols = []
+		for x in range(number_of_org):
+			protocols.append((user_orgs[x].organization.name,user_orgs[x].organization.protocols))
+		return HttpResponse(user_orgs)
+	else:
+		current_profile_info = None
+		context = {
+			'title': 'ProtoCat',
+			'current_profile_info': current_profile_info,
+		}
+		return render(request, 'index.html', context)

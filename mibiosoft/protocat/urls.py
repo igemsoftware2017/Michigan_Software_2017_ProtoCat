@@ -31,4 +31,5 @@ urlpatterns = [
 	url(r'^test/$', views.test, name="test"),
 	url(r'^github/$', views.github, name="github"),
 	url(r'^postgithub/$', views.github_post, name="githubpost"),
+	url(r'^organization/$', views.organization, name="orginaziation_index_page"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
