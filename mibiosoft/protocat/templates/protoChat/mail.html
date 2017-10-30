@@ -5,23 +5,21 @@
 {% if user.is_authenticated %}
 
 <ul class="nav nav-tabs">
-    <li class="active"><a data-toggle="pill" href="#inbox">Home</a></li>
-    <li><a data-toggle="pill" href="#sent">Menu 1</a></li>
-    <li><a href={% url 'new_message' %}>newmessage</a></li>
+    <li class="active"><a data-toggle="pill" href="#inbox">Inbox</a></li>
+    <!--li><a data-toggle="pill" href="#sent">Menu 1</a></li>-->
+    <li><a href={% url 'new_message' %}>New Message</a></li>
 </ul>
 
 <div class="tab-content">
-    <div id="inbox">
-        {% include 'protoChat/inbox.html' %}
+    <div id="inbox" class="tab-pane fade in active" style="width:100%">
+      {% include 'protoChat/inbox.html' %}
+    <div id="sent" class="tab-pane fade">
+
     </div>
-    <div id="sent">
-        
-    </div>
-    <div id="new">
-        
+    <div id="new" class="tab-pane fade">
+
     </div>
 </div>
 
 {% endif %}
 {% endblock %}
-

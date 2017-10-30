@@ -1,13 +1,21 @@
-{% for message_chain in message_list %}
-<b>
-	{{message_chain.0.sender}}
-</b>
-<ul>
-{% for message in message_chain %}
-			
-	
-	
-{% endfor %}
-</ul>
 
-{% endfor %}
+<div style="width:75%; margin:auto; font-size:2rem; padding-top:15px;">
+  {% for message_chain in message_list %}
+  <ul class="list-group">
+    <li class="list-group-item">
+      Messages from: <b>{{message_chain.0.sender}}</b>
+      <ul>
+        {% for message in message_chain %}
+        <li>
+          <div style="border-bottom:1px solid #aaa;">
+            <span>To: <b>{{ message.recipient }}</b></span>
+            <span style="float:right;font-size:70%;line-height:35px">{{ message.timeSent }}</span>
+          </div>
+          <p style="padding-left:25px">{{ message.message }}</p>
+        </li>
+        {% endfor %}
+      </ul>
+    </li>
+  </ul>
+  {% endfor %}
+</div>
