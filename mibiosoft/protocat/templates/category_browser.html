@@ -98,8 +98,17 @@ $(document).on('ready', function() {
 <div class="col-sm-12">
 	<div class="row">
 		{% for protocol in protocols %}
-		<div class="col-sm-6" onclick="location.href='/protocol/{{ protocol.id }}/'">
-			<div class="panel panel-default">
+		<div class="col-sm-6" >
+
+			{% if user_organizations %}
+			<button onclick="location.href='/browse'">Add To Organization</button>
+			<select>
+					{% for user_org in user_organizations %}
+					<option>{{user_org.name}}</option>
+					{% endfor %}
+			</select>
+			{% endif %}
+			<div class="panel panel-default" onclick="location.href='/protocol/{{ protocol.id }}/'">
 				<div class-"panel-heading">
 					<h3><center><strong>{{ protocol.title }}</strong></center></h3>
 					<h5><center><strong>Author: </strong>{{ protocol.author }}</center></h5>

@@ -112,7 +112,7 @@ function multiply_everything(factor) {
 					&& reagents[comp_reagent_num].unit == reagents[reagent_num].unit
 					&& reagents[comp_reagent_num].reagent_type == reagents[reagent_num].reagent_type
 					&& comp_reagent_num != reagent_num) {
-					
+
 					// subtract the other reagents from the filler
 					reagents[reagent_num].amount -= reagents[comp_reagent_num].amount;
 				}
@@ -219,8 +219,8 @@ function update_visual_data() {
 			}
 			if (correct_reagent != null) {
 				console.log(correct_reagent.preserve_units)
-				this.innerHTML = (correct_reagent.amount / Math.pow(10, correct_reagent.preserve_units)).toPrecision(correct_reagent.significant_figures) 
-					+ " " + correct_reagent.prefix + correct_reagent.unit 
+				this.innerHTML = (correct_reagent.amount / Math.pow(10, correct_reagent.preserve_units)).toPrecision(correct_reagent.significant_figures)
+					+ " " + correct_reagent.prefix + correct_reagent.unit
 					+ " of <a href=\"/reagent/" + correct_reagent.reagent_id + "\">" + correct_reagent.reagent + "</a>";
 			}
 			else {
@@ -444,7 +444,7 @@ $(document).on('ready', function(){
 		else {
 			alert("Everything is constant or you don't have enough materials")
 		}
-		
+
 	});
 	$('#recalc_products').on('click', function() {
 		// batch calc

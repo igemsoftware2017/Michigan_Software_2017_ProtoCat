@@ -41,7 +41,11 @@ def category_browser(request, current_parent):
 		current_profile_info = None
 	categories = Category.objects.filter(parent_category = current_parent)
 	protocols = Protocol.objects.filter(category = current_parent).filter(searchable = True)
-
+	memberships = Membership.objects.filter(user = current_profile_info)
+	user_orgs = []
+	for x in memberships:
+		if x.isAdmin:
+			user_orgs.append(x.organization)
 	text = 'ProtoCat'
 	context = {
 		'title': 'ProtoCat - Browse Categories',
@@ -49,6 +53,7 @@ def category_browser(request, current_parent):
 		'categories': categories,
 		'protocols': protocols,
 		'current_profile_info': current_profile_info,
+		'user_organizations': user_orgs,
 	}
 	return render(request, 'category_browser.html', context)
 
@@ -766,3 +771,6 @@ def organization(request):
 			'current_profile_info': current_profile_info,
 		}
 		return render(request, 'index.html', context)
+
+def add_organization_protocol(request, organization_id, protocol_id):
+	return HttpResponse(organization_id + " " + protocol_id)
