@@ -772,5 +772,24 @@ def organization(request):
 		}
 		return render(request, 'index.html', context)
 
-def add_organization_protocol(request, organization_id, protocol_id):
-	return HttpResponse(organization_id + " " + protocol_id)
+def add_organization_protocol(request):
+
+	current_profile_info = request.user
+	if (not current_profile_info.is_anonymous()):
+		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
+	else:
+		current_profile_info = None
+	try:
+		org_id = request.POST['organization_id']
+		pro_id = request.POST['protocol_id']
+		org = Organization.objects.get(id = org_id)
+		pro = Protocol.objects.get(id=pro_id)
+		if Organization_Protocol.objects.filter(protocol = pro, organization = org)==None:
+			org_pro = Organization_Protocol(protocol = pro, organization = org)
+			org_pro.save()
+		else:
+			print("Already exist")
+		return protocol_by_organization(request, org_id)
+	except:
+		print("error")
+	return category_default(request)
