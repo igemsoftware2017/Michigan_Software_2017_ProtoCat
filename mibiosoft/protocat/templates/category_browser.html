@@ -108,7 +108,7 @@ $(document).on('ready', function() {
 						{% endfor %}
 				</select>
 			<input type="hidden" value = "{{protocol.id}}" name="protocol_id">
-			<input type="submit" value="Add to Organization">
+			<input type="submit" class="btn btn-primary btn-xs" value="Add to Organization">
 		</form>
 			{% endif %}
 			{% if isAdmin %}
@@ -118,7 +118,7 @@ $(document).on('ready', function() {
 						<option value="{{org.id}}">{{org.name}}</option>
 				</select>
 			<input type="hidden" value = "{{protocol.id}}" name="protocol_id">
-			<input type="submit" value="Delete from Organization">
+			<input type="submit" class="btn btn-primary btn-xs" value="Delete from Organization">
 		</form>
 			{% endif %}
 			<div class="panel panel-default" onclick="location.href='/protocol/{{ protocol.id }}/'">
