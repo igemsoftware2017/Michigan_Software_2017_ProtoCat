@@ -115,6 +115,11 @@ def protocol(request, protocol_id):
 		rating = ProtocolRating.objects.get(person = current_profile_info, protocol = protocol)
 	except:
 		rating = None
+	memberships = Membership.objects.filter(user = current_profile_info)
+	user_orgs = []
+	for x in memberships:
+		if x.isAdmin:
+			user_orgs.append(x.organization)
 
 
 	context = {
@@ -127,6 +132,7 @@ def protocol(request, protocol_id):
 		'aggregated_reagents': aggregated_reagents,
 		'user_rating': rating,
 		'current_profile_info': current_profile_info,
+		'user_organizations': user_orgs,
 	}
 
 	return render(request, 'protocol.html', context)

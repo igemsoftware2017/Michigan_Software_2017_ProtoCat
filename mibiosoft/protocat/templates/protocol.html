@@ -749,6 +749,28 @@ textarea[name=comment] {
 				<a href="/upload/{{protocol.id}}">
 					<i class="fa fa-code-fork" id="fork"></i> Branch this protocol
 				</a>
+				{% if user_organizations %}
+				<form method="POST", action="/submitorganizationprotocol/" id="org_form">
+					{% csrf_token %}
+					<select name="organization_id">
+							{% for user_org in user_organizations %}
+							<option value="{{user_org.id}}">{{user_org.name}}</option>
+							{% endfor %}
+					</select>
+				<input type="hidden" value = "{{protocol.id}}" name="protocol_id">
+				<input type="submit" class="btn btn-primary btn-xs" value="Add to Organization">
+			</form>
+				{% endif %}
+				{% if isAdmin %}
+				<form method="POST", action="/deleteorganizationprotocol/" id="org_form">
+					{% csrf_token %}
+					<select name="organization_id">
+							<option value="{{org.id}}">{{org.name}}</option>
+					</select>
+				<input type="hidden" value = "{{protocol.id}}" name="protocol_id">
+				<input type="submit" class="btn btn-primary btn-xs" value="Delete from Organization">
+			</form>
+				{% endif %}
 			</div>
 			<div class="col-sm-2 hidden-xs protocol-author-picture fix-margin-top pull-right">
 				<a href="/user/{{ protocol.author.id }}/">
