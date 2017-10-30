@@ -67,7 +67,8 @@ def protocol_by_organization(request, organization_id):
 	protocols = Organization_Protocol.objects.filter(organization = org)
 	isAdmin = None
 	try:
-		isAdmin = Membership.objects.get(user = current_profile_info, organization = org).isAdmin
+		if Membership.objects.get(user = current_profile_info, organization = org).isAdmin:
+			isAdmin = True
 	except:
 		print("no valid user or organization")
 	result_pro = []
@@ -791,7 +792,7 @@ def add_organization_protocol(request):
 		pro_id = request.POST['protocol_id']
 		org = Organization.objects.get(id = org_id)
 		pro = Protocol.objects.get(id=pro_id)
-		if Organization_Protocol.objects.filter(protocol = pro, organization = org)==None:
+		if Organization_Protocol.objects.filter(protocol = pro, organization = org).count()==0:
 			org_pro = Organization_Protocol(protocol = pro, organization = org)
 			org_pro.save()
 		else:
