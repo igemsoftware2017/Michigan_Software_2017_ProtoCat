@@ -228,9 +228,34 @@ class ProtocolViewSet(viewsets.ModelViewSet):
 					if (reagent.protocol_step_number == step.step_number):
 						reagent.protocol_step = step
 						reagent.save()
+
+			for question in request.data["protocol_questions"]:
+				print(question)
+				new_question = None
+				if question["type"] == "Poll":
+					print("METRIC ENUM QUESTION")
+					new_question = MetricEnumQuestion()
+					new_question.protocol = protocol
+					new_question.save()
+					for option in question["options"]:
+						new_opt = MetricEnumOption()
+						new_opt.enum_question = new_question
+						new_opt.option_text = option
+						new_opt.save()
+				else:
+					print("METRIC QUESTION")
+					new_question = MetricQuestion()
+					new_question.protocol = protocol
+					new_question.question_type = question["type"]
+
+				new_question.question_text = question["question_text"]
+				new_question.save()
+
+			print(protocol.metric_questions)
+
 			return Response({'success': True, 'location': '/protocol/' + str(protocol.id)})
 		except Exception as inst:
-			#print(inst)
+			print(inst)
 			return Response({'success': False, 'error': str(inst)})
 
 class ProfileViewSet(viewsets.ModelViewSet):

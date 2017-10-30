@@ -15,6 +15,11 @@ class CategoryAdmin(admin.ModelAdmin):
 	class Meta:
 		model = Category
 
+class MetricQuestionAdmin(admin.ModelAdmin):
+	list_display = ["__str__", "question_text"]
+	class Meta:
+		model = MetricQuestion
+
 class ReagentAdmin(admin.ModelAdmin):
 	list_display = ["__str__", "get_website"]
 	class Meta:
@@ -65,3 +70,4 @@ admin.site.register(ProtocolRating, ProtocolRatingAdmin)
 admin.site.register(ProtocolComment, ProtocolCommentAdmin)
 admin.site.register(GithubId, GithubIdAdmin)
 admin.site.register(Message, MessageAdmin)
+admin.site.register(MetricQuestion, MetricQuestionAdmin)
