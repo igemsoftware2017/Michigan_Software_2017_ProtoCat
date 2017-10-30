@@ -867,17 +867,24 @@ def inbox_view(request):
 	message_chain_dict = {}
 
 	for message in messages:
+
 		if message.recipient == user:
 			message.read = True
 			message.save()
 
-			if message.sender in message_chain_dict:
-				message_chain_dict[message.sender].append(message)
-			else:
-				message_chain_dict[message.sender] = [message]
+		user_in_question = message.sender
+		if user_in_question == user:
+			user_in_question = message.recipient
+
+		if user_in_question in message_chain_dict:
+			message_chain_dict[user_in_question].append(message)
 		else:
-			if message.sender in message_chain_dict:
-				message_chain_dict[message.sender].append(message)
+			message_chain_dict[user_in_question] = [message]
+			
+			# if message.recipient == user:
+			# 	message_chain_dict[message.sender] = [message]
+			# else:
+			# 	message_chain_dict[message.recipient] = [message]
 
 	the_list = message_chain_dict.values()
 

@@ -3,7 +3,11 @@
   {% for message_chain in message_list %}
   <ul class="list-group">
     <li class="list-group-item">
+      {% if message_chain.0.sender != me %}
       Messages from: <b>{{message_chain.0.sender}}</b>
+      {% else %}
+      Messages from: <b>{{message_chain.0.recipient}}</b>
+      {% endif %}
       <ul>
         {% for message in message_chain %}
         <li>
