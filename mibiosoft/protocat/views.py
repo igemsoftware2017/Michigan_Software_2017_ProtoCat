@@ -58,15 +58,19 @@ def protocol_by_organization(request, organization_id):
 		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
 	else:
 		current_profile_info = None
-	organization = Organization.objects.filter(id = organization_id).first()
-	protocols = organization.protocols.all()
+	org = Organization.objects.filter(id = organization_id)
+	protocols = Organization_Protocol.objects.filter(organization = org)
+	result_pro = []
+	for protocol in protocols:
+		result_pro.append(Protocol.objects.get(id = protocol.protocol.id))
+
 	print(organization)
 	text = 'ProtoCat'
 	context = {
 		'title': 'ProtoCat - Browse Categories by Organization',
 		'parent_category': None,
 		'categories': None,
-		'protocols': protocols,
+		'protocols': result_pro,
 		'current_profile_info': current_profile_info,
 	}
 	return render(request, 'category_browser.html', context)
@@ -750,8 +754,6 @@ def organization(request):
 			return HttpResponse("No active organization")
 		number_of_org = user_orgs.count()
 		protocols = []
-		for x in range(number_of_org):
-			protocols.append((user_orgs[x].organization.name,user_orgs[x].organization.protocols))
 		context = {
 			'title': 'ProtoCat',
 			'current_profile_info': current_profile_info,

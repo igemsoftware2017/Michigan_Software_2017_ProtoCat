@@ -154,7 +154,6 @@ class Organization(models.Model):
     name = models.TextField()
     description = models.TextField()
     organization_image = models.ImageField(blank = True, null = True, upload_to = "media")
-    protocols = models.ManyToManyField(Protocol, blank = True)
     def __str__(self):
         return str(self.name)
     def get_members(self):
@@ -163,8 +162,6 @@ class Organization(models.Model):
         for x in users:
             resultArray.append(str(x.user))
         return resultArray
-    def get_protocols(self):
-        return self.protocols
 
 class Membership(models.Model):
     organization = models.ForeignKey(Organization)
@@ -172,6 +169,13 @@ class Membership(models.Model):
     isAdmin = models.BooleanField()
     def __str__(self):
         return str(self.user)
+
+class Organization_Protocol(models.Model):
+    organization = models.ForeignKey(Organization)
+    protocol = models.ForeignKey(Protocol)
+    def __str__(self):
+        return str(self.organization)
+
 
 # the data for each protocol step
 class ProtocolStep(models.Model):

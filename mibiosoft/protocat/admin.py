@@ -58,6 +58,9 @@ class OrganizationAdmin(admin.ModelAdmin):
 
 class MembershipAdmin(admin.ModelAdmin):
 	list_display = ["organization", "user"]
+
+class Organization_ProtocolAdmin(admin.ModelAdmin):
+	list_display = ["__str__", "protocol"]
 # Register your models here.
 
 admin.site.register(ProfileInfo, ProfileInfoAdmin)
@@ -72,3 +75,4 @@ admin.site.register(GithubId, GithubIdAdmin)
 admin.site.register(Favourite_Protocol, Favourite_ProtocolAdmin)
 admin.site.register(Organization, OrganizationAdmin)
 admin.site.register(Membership, MembershipAdmin)
+admin.site.register(Organization_Protocol, Organization_ProtocolAdmin)
