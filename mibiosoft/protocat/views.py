@@ -880,13 +880,11 @@ def inbox_view(request):
 				message_chain_dict[message.sender].append(message)
 
 	the_list = message_chain_dict.values()
-	print("HELLO")
-	print(the_list)
-
 
 	context = {
 		'title': 'Inbox',
 		'message_list': the_list,
+		'me': user,
 	}
 	if (request.user.is_anonymous()):
 		context['current_profile_info'] = None

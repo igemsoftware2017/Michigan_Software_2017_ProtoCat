@@ -8,7 +8,11 @@
         {% for message in message_chain %}
         <li>
           <div style="border-bottom:1px solid #aaa;">
+            {% if message.recipient == me %}
+            <span>From: <b>{{ message.sender }}</b></span>
+            {% else %}
             <span>To: <b>{{ message.recipient }}</b></span>
+            {% endif %}
             <span style="float:right;font-size:70%;line-height:35px">{{ message.timeSent }}</span>
           </div>
           <p style="padding-left:25px">{{ message.message }}</p>
