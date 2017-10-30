@@ -34,4 +34,5 @@ urlpatterns = [
 	url(r'^organization/$', views.organization, name="orginaziation_index_page"),
 	url(r'^organization/(?P<organization_id>[0-9]+)$', views.protocol_by_organization, name="orginization_protocol_page"),
 	url(r'^submitorganizationprotocol/$', views.add_organization_protocol, name="organization_protocol__add_page"),
+	url(r'^deleteorganizationprotocol/$', views.delete_organization_protocol, name="organization_protocol__delete_page"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

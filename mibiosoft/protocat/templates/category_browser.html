@@ -108,7 +108,17 @@ $(document).on('ready', function() {
 						{% endfor %}
 				</select>
 			<input type="hidden" value = "{{protocol.id}}" name="protocol_id">
-			<input type="submit" value="Submit">
+			<input type="submit" value="Add to Organization">
+		</form>
+			{% endif %}
+			{% if isAdmin %}
+			<form method="POST", action="/deleteorganizationprotocol/" id="org_form">
+				{% csrf_token %}
+				<select name="organization_id">
+						<option value="{{org.id}}">{{org.name}}</option>
+				</select>
+			<input type="hidden" value = "{{protocol.id}}" name="protocol_id">
+			<input type="submit" value="Delete from Organization">
 		</form>
 			{% endif %}
 			<div class="panel panel-default" onclick="location.href='/protocol/{{ protocol.id }}/'">

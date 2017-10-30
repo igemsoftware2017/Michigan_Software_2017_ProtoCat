@@ -63,13 +63,16 @@ def protocol_by_organization(request, organization_id):
 		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
 	else:
 		current_profile_info = None
-	org = Organization.objects.filter(id = organization_id)
+	org = Organization.objects.get(id = organization_id)
 	protocols = Organization_Protocol.objects.filter(organization = org)
+	isAdmin = None
+	try:
+		isAdmin = Membership.objects.get(user = current_profile_info, organization = org).isAdmin
+	except:
+		print("no valid user or organization")
 	result_pro = []
 	for protocol in protocols:
 		result_pro.append(Protocol.objects.get(id = protocol.protocol.id))
-
-	print(organization)
 	text = 'ProtoCat'
 	context = {
 		'title': 'ProtoCat - Browse Categories by Organization',
@@ -77,6 +80,8 @@ def protocol_by_organization(request, organization_id):
 		'categories': None,
 		'protocols': result_pro,
 		'current_profile_info': current_profile_info,
+		'isAdmin': isAdmin,
+		'org': org,
 	}
 	return render(request, 'category_browser.html', context)
 
@@ -754,14 +759,16 @@ def organization(request):
 	if (not current_profile_info.is_anonymous()):
 		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
 		try:
-			user_orgs = Membership.objects.filter(user = current_profile_info)
+			memberships = Membership.objects.filter(user = current_profile_info)
 		except:
 			return HttpResponse("No active organization")
-		number_of_org = user_orgs.count()
-		protocols = []
+		organizations = []
+		for x in memberships:
+			organizations.append(x.organization)
 		context = {
 			'title': 'ProtoCat',
 			'current_profile_info': current_profile_info,
+			'organizations': organizations,
 		}
 		return render(request, 'organization.html', context)
 	else:
@@ -793,3 +800,23 @@ def add_organization_protocol(request):
 	except:
 		print("error")
 	return category_default(request)
+
+def delete_organization_protocol(request):
+	current_profile_info = request.user
+	if (not current_profile_info.is_anonymous()):
+		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
+	else:
+		current_profile_info = None
+	try:
+		org_id = request.POST['organization_id']
+		pro_id = request.POST['protocol_id']
+		org = Organization.objects.get(id = org_id)
+		pro = Protocol.objects.get(id=pro_id)
+		if Organization_Protocol.objects.filter(protocol = pro, organization = org)==None:
+			print("Entry does not exist")
+		else:
+			Organization_Protocol.objects.filter(protocol = pro, organization = org).delete()
+		return protocol_by_organization(request, org_id)
+	except:
+		print("error")
+		return category_default(request)
