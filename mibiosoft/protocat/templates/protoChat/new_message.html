@@ -1,42 +1,53 @@
 {% extends 'base.html' %}
 
 {% block content %}
-{% if user.is_authenticated %}
-<form method="Post">
-    {% csrf_token %}
-    <div class = "row">
+<ul class="nav nav-tabs">
+  <li><a href={% url 'inbox'%}>Inbox</a></li>
+  <!--li><a data-toggle="pill" href="#sent">Menu 1</a></li>-->
+  <li class="active"><a href={% url 'new_message' %}>New Message</a></li>
+</ul>
+
+<div class="tab-content">
+  <div id="new" class="tab-pane fade in active">
+
+    {% if user.is_authenticated %}
+    <form method="Post">
+      {% csrf_token %}
+      <div class = "row">
         <div class="col-xs-12">
-                {% for error in form.non_field_errors %}
-                    <span class="text-danger">{{ error }}</span>
-                {% endfor %}
+          {% for error in form.non_field_errors %}
+          <span class="text-danger">{{ error }}</span>
+          {% endfor %}
         </div>
-    </div>
+      </div>
 
-    <br>
+      <br>
 
-    {% for field in form %}
-        <div class="row">
+      {% for field in form %}
+      <div class="row">
         <div class = "col-xs-12">
-        <div class ="form-group">
+          <div class ="form-group">
 
-                {% for error in field.errors %}
-                    <span class="text-danger small">{{ error }}</span>
-                {% endfor %}
+            {% for error in field.errors %}
+            <span class="text-danger small">{{ error }}</span>
+            {% endfor %}
 
-                <label class = "control-label col-xs-2">{{ field.label_tag }}</label>
-                <div class="col-xs-9">{{ field }}</div>
-            </div>
+            <label class = "control-label col-xs-2">{{ field.label_tag }}</label>
+            <div class="col-xs-9">{{ field }}</div>
+          </div>
         </div>
-        </div>
-    {% endfor %}
+      </div>
+      {% endfor %}
 
-    <div class = "row">
+      <div class = "row">
         <div class="col-xs-5 col-xs-offset-0">
-            <button type="submit" class="btn">Submit</button>
+          <button type="submit" class="btn">Submit</button>
         </div>
-    </div>
-</form>
-{% else %}
-<p>Must be logged in</p>
-{% endif %}
+      </div>
+    </form>
+    {% else %}
+    <p>Must be logged in</p>
+    {% endif %}
+  </div>
+</div>
 {% endblock %}
