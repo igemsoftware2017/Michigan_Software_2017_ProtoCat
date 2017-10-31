@@ -112,7 +112,7 @@ function multiply_everything(factor) {
 					&& reagents[comp_reagent_num].unit == reagents[reagent_num].unit
 					&& reagents[comp_reagent_num].reagent_type == reagents[reagent_num].reagent_type
 					&& comp_reagent_num != reagent_num) {
-					
+
 					// subtract the other reagents from the filler
 					reagents[reagent_num].amount -= reagents[comp_reagent_num].amount;
 				}
@@ -219,8 +219,8 @@ function update_visual_data() {
 			}
 			if (correct_reagent != null) {
 				console.log(correct_reagent.preserve_units)
-				this.innerHTML = (correct_reagent.amount / Math.pow(10, correct_reagent.preserve_units)).toPrecision(correct_reagent.significant_figures) 
-					+ " " + correct_reagent.prefix + correct_reagent.unit 
+				this.innerHTML = (correct_reagent.amount / Math.pow(10, correct_reagent.preserve_units)).toPrecision(correct_reagent.significant_figures)
+					+ " " + correct_reagent.prefix + correct_reagent.unit
 					+ " of <a href=\"/reagent/" + correct_reagent.reagent_id + "\">" + correct_reagent.reagent + "</a>";
 			}
 			else {
@@ -444,7 +444,7 @@ $(document).on('ready', function() {
 		else {
 			alert("Everything is constant or you don't have enough materials")
 		}
-		
+
 	});
 	$('#recalc_products').on('click', function() {
 		// batch calc
@@ -780,6 +780,28 @@ textarea[name=comment] {
 				<a href="/upload/{{protocol.id}}">
 					<i class="fa fa-code-fork" id="fork"></i> Branch this protocol
 				</a>
+				{% if user_organizations %}
+				<form method="POST", action="/submitorganizationprotocol/" id="org_form">
+					{% csrf_token %}
+					<select name="organization_id">
+							{% for user_org in user_organizations %}
+							<option value="{{user_org.id}}">{{user_org.name}}</option>
+							{% endfor %}
+					</select>
+				<input type="hidden" value = "{{protocol.id}}" name="protocol_id">
+				<input type="submit" class="btn btn-primary btn-xs" value="Add to Organization">
+			</form>
+				{% endif %}
+				{% if isAdmin %}
+				<form method="POST", action="/deleteorganizationprotocol/" id="org_form">
+					{% csrf_token %}
+					<select name="organization_id">
+							<option value="{{org.id}}">{{org.name}}</option>
+					</select>
+				<input type="hidden" value = "{{protocol.id}}" name="protocol_id">
+				<input type="submit" class="btn btn-primary btn-xs" value="Delete from Organization">
+			</form>
+				{% endif %}
 			</div>
 			<div class="col-sm-2 hidden-xs protocol-author-picture fix-margin-top pull-right">
 				<a href="/user/{{ protocol.author.id }}/">
@@ -893,6 +915,7 @@ textarea[name=comment] {
 						</div>
 
 						<div id="Changelog" class="tab-pane fade">
+							<a href="/history/{{ protocol.id }}/">View visual history of this protocol</a>
 							{{ protocol.change_log|safe }}<br><br>
 							{% if protocol.previous_revision %}
 							<a href="/protocol/{{ protocol.previous_revision.id }}">Previous Revision</a><br>

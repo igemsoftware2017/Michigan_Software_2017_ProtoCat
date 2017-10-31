@@ -53,11 +53,22 @@ class GithubIdAdmin(admin.ModelAdmin):
 	class Meta:
 		model = GithubId
 
+class Favourite_ProtocolAdmin(admin.ModelAdmin):
+	list_display = ["__str__", "fav_protocol"]
+	class Meta:
+		model = Favourite_Protocol
+
+class OrganizationAdmin(admin.ModelAdmin):
+	list_display = ["__str__", "get_members"]
+
+class MembershipAdmin(admin.ModelAdmin):
+	list_display = ["organization", "user"]
 class MessageAdmin(admin.ModelAdmin):
 	class Meta:
 		model = Message
 
-
+class Organization_ProtocolAdmin(admin.ModelAdmin):
+	list_display = ["__str__", "protocol"]
 # Register your models here.
 
 admin.site.register(ProfileInfo, ProfileInfoAdmin)
@@ -71,3 +82,7 @@ admin.site.register(ProtocolComment, ProtocolCommentAdmin)
 admin.site.register(GithubId, GithubIdAdmin)
 admin.site.register(Message, MessageAdmin)
 admin.site.register(MetricQuestion, MetricQuestionAdmin)
+admin.site.register(Favourite_Protocol, Favourite_ProtocolAdmin)
+admin.site.register(Organization, OrganizationAdmin)
+admin.site.register(Membership, MembershipAdmin)
+admin.site.register(Organization_Protocol, Organization_ProtocolAdmin)
