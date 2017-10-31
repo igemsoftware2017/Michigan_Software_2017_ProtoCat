@@ -1,5 +1,7 @@
 {% extends 'base.html' %} {% block content %}
 
+{% load app_filters %}
+
 <script src="/static/js/jquery.panzoom.min.js"></script>
 <style>
 	.protocolTree ul {
@@ -101,11 +103,11 @@
 		{% for protocol in protocols %}
 		{
 			title: "{{ protocol.title }}",
-			description: "{% spaceless %}{{ protocol.description }}{% endspaceless %}",
+			description: "{{ protocol.description|replace_linebr }}",
 			id: "{{ protocol.id }}",
 			parent_id: "{% if protocol.previous_revision != None %}{{ protocol.previous_revision.id }}{% else %}root{% endif %}",
 			avg_rating: "{{ protocol.avg_rating }}", 
-			change_log: "{% spaceless %}{{ protocol.change_log }}{% endspaceless %}", 
+			change_log: "{{ protocol.change_log|replace_linebr }}", 
 			is_hidden: {% if not protocol.searchable %}true{% else %}false{% endif %}
 		},
 		{% endfor %}

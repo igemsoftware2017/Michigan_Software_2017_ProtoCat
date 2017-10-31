@@ -17,6 +17,7 @@ import bleach
 from protocat.converter.Converter import converter
 import json
 
+
 def index(request):
 	current_profile_info = request.user
 	if (not current_profile_info.is_anonymous()):
