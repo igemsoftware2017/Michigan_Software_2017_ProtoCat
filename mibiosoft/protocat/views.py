@@ -136,6 +136,23 @@ def protocol(request, protocol_id):
 	else:
 		is_favorite = current_profile_info.favorites.filter(id = protocol.id).exists()
 
+	# Get the questions associated with the Protocol
+	questions = MetricQuestion.objects.filter(protocol = protocol)
+	enum_qs = MetricEnumQuestion.objects.filter(protocol = protocol)
+	enum_questions = []
+	for question in enum_qs:
+		enum_ = {}
+		enum_['id'] = question.id
+		enum_['question_text'] = question.question_text
+		enum_['options'] = []
+		opts = MetricEnumOption.objects.filter(enum_question = question)
+		for option in opts:
+			val = {}
+			val['text'] = option.option_text
+			val['id'] = option.id
+			enum_['options'].append(val)
+		enum_questions.append(enum_)
+
 	context = {
 		'title': protocol.title,
 		'protocol': protocol,
@@ -147,7 +164,9 @@ def protocol(request, protocol_id):
 		'user_rating': rating,
 		'current_profile_info': current_profile_info,
 		'user_organizations': user_orgs,
-		'is_favorite': is_favorite
+		'is_favorite': is_favorite,
+		'questions': questions,
+		'enum_questions': enum_questions,
 	}
 
 	return render(request, 'protocol.html', context)
