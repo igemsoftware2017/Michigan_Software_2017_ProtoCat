@@ -31,6 +31,7 @@ urlpatterns = [
 	url(r'^getcategoryprotocols/(?P<category_id>[0-9]*)$', views.get_protocols_from_category, name="update_profile"),
 	url(r'^test/$', views.test, name="test"),
 	url(r'^github/$', views.github, name="github"),
+	url(r'^history/(?P<protocol_id>[0-9]+)/$', views.protocol_history, name="history"),
 	url(r'^postgithub/$', views.github_post, name="githubpost"),
 	url(r'^organization/$', views.organization, name="orginaziation_index_page"),
 	url(r'^organization/(?P<organization_id>[0-9]+)$', views.protocol_by_organization, name="orginization_protocol_page"),

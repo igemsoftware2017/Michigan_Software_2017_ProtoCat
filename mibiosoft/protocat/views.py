@@ -26,7 +26,7 @@ def index(request):
 
 	else:
 		current_profile_info = None
-		messages = [];
+		messages = []
 	context = {
 		'title': 'ProtoCat4.0',
 		'current_profile_info': current_profile_info,
@@ -771,6 +771,22 @@ def github_post(request):
 	gh.save()
 	return HttpResponseRedirect('/')
 
+def protocol_history(request, protocol_id):
+	current_profile_info = request.user
+	if (not current_profile_info.is_anonymous()):
+		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
+	else:
+		current_profile_info = None
+	current_protocol = Protocol.objects.all().get(id = protocol_id)
+	protocols = Protocol.objects.all().filter(first_revision = current_protocol.first_revision)
+	context = {
+		'title': 'ProtoCat',
+		'current_profile_info': current_profile_info,
+		'protocols': protocols,
+		'original_protocol': current_protocol
+	}
+	return render(request, "history.html", context)
+
 def organization_create(request):
 	#create a new organization
 	return HttpResponseRedirect('/')
@@ -801,7 +817,6 @@ def organization(request):
 		return render(request, 'index.html', context)
 
 def add_organization_protocol(request):
-
 	current_profile_info = request.user
 	if (not current_profile_info.is_anonymous()):
 		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
@@ -847,7 +862,6 @@ def import_page(request):
 	current_profile_info = request.user
 	if (not current_profile_info.is_anonymous()):
 		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
-		#print(current_profile_info)
 	else:
 		current_profile_info = None
 
@@ -857,7 +871,6 @@ def import_page(request):
 		'title': 'ProtoCat - Upload Protocol',
 		'current_profile_info': current_profile_info,
 	}
-	#print(len(connection.queries))
 	if (current_profile_info == None):
 		return HttpResponseRedirect('/')
 	else:

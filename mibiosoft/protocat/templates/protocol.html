@@ -915,6 +915,7 @@ textarea[name=comment] {
 						</div>
 
 						<div id="Changelog" class="tab-pane fade">
+							<a href="/history/{{ protocol.id }}/">View visual history of this protocol</a>
 							{{ protocol.change_log|safe }}<br><br>
 							{% if protocol.previous_revision %}
 							<a href="/protocol/{{ protocol.previous_revision.id }}">Previous Revision</a><br>

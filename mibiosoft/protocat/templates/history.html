@@ -1,0 +1,260 @@
+{% extends 'base.html' %} {% block content %}
+
+<script src="/static/js/jquery.panzoom.min.js"></script>
+<style>
+	.protocolTree ul {
+		position: relative;
+		padding: 1em 0;
+		white-space: nowrap;
+		margin: 0 auto;
+		text-align: center;
+	}
+
+	.protocolTree ul::after {
+		content: '';
+		display: table;
+		clear: both;
+	}
+
+	.protocolTree li {
+		display: inline-block;
+		vertical-align: top;
+		text-align: center;
+		list-style-type: none;
+		position: relative;
+		padding: 1em .5em 0 .5em;
+	}
+
+	.protocolTree li::before,
+	.protocolTree li::after {
+		content: '';
+		position: absolute;
+		top: 0;
+		right: 48%;
+		border-top: 2px solid #ccc;
+		width: 60%;
+		height: 1em;
+	}
+
+	.protocolTree li::after {
+		right: auto;
+		left: 48%;
+		border-left: 2px solid #ccc;
+	}
+
+	.protocolTree li:only-child::after,
+	.protocolTree li:only-child::before {
+		display: none;
+	}
+
+	.protocolTree li:only-child {
+		padding-top: 0;
+	}
+
+	.protocolTree li:first-child::before,
+	.protocolTree li:last-child::after {
+		border: 0 none;
+	}
+
+	.protocolTree li:last-child::before {
+		border-right: 2px solid #ccc;
+		border-radius: 0 5px 0 0;
+	}
+
+	.protocolTree li:first-child::after {
+		border-radius: 5px 0 0 0;
+	}
+
+	.protocolTree ul ul::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 49.25%;
+		border-left: 2px solid #ccc;
+		width: 0;
+		height: 1em;
+	}
+
+	.protocolTree li a {
+		text-decoration: none;
+		display: inline-block;
+		border-radius: 5px;
+		color: #666;
+		position: relative;
+		top: 1px;
+	}
+
+	#root {
+		height: 90vh;
+	}
+
+	#key {
+		position: absolute;
+		top: 0px;
+		left: 0px;
+		z-index: 1000;
+		padding: 15px;
+	}
+</style>
+<script>
+	var protocols = [
+		{% for protocol in protocols %}
+		{
+			title: "{{ protocol.title }}",
+			description: "{{ protocol.description }}",
+			id: "{{ protocol.id }}",
+			parent_id: "{% if protocol.previous_revision != None %}{{ protocol.previous_revision.id }}{% else %}root{% endif %}",
+			avg_rating: "{{ protocol.avg_rating }}", 
+			change_log: "{{ protocol.change_log }}", 
+			is_hidden: {% if not protocol.searchable %}true{% else %}false{% endif %}
+		},
+		{% endfor %}
+	];
+	
+	var to_add = [];
+
+	for (var i = 0; i < protocols.length; ++i) {
+		if (protocols[i].parent_id == 'root') {
+			to_add.push(protocols[i]);
+			break;
+		}
+	}
+
+	/**
+	 * Converts an HSL color value to RGB. Conversion formula
+	 * adapted from http://en.wikipedia.org/wiki/HSL_color_space.
+	 * Assumes h, s, and l are contained in the set [0, 1] and
+	 * returns r, g, and b in the set [0, 255].
+	 *
+	 * @param   {number}  h       The hue
+	 * @param   {number}  s       The saturation
+	 * @param   {number}  l       The lightness
+	 * @return  {Array}           The RGB representation
+	 */
+	function hslToRgb(h, s, l){
+		var r, g, b;
+
+		if(s == 0){
+			r = g = b = l; // achromatic
+		}else{
+			var hue2rgb = function hue2rgb(p, q, t){
+				if(t < 0) t += 1;
+				if(t > 1) t -= 1;
+				if(t < 1/6) return p + (q - p) * 6 * t;
+				if(t < 1/2) return q;
+				if(t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+				return p;
+			}
+
+			var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+			var p = 2 * l - q;
+			r = hue2rgb(p, q, h + 1/3);
+			g = hue2rgb(p, q, h);
+			b = hue2rgb(p, q, h - 1/3);
+		}
+
+		return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+	}
+	/* to translate rgb colors to hex in addToMe */
+	function rgbToHex(r, g, b) {
+		return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+	}
+
+
+	function addToMe(data) {
+		var average = Math.round(data.avg_rating * 100) / 100;
+
+		/* calculates a hue in rgb based on average rating */
+		var hue = (average - 1) * 1 / 4 * 120 / 360;
+		var saturation = 0.90;
+		var lightness = average != 0 ? 0.60 : 0;
+
+		var rgb = hslToRgb(hue, saturation, lightness);
+		var color = rgbToHex(rgb[0], rgb[1], rgb[2]);
+
+		/* sets a transparency value */
+		var transparencyVal = 1;
+		if (data.is_hidden) {
+			transparencyVal = 0.5;
+		}
+
+
+		average = "<p>Average Rating: " + average + "</p><p>Change log: " + data.change_log + "</p>";  
+		$("#" + data.parent_id).children("ul").first()
+			.html($("#" + data.parent_id).children("ul").first()
+			.html().trim() + '<li id=' + data.id + '><a href="/protocol/' + data.id + '"><svg width="30" height="30"><circle title="' + data.title + '" data-toggle="popover" data-container="body" data-html="true" data-trigger="hover" data-content="' +  average + '" fill="' + color  + '" fill-opacity="' + transparencyVal + '" r="15" cx="15" cy="15" /></svg></a><ul></ul></li>');
+	}
+
+	$(document).on('ready', function () {
+		var parent_id;
+		while (to_add.length != 0) {
+			temp = to_add.pop();
+			addToMe(temp);
+			parent_id = temp.id;
+			for (i = 0; i < protocols.length; ++i) {
+				if (parent_id == protocols[i].parent_id) {
+					to_add.push(protocols[i]);
+					protocols.splice(i, 1);
+				}
+			}
+		}
+
+		$("#root ul:empty").remove();
+		var zoom = $('#root').panzoom({
+			transition: true
+		});
+
+		zoom.parent().on('mousewheel.focal', function (e) {
+			e.preventDefault();
+			var delta = e.delta || e.originalEvent.wheelDelta;
+			var zoomOut = delta ? delta < 0 : e.originalEvent.deltaY > 0;
+			zoom.panzoom('zoom', zoomOut, {
+				increment: 0.1,
+				animate: false,
+				focal: e
+			});
+		});
+
+
+
+
+		$('li > a').on("hover", function(e) {
+			//e.stopImmediatePropagation();
+		});
+		$('[data-toggle="popover"]').popover();
+	});
+</script>
+<div style="position: relative;">
+	<div id="panZoomContainer">
+		<div id="root" class="protocolTree">
+			<ul></ul>
+		</div>
+	</div>
+	<div id="key" class="panel panel-default">
+		<div>
+			<h3 style="margin-top:0px;">Key</h3>
+		</div>
+		<div>
+			<svg width="48" height="16">
+				<defs>
+					<linearGradient id="gradient">
+						<stop offset="0%" stop-color="red" />
+						<stop offset="50%" stop-color="yellow" />
+						<stop offset="100%" stop-color="green" />
+					</linearGradient>
+				</defs>
+				<rect fill="url(#gradient)" x="0" y="0" width="48" height="16"></circle>
+			</svg>
+			<span style="vertical-align: top;"> : 1 star - 5 star</span>
+		</div>
+		<div>
+			<svg width="16" height="16"><circle fill="#99f53d" fill-opacity="0.5" r="8" cx="8" cy="8"></circle></svg><span style="vertical-align: top;"> : Hidden Protocol</span>
+		</div>
+		<div>
+			<svg width="16" height="16"><circle fill="#000000" fill-opacity="1" r="8" cx="8" cy="8"></circle></svg><span style="vertical-align: top;"> : Unrated Protocol</span>
+		</div>
+	</div>
+</div>
+
+
+{% endblock %}
