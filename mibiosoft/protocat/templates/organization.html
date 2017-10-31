@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block content %}
+{% if organizations %}
+<div class="col-sm-12">
+	<div class="row">
+    {% for org in organizations %}
+    <div class="col-sm-6" >
+      <div class="panel panel-default" onclick="location.href='/organization/{{org.id}}'">
+				<div class-"panel-heading">
+          <h3><center><strong>{{ org.name }}</strong></center></h3>
+					<h5><center><strong>Description </strong>{{ org.description }}</center></h5>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% else %}
+<center>No Active Organization</center>
+{% endif %}
+{% endblock %}
