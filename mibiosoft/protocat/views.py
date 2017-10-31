@@ -1035,6 +1035,30 @@ def get_protocols_from_category(request, category_id):
 
 
 def submit_metric(request):
-	data = request.data
-	print(data)
+	user = ProfileInfo.objects.get(user = request.user)
+	data = json.loads(request.body)
+	enum_metrics = data['enum']
+	ques_metrics = data['ques']
+	# Add responses for Normal Questions
+	for metric_id in ques_metrics:
+		question = MetricQuestion.objects.all().filter(id=metric_id)[0]
+		resp = MetricResponse()
+		resp.question = question
+		resp.response = ques_metrics[metric_id]
+		resp.user = user
+		resp.save()
+
+	# Add responses for Enum Questions
+	for metric_id in enum_metrics:
+		question = MetricEnumQuestion.objects.all().filter(id=metric_id)[0]
+		response = MetricEnumOption.objects.all().filter(id=enum_metrics[metric_id])[0]
+		resp = MetricEnumResponse()
+		resp.question = question
+		resp.response = response
+		resp.user = user
+		resp.save()
+	
+	print(len(MetricResponse.objects.all()))
+	print(len(MetricEnumResponse.objects.all()))
+
 	return JsonResponse({'success': True})
