@@ -229,6 +229,7 @@
 								<li><a href="/upload/">Upload Protocol</a></li>
 								<li><a href="/import/">Import Protocol</a></li>
 								<li><a href="/user/{{ user.profileinfo.id }}">User Profile</a></li>
+								<li><a href="/organization">Organization and Group</a></li>
 								<li><a href="{% url 'inbox'%}">Inbox {% if numMessages > 0 %}({{numMessages}}){% endif %}</a></li>
 								<li><a href="/logoff/">Log out</a></li>
 								{% endif %}
@@ -243,6 +244,7 @@
 						{% else %}
 						<li class="visible-xs"><a href="/protocol_upload/">Upload Protocol</a></li>
 						<li class="visible-xs"><a href="/user/{{ user.profileinfo.id }}">User Profile</a></li>
+						<li class="visible-xs"><a href="/organization">Organization and Group</a></li>
 						<li class="visible-xs"><a href="{% url 'inbox'%}">Inbox</a></li>
 						<li class="visible-xs"><a href="/logoff/">Log out</a></li>
 						{% endif %}
