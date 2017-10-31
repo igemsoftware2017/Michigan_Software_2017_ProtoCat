@@ -48,6 +48,10 @@ class GithubIdAdmin(admin.ModelAdmin):
 	class Meta:
 		model = GithubId
 
+class MessageAdmin(admin.ModelAdmin):
+	class Meta:
+		model = Message
+
 
 # Register your models here.
 
@@ -60,3 +64,4 @@ admin.site.register(ReagentForProtocol, ReagentForProtocolAdmin)
 admin.site.register(ProtocolRating, ProtocolRatingAdmin)
 admin.site.register(ProtocolComment, ProtocolCommentAdmin)
 admin.site.register(GithubId, GithubIdAdmin)
+admin.site.register(Message, MessageAdmin)

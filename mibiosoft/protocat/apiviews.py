@@ -2,6 +2,7 @@ from rest_framework import permissions
 from rest_framework import renderers
 from rest_framework import viewsets
 from rest_framework import status
+from rest_framework import generics
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 from rest_framework import permissions
@@ -275,7 +276,6 @@ class CategoryViewSet(viewsets.ModelViewSet):
 
 	def create(self, request):
 		try:
-			#print(request.data)
 			category = Category()
 			category.title = request.data['title']
 			category.description = request.data['description']
@@ -287,8 +287,20 @@ class CategoryViewSet(viewsets.ModelViewSet):
 			category.save()
 			return Response({'status': 'Saved category'})
 		except Exception as inst:
-			#print(inst)
 			return Response({'status': 'failed'})
+
+class CategoryBrowser(generics.ListAPIView):
+	serializer_class = CategorySerializer
+	permission_classes = (IsReadOnly,)
+	def get_queryset(self):
+		categories = Category.objects.all()
+		parent_id = self.request.GET.get('parent_id', None)
+		print(parent_id)
+		if (parent_id != None):
+			categories = categories.filter(parent_category = int(parent_id))
+		else:
+			categories = categories.filter(parent_category = None)
+		return categories
 
 class ReagentViewSet(viewsets.ModelViewSet):
 	"""

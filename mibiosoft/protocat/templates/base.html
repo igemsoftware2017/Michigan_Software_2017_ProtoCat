@@ -10,24 +10,24 @@
 
 		<!-- for the favicon -->
 		<link rel="shortcut icon" href="/static/images/protocat.ico" />
-		<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
-		<script src="https://code.jquery.com/jquery-migrate-1.4.1.min.js"></script>
-		<script src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js" integrity="sha256-eGE6blurk5sHj+rmkfsGYeKyZx3M4bG+ZlFyA7Kns7E=" crossorigin="anonymous"></script>
+		<script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+		<script src="//code.jquery.com/jquery-migrate-1.4.1.min.js"></script>
+		<script src="//code.jquery.com/ui/1.12.0/jquery-ui.min.js" integrity="sha256-eGE6blurk5sHj+rmkfsGYeKyZx3M4bG+ZlFyA7Kns7E=" crossorigin="anonymous"></script>
 		<link rel="stylesheet" href="//code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
 
 		<script src="//cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
-		<script src="https://cdn.tinymce.com/4/tinymce.min.js"></script>
+		<script src="//cdn.tinymce.com/4/tinymce.min.js"></script>
 		<script src="/static/js/jquery.tinymce.min.js"></script>
-		<link rel="stylesheet" type="text/css" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 		<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 		<script type="text/javascript" src="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script>
 		<link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css" />
-		<script src="https://use.fontawesome.com/bcb2f2c4d9.js"></script>
+		<script src="//use.fontawesome.com/bcb2f2c4d9.js"></script>
 
 
 		<!-- Global js -->
 		<script src="/static/js/main.js"></script>
-		<script src="http://imakewebthings.github.com/jquery-waypoints/waypoints.min.js" type="text/javascript"></script>
+		<script src="/static/js/waypoints.min.js" type="text/javascript"></script>
 		<link rel="stylesheet" type="text/css" href="/static/css/star-rating.min.css">
 		<link rel="stylesheet" type="text/css" href="/static/css/bootstrap-switch.min.css">
 		<script src="/static/js/star-rating.min.js"></script>
@@ -213,13 +213,14 @@
 								{% if current_profile_info.profile_image != "" %}
 								<img id="navbar-image" src="{{ current_profile_info.profile_image.url }}" width=30 height=30 alt="Image not found" class="img-rounded"/><span id="navbar-drop-down" class="fix-margin-right caret"></span>
 								{% else %}
-								<img id="navbar-image" src="http://2014.igem.org/wiki/images/thumb/0/04/ChrisP.jpg/330px-ChrisP.jpg.png" width=30 height=30 alt="Image not found" class="img-rounded"/><span id="navbar-drop-down" class="fix-margin-right caret"></span>
+								<img id="navbar-image" src="//2014.igem.org/wiki/images/thumb/0/04/ChrisP.jpg/330px-ChrisP.jpg.png" width=30 height=30 alt="Image not found" class="img-rounded"/><span id="navbar-drop-down" class="fix-margin-right caret"></span>
 								{% endif %}
 								{% else %}
 								<span class="fix-margin-right"><span id="navbar-icon" class="glyphicon glyphicon-user"></span>Login</span>
 								{% endif %}
 							</a>
 							<!-- TODO have drop-down menu open by default on small devices -->
+
 							<ul class="dropdown-menu">
 								{% if not user.is_authenticated %}
 								<li><a href="/signup/">Sign up</a></li>
@@ -227,6 +228,7 @@
 								{% else %}
 								<li><a href="/upload/">Upload Protocol</a></li>
 								<li><a href="/user/{{ user.profileinfo.id }}">User Profile</a></li>
+								<li><a href="{% url 'inbox'%}">Inbox {% if numMessages > 0 %}({{numMessages}}){% endif %}</a></li>
 								<li><a href="/logoff/">Log out</a></li>
 								{% endif %}
 								<li role="separator" class="divider"></li>
@@ -240,6 +242,7 @@
 						{% else %}
 						<li class="visible-xs"><a href="/protocol_upload/">Upload Protocol</a></li>
 						<li class="visible-xs"><a href="/user/{{ user.profileinfo.id }}">User Profile</a></li>
+						<li class="visible-xs"><a href="{% url 'inbox'%}">Inbox</a></li>
 						<li class="visible-xs"><a href="/logoff/">Log out</a></li>
 						{% endif %}
 						<li class="visible-xs"><a href="/browse/">Browse</a></li>
