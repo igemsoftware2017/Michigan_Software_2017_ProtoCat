@@ -44,4 +44,5 @@ urlpatterns = [
 	url(r'^newmessage/$', views.NewMessageView.as_view(), name="new_message"),
 	url(r'^inbox/$', views.inbox_view, name="inbox"),
 	url(r'^submitmetrics/$', views.submit_metric, name="submit_metric"),
+	url(r'', views.retrieve_data, name="get_metrics"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

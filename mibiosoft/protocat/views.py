@@ -1064,3 +1064,6 @@ def submit_metric(request):
 		resp.save()
 
 	return JsonResponse({'success': True})
+
+def retrieve_data(request):
+	pass
