@@ -84,7 +84,7 @@ def protocol_by_organization(request, organization_id):
 		'isAdmin': isAdmin,
 		'org': org,
 	}
-	return render(request, 'category_browser.html', context)
+	return render(request, 'protocol_by_organization.html', context)
 
 
 def protocol(request, protocol_id):
