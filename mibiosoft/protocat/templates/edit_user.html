@@ -190,6 +190,7 @@ function submit_sm() {
 			<li class="active"><a data-toggle="tab" href="#Protocols">Protocols</a></li>
 			<li><a data-toggle="tab" href="#Notes">Notes</a></li>
 			<li><a data-toggle="tab" href="#Ratings">Ratings</a></li>
+			<li><a data-toggle="tab" href="#Favorites">Favorites</a></li>
 		</ul>
 
 		<div class="panel-body">
@@ -207,6 +208,11 @@ function submit_sm() {
 				<div id="Ratings" class="tab-pane fade">
 					{% for rating in user_rated_protocols %}
 					<a href="/protocol/{{ rating.protocol.id }}">{{ rating.protocol.title }}</a>, gave a {{ rating.score }} <br />
+					{% endfor %}
+				</div>
+				<div id="Favorites" class="tab-pane fade">
+					{% for favorite in profile_info.favorites.all %}
+					<a href="/protocol/{{ favorite.id }}">{{ favorite.title }}</a>, by <a href="/user/{{ favorite.author.id }}">{{ favorite.author.user }}</a><br />
 					{% endfor %}
 				</div>
 			</div>
