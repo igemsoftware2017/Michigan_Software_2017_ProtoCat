@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row">
+	{% for protocol in protocols %}
+	<div>
+	{% if user_organizations %}
+	<form style="margin-left: 15px" method="POST", action="/submitorganizationprotocol/" id="org_form">
+		{% csrf_token %}
+		<select name="organization_id">
+				{% for user_org in user_organizations %}
+				<option value="{{user_org.id}}">{{user_org.name}}</option>
+				{% endfor %}
+		</select>
+	<input type="hidden" value = "{{protocol.id}}" name="protocol_id">
+	<input type="submit" class="btn btn-primary btn-xs" value="Add to Organization">
+</form>
+</div>
+	{% endif %}
+	{% if isAdmin %}
+	<div>
+	<form style="margin-left: 15px" method="POST", action="/deleteorganizationprotocol/" id="org_form">
+		{% csrf_token %}
+		<select name="organization_id">
+				<option value="{{org.id}}">{{org.name}}</option>
+		</select>
+	<input type="hidden" value = "{{protocol.id}}" name="protocol_id">
+	<input type="submit" class="btn btn-primary btn-xs" value="Delete from Organization">
+</form>
+</div>
+	{% endif %}
+
+	{% include 'repeated_parts/col_sm_6_protocol_info.html' %}
+	{% endfor %}
+</div>
+{% endblock %}
