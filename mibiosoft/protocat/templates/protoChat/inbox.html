@@ -1,4 +1,20 @@
-
+<script>
+$(document).ready(function(){
+  var form = `<form method="post">
+  <div class="form-group">
+  <label for="reply">Reply</label>
+  <input type="message" class="form-control" aria-describedby="replyHelp">
+  <button type="submit" class="btn btn-default">Submit</button>
+  </div></form>`;
+  $("button.reply").on("click", function(event){
+    console.log(event.target.parentElement.parentElement.parentElement);
+    var newForm = document.createElement("div");
+    newForm.innerHTML = form;
+    event.target.parentElement.parentElement.append(newForm);
+    event.target.parentElement.removeChild(event.target);
+  })
+})
+</script>
 <div style="width:75%; margin:auto; font-size:2rem; padding-top:15px;">
   {% for message_chain in message_list %}
   <ul class="list-group">
@@ -17,6 +33,7 @@
             {% else %}
             <span>To: <b>{{ message.recipient }}</b></span>
             {% endif %}
+            <button class="reply btn btn-primary btn-sm" style="float:right;margin-left:10px;">Reply</button>
             <span style="float:right;font-size:70%;line-height:35px">{{ message.timeSent }}</span>
           </div>
           <p style="padding-left:25px">{{ message.message }}</p>
