@@ -36,6 +36,5 @@ urlpatterns = [
 	url(r'^importprotocol/$', views.submit_import, name="submit_import_page"),
 	url(r'^togglefavorite/(?P<protocol_id>[0-9]+)/$', views.toggle_protocol_favorite, name="toggle_favorite"),
 	url(r'^newmessage/(?P<recip_name>\w+)$', views.NewMessageView.as_view(), name="new_message"),
-	url(r'^newmessage/$', views.NewMessageView.as_view(), name="new_message"),
 	url(r'^inbox/$', views.inbox_view, name="inbox"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
