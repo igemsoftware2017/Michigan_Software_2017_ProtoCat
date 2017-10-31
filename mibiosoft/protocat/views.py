@@ -597,17 +597,35 @@ def submit_comment(request):
 		protocol = Protocol.objects.get(id = protocol_id)
 
 		try:
+			comment_msg = str(notification.sender) + " has commented on your protocol: " + str(protocol) + "\n" + str(notification.message)
 			proto_comment = ProtocolComment(author = current_profile_info, protocol = protocol, note = comment)
+			print("1")
 			proto_comment.save()
+			print("2")
+			notification = Message()
+			print("3")
+			notification.sender = current_profile_info
+			print("4")
+			notification.recipient = protocol.author
+			print("5")
+			notification.message = comment_msg
+			print("6")
+			notification.save()
+       
 		except:
-			pass
+			#pass
+			print("there is an exception")
+        
 	context = {
 		'title': 'ProtoCat',
 		'current_profile_info': current_profile_info,
 		'comment': proto_comment,
 	}
+  
+	print(str(notification.sender) + " has commented on your protocol: " + str(protocol) + "\n" + str(notification.message))
+	print("\n" + "recipient: " + str(notification.recipient))
+    
 	return render(request, 'repeated_parts/comment.html', context)
-
 
 
 def update_profile(request):
