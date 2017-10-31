@@ -96,7 +96,8 @@
 			description: "{{ protocol.description }}",
 			id: "{{ protocol.id }}",
 			parent_id: "{% if protocol.previous_revision != None %}{{ protocol.previous_revision.id }}{% else %}root{% endif %}",
-			avg_rating: "{{ protocol.avg_rating }}"
+			avg_rating: "{{ protocol.avg_rating }}", 
+            is_hidden: {% if not protocol.searchable %}true{% else %}false{% endif %}
 		},
 		{% endfor %}
 	];
@@ -129,26 +130,33 @@
         	var toReturn = (f*65536)+(s*256) + t;
         	return toReturn;
 	}
+    /* to translate rgb colors to hex in addToMe */
+    function rgbToHex(r, g, b) {
+    return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+    }
+
+
 	function addToMe(data) {
-		var newText = Math.round(data.avg_rating * 100) / 100;
-		color = "#555"; 
-		colorGreen = "#1c6625";
-		colorLightGreen = "#39ba49";
-		colorRed = "#e82406";
-		colorYellow = "#ede912";
-		if (newText > 4) {
-			color = colorGreen;
-		} else if (newText > 3) {
-			color = colorLightGreen;
-		} else if (newText > 2) {
-			color = colorYellow;
-		} else if (newText > 0) {
-			color = colorRed;
-		} 
-		newText = "rating: " + newText;  
+		var average = Math.round(data.avg_rating * 100) / 100;
+
+        /* calculates a hue in rgb based on average rating */
+        var hue = (average - 1) * 1 / 4;
+        var r = Math.floor(255 * (1 - hue)),
+            g = Math.floor(255 * hue),
+            b = 0;
+        var color = rgbToHex(r, g, b);
+
+        /* sets a transparency value */
+        var transparencyVal = 1;
+        if (data.is_hidden) {
+            transparencyVal = 0.25;
+        }
+
+
+		average = "rating: " + average;  
 		$("#" + data.parent_id).children("ul").first()
 			.html($("#" + data.parent_id).children("ul").first()
-			.html().trim() + '<li id=' + data.id + '><a href="/protocol/' + data.id + '"><svg width="30" height="30"><circle title="' + data.title + '" data-toggle="popover" data-container="body" data-trigger="hover" data-content="' +  newText + '" fill="' + hue + '" r="15" cx="15" cy="15" /></svg></a><ul></ul></li>');
+			.html().trim() + '<li id=' + data.id + '><a href="/protocol/' + data.id + '"><svg width="30" height="30"><circle title="' + data.title + '" data-toggle="popover" data-container="body" data-trigger="hover" data-content="' +  average + '" fill="' + color  + '" fill-opacity="' + transparencyVal + '" r="15" cx="15" cy="15" /></svg></a><ul></ul></li>');
 	}
 
 	$(document).on('ready', function () {
