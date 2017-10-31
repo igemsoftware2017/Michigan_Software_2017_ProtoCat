@@ -520,12 +520,15 @@ $(document).on('ready', function() {
 	$('#metric_form').on('submit', function(e) {
 		e.preventDefault();
 		var submit_data = {}
+		submit_data['enum'] = {}
+		submit_data['ques'] = {}
+
 		var metrics = $('#Metrics_pane').children('div.panel-group');
 		//console.log(metrics.html());
 		metrics.children('div.question').each(function(){
 			var id;
 			var val;
-
+			var enum_question = false;
 			//Try to get Text field
 			id = $(this).children('div').children('div').children('textarea').attr('id');
 			val = $(this).children('div').children('div').children('textarea').val();
@@ -539,12 +542,17 @@ $(document).on('ready', function() {
 				//try to get the enum options
 				id = $(this).children('div').attr('id');
 				val = $(this).children('div').find('input:checked').val();
+				enum_question = true;
 			}
 
 			if(val === "" || val === undefined){
 				return;
 			}
-			submit_data[id] = val
+			if(enum_question === true){
+				submit_data['enum'][id] = val
+			} else {
+				submit_data['ques'][id] = val
+			}
 		});
 		
 		console.log(submit_data)
@@ -554,6 +562,7 @@ $(document).on('ready', function() {
 			url: "/submitmetrics/",
 			processData: false,
 			contentType: 'application/json',
+			headers: { "X-CSRFToken": getCookie("csrftoken") },
 			success: function(data){
 				if (data.success) {
 					alert("Your submission has been recieved")
@@ -1021,7 +1030,6 @@ textarea[name=comment] {
 	</div>
 
 	{% if questions|length > 0 or enum_questions|length > 0 %}
-	<form id="metric_form" method="POST" action="/submitmetrics/">
 		<div class="row">
 			<div class="col-sm-12">
 				<div class="panel panel-primary" id="Metrics_pane">
@@ -1057,15 +1065,16 @@ textarea[name=comment] {
 						{% endfor %}
 						<div class="row" style="padding:10px;">
 							<div class="col-sm-12" id="metric-submit-div" >
-								<input type="submit" class="btn btn-primary btn-block" value="Submit Response">
+									<form id="metric_form" method="POST" action="/submitmetrics/">
+										<input type="submit" class="form-control btn btn-primary btn-block" value="Submit Response">
+										{% csrf_token %}			
+									</form>
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-		{% csrf_token %}			
-		</form>
 	{% endif %}
 
 	<div class="row">
