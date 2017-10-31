@@ -118,20 +118,6 @@
 
 	function addToMe(data) {
 		var average = Math.round(data.avg_rating * 100) / 100;
-		/* color = "#555"; 
-		colorGreen = "#1c6625";
-		colorLightGreen = "#39ba49";
-		colorRed = "#e82406";
-		colorYellow = "#ede912";
-		if (average > 4) {
-			color = colorGreen;
-		} else if (average > 3) {
-			color = colorLightGreen;
-		} else if (average > 2) {
-			color = colorYellow;
-		} else if (average > 0) {
-			color = colorRed;
-		} */
 
         /* calculates a hue in rgb based on average rating */
         var hue = (average - 1) * 1 / 4;
