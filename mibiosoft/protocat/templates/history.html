@@ -109,7 +109,26 @@
 			break;
 		}
 	}
+/*RGB to HSL value
+ *@param Number hexIn
+ **return hexOut */
 
+	function hex2num(hexIn){
+        	//assumes
+        	var f = floor(((hexIn/65536) -1) % 256);
+        	var s = floor(((hexIn/256)-1) %256);
+        	var t = floor((hexIn-1)%256);
+        	//f, s, t are in 0 , 255 range
+      		//if they are in 0,1 range, divide by 255 after
+        	return [f,s,t];
+	}
+	function arr2num(f,s,t){
+        	//f, s, t are in 0 , 255 range
+        	//if they are in 0,1 range, mutiply by 255 first
+        	f /= 255, s/=255, t/=255;
+        	var toReturn = (f*65536)+(s*256) + t;
+        	return toReturn;
+	}
 	function addToMe(data) {
 		var newText = Math.round(data.avg_rating * 100) / 100;
 		color = "#555"; 
