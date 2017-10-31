@@ -807,7 +807,7 @@ def submit_import(request):
 		'title': 'ProtoCat - Submit Upload',
 		'current_profile_info': current_profile_info,
 	}
-	return HttpResponseRedirect('/')
+	return HttpResponseRedirect('/protocol/{}'.format(protocol.id))
 		
 def toggle_protocol_favorite(request, protocol_id):
 	if (request.user.profileinfo.favorites.filter(id = protocol_id)):
