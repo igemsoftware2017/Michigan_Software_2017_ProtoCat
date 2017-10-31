@@ -1,53 +1,14 @@
-{% extends 'base.html' %}
-
-{% block content %}
-<ul class="nav nav-tabs">
-  <li><a href={% url 'inbox'%}>Inbox</a></li>
-  <!--li><a data-toggle="pill" href="#sent">Menu 1</a></li>-->
-  <li class="active"><a href={% url 'new_message' %}>New Message</a></li>
-</ul>
-
-<div class="tab-content">
-  <div id="new" class="tab-pane fade in active">
-
-    {% if user.is_authenticated %}
-    <form method="Post">
-      {% csrf_token %}
-      <div class = "row">
-        <div class="col-xs-12">
-          {% for error in form.non_field_errors %}
-          <span class="text-danger">{{ error }}</span>
-          {% endfor %}
-        </div>
-      </div>
-
-      <br>
-
-      {% for field in form %}
-      <div class="row">
-        <div class = "col-xs-12">
-          <div class ="form-group">
-
-            {% for error in field.errors %}
-            <span class="text-danger small">{{ error }}</span>
-            {% endfor %}
-
-            <label class = "control-label col-xs-2">{{ field.label_tag }}</label>
-            <div class="col-xs-9">{{ field }}</div>
-          </div>
-        </div>
-      </div>
-      {% endfor %}
-
-      <div class = "row">
-        <div class="col-xs-5 col-xs-offset-0">
-          <button type="submit" class="btn">Submit</button>
-        </div>
-      </div>
-    </form>
-    {% else %}
-    <p>Must be logged in</p>
-    {% endif %}
-  </div>
+<div style="width:75%; margin:auto; font-size:2rem; padding-top:15px;">
+  <form method="post">
+    <div class="form-group">
+    {% csrf_token %}
+    <b>New Message</b><br/>
+    {% if error %}<p style="color: red">{{error}}</p>{% endif %}
+    <input type="text"  value="" name="recipient" placeholder="Recipient Name">
+    <br/>
+    <textarea name="message" rows="5" cols="40"></textarea>
+    <br/>
+    <button type="submit" class="btn btn-default">Submit</button>
+    </div>
+  </form>
 </div>
-{% endblock %}
