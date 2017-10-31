@@ -146,6 +146,7 @@ def protocol(request, protocol_id):
 		'user_rating': rating,
 		'current_profile_info': current_profile_info,
 		'user_organizations': user_orgs,
+		'is_favorite': is_favorite
 	}
 
 	return render(request, 'protocol.html', context)
@@ -770,7 +771,6 @@ def github_post(request):
 	gh.save()
 	return HttpResponseRedirect('/')
 
-
 def organization_create(request):
 	#create a new organization
 	return HttpResponseRedirect('/')
@@ -864,18 +864,17 @@ def import_page(request):
 		return render(request, 'import.html', context)
 
 def submit_import(request):
-	current_profile_info = request.user
-	if (not current_profile_info.is_anonymous()):
-		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
-		#print(current_profile_info)
-	else:
-		current_profile_info = None
-
 	conv = converter()
 	pio_data = request.FILES['files[]'].file.getvalue()
 
 	pio_json = json.loads(pio_data)
 	cat_json = conv.convert_io_to_cat(pio_json)
+
+	current_profile_info = request.user
+	if (not current_profile_info.is_anonymous()):
+		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
+	else:
+		current_profile_info = None
 	try:
 		# get main data for the Protocol model
 		protocol_title = cat_json['title']

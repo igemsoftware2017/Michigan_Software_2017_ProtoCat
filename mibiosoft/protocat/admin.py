@@ -48,7 +48,6 @@ class GithubIdAdmin(admin.ModelAdmin):
 	class Meta:
 		model = GithubId
 
-
 class Favourite_ProtocolAdmin(admin.ModelAdmin):
 	list_display = ["__str__", "fav_protocol"]
 	class Meta:
