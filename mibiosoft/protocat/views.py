@@ -1035,6 +1035,11 @@ def get_protocols_from_category(request, category_id):
 
 
 def submit_metric(request):
+	if request.user.is_anonymous():
+		return JsonResponse({'success': False, 'error': "Please log in to submit metrics."})
+	else:
+		user = ProfileInfo.objects.get(user = request.user)
+
 	user = ProfileInfo.objects.get(user = request.user)
 	data = json.loads(request.body)
 	enum_metrics = data['enum']
@@ -1057,8 +1062,5 @@ def submit_metric(request):
 		resp.response = response
 		resp.user = user
 		resp.save()
-	
-	print(len(MetricResponse.objects.all()))
-	print(len(MetricEnumResponse.objects.all()))
 
 	return JsonResponse({'success': True})
