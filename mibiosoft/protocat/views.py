@@ -1032,3 +1032,9 @@ def get_protocols_from_category(request, category_id):
 		'protocols': protocols
 	}
 	return render(request, "category_browser_protocols.html", context)
+
+
+def submit_metric(request):
+	data = request.data
+	print(data)
+	return JsonResponse({'success': True})
