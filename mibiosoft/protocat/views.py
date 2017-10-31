@@ -11,17 +11,26 @@ from django.conf import settings
 from django.views.decorators.cache import never_cache
 from django.http import JsonResponse
 from django.db.models import Max
+from django.views.generic import View, FormView
+from . import forms, models
 import bleach
+from protocat.converter.Converter import converter
+import json
 
 def index(request):
 	current_profile_info = request.user
 	if (not current_profile_info.is_anonymous()):
 		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
+
+		messages = models.Message.objects.filter(recipient = current_profile_info).filter(read = False).filter(deleted = False)
+
 	else:
 		current_profile_info = None
+		messages = [];
 	context = {
-		'title': 'ProtoCat',
+		'title': 'ProtoCat4.0',
 		'current_profile_info': current_profile_info,
+		'numMessages': len(messages),
 	}
 	return render(request, 'index.html', context)
 
@@ -121,6 +130,10 @@ def protocol(request, protocol_id):
 		if x.isAdmin:
 			user_orgs.append(x.organization)
 
+	if (current_profile_info == None):
+		is_favorite = None
+	else:
+		is_favorite = current_profile_info.favorites.filter(id = protocol.id).exists()
 
 	context = {
 		'title': protocol.title,
@@ -133,6 +146,7 @@ def protocol(request, protocol_id):
 		'user_rating': rating,
 		'current_profile_info': current_profile_info,
 		'user_organizations': user_orgs,
+		'is_favorite': is_favorite
 	}
 
 	return render(request, 'protocol.html', context)
@@ -333,7 +347,7 @@ def search(request):
 
 	order = sort_direction + order
 
-	results = Protocol.objects.filter(Q(title__icontains = text_filter) | Q(description__icontains = text_filter))
+	results = Protocol.objects.filter(Q(title__icontains = text_filter) | Q(description__icontains = text_filter) | Q(materials__icontains = text_filter) | Q(protocol_step__action__icontains = text_filter) | Q(reagentforprotocol__display_name__icontains = text_filter)).distinct()
 
 	try:
 		search_hidden = (request.POST['search-hidden'] == "on")
@@ -350,7 +364,7 @@ def search(request):
 		revision_start_date = map(int, revision_start_date)
 		my_datetime = datetime.date(revision_start_date[2], revision_start_date[0], revision_start_date[1])
 		# try to make timezone aware
-		results = results.exclude(upload_date__lt=my_datetime)
+		results = results.exclude(upload_date__lt = my_datetime)
 	except:
 		pass
 
@@ -587,7 +601,7 @@ def submit_upload(request):
 				num_steps = num_steps + 1
 			except:
 				# Means that the name doesn't exist
-				#print('error1')
+				# print('error1')
 				pass
 
 		protocol.num_steps = num_steps
@@ -757,6 +771,7 @@ def github_post(request):
 	gh.save()
 	return HttpResponseRedirect('/')
 
+<<<<<<< HEAD
 def organization_create(request):
 	#create a new organization
 	return HttpResponseRedirect('/')
@@ -809,11 +824,41 @@ def add_organization_protocol(request):
 	return category_default(request)
 
 def delete_organization_protocol(request):
+=======
+def import_page(request):
+	current_profile_info = request.user
+	if (not current_profile_info.is_anonymous()):
+		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
+		#print(current_profile_info)
+	else:
+		current_profile_info = None
+
+	categories = Category.objects.all()
+
+	context = {
+		'title': 'ProtoCat - Upload Protocol',
+		'current_profile_info': current_profile_info,
+	}
+	#print(len(connection.queries))
+	if (current_profile_info == None):
+		return HttpResponseRedirect('/')
+	else:
+		return render(request, 'import.html', context)
+
+def submit_import(request):
+	conv = converter()
+	pio_data = request.FILES['files[]'].file.getvalue()
+
+	pio_json = json.loads(pio_data)
+	cat_json = conv.convert_io_to_cat(pio_json)
+
+>>>>>>> master
 	current_profile_info = request.user
 	if (not current_profile_info.is_anonymous()):
 		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
 	else:
 		current_profile_info = None
+<<<<<<< HEAD
 	try:
 		org_id = request.POST['organization_id']
 		pro_id = request.POST['protocol_id']
@@ -827,3 +872,132 @@ def delete_organization_protocol(request):
 	except:
 		print("error")
 		return category_default(request)
+=======
+
+	try:
+		# get main data for the Protocol model
+		protocol_title = cat_json['title']
+		protocol_desc = cat_json['description']
+		protocol_changes = cat_json['change-log']
+
+		protocol = Protocol(change_log = protocol_changes, title = protocol_title, description = protocol_desc, author = current_profile_info)
+
+		protocol_cat = ""
+		try:
+			# get category and associate it with protocol
+			protocol_cat = bleach.clean(cat_json['category'])
+			cat = Category.objects.get(title = protocol_cat)
+			protocol.category = cat
+		except:
+			pass
+
+		# associate new protocol with previous revision if necessary
+		previous_protocol_id = -1
+
+		protocol.save()
+
+		for step in cat_json['protocol_steps']:
+			ps = ProtocolStep(title=step['title'], action = step['action'], warning = step['warning'],\
+				step_number = step['step_number'], time = step['time'], protocol = protocol)
+			ps.save()
+		protocol.num_steps = len(cat_json['protocol_steps'])
+
+		try:
+			protocol.materials = bleach.clean(cat_json['materials'])
+		except:
+			protocol.materials = ""
+
+		protocol.save()
+
+	except Exception as e:
+		#print('error2')
+		print(e)
+		pass
+
+	context = {
+		'title': 'ProtoCat - Submit Upload',
+		'current_profile_info': current_profile_info,
+	}
+	return HttpResponseRedirect('/')
+
+def toggle_protocol_favorite(request, protocol_id):
+	if (request.user.profileinfo.favorites.filter(id = protocol_id)):
+		request.user.profileinfo.favorites.remove(protocol_id)
+		return JsonResponse({'success': True})
+	else:
+		request.user.profileinfo.favorites.add(protocol_id)
+		return JsonResponse({'success': False})
+
+class NewMessageView (FormView):
+	template_name = 'protoChat/new_message.html'
+	form_class = forms.NewMessageForm
+
+	def get_context_data(self, **kwargs):
+		context = super(NewMessageView, self).get_context_data(**kwargs)
+		context['title'] = 'New Message'
+		if (self.request.user.is_anonymous()):
+			context['current_profile_info'] = None
+		else:
+			context['current_profile_info'] = self.request.user.profileinfo
+		return context
+
+	def get_initial(self):
+		initial = super(NewMessageView, self).get_initial()
+		if 'recip_name' in self.kwargs:
+			initial['recipient'] = self.kwargs['recip_name']
+		return initial
+
+	def form_valid(self, form):
+		if self.request.user.is_anonymous():
+			return redirect('root_index')
+
+		sender = ProfileInfo.objects.get(user = self.request.user)
+		recip_user = User.objects.get(username = form.cleaned_data.get('recipient'))
+		recip = ProfileInfo.objects.get(user = recip_user)
+		message = form.cleaned_data.get('message')
+
+		models.Message.objects.create(sender=sender, recipient=recip, message=message)
+		return redirect('root_index')
+
+def inbox_view(request):
+	if request.method == "POST":
+		for key in request.POST:
+			if key[:5] == 'check':
+				id = key[5:]
+				tempMessage = models.Message.objects.get(id=id)
+				tempMessage.deleted = True
+				tempMessage.save()
+
+	if request.user.is_anonymous():
+		return redirect('root_index')
+	else:
+		user = ProfileInfo.objects.get(user = request.user)
+
+	messages = models.Message.objects.filter(recipient=user).filter(deleted=False).order_by('-timeSent')
+
+	for message in messages:
+		message.read = True
+		message.save()
+
+	context = {
+		'title': 'Inbox',
+		'message_list': messages,
+	}
+	if (request.user.is_anonymous()):
+		context['current_profile_info'] = None
+	else:
+		context['current_profile_info'] = request.user.profileinfo
+	return render(request, 'protoChat/inbox.html', context)
+
+def get_protocols_from_category(request, category_id):
+	if (category_id == ""):
+		category_id = None
+	else:
+		category_id = int(category_id)
+	protocols = Protocol.objects.all().filter(category = category_id).filter(searchable = True)
+	context = {
+		'protocols': protocols
+	}
+	return render(request, "category_browser_protocols.html", context)
+
+>>>>>>> master
