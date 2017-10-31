@@ -181,12 +181,8 @@
 			transparencyVal = 0.5;
 		}
 
-<<<<<<< HEAD
-		average = "<p>Average Rating: " + average + "</p><p>Change log: " + data.change_log + "</p>";  
-=======
 
 		average = "<p>Average Rating: " + average + "</p><p>Change log: " + unescape(data.change_log) + "</p>";  
->>>>>>> 6a2aefe6a70ce20a687e9225804f0a6b0ede8507
 		$("#" + data.parent_id).children("ul").first()
 			.html($("#" + data.parent_id).children("ul").first()
 			.html().trim() + '<li id=' + data.id + '><a href="/protocol/' + data.id + '"><svg width="30" height="30"><circle title="' + data.title + '" data-toggle="popover" data-container="body" data-html="true" data-trigger="hover" data-content="' +  average + '" fill="' + color  + '" fill-opacity="' + transparencyVal + '" r="15" cx="15" cy="15" /></svg></a><ul></ul></li>');
