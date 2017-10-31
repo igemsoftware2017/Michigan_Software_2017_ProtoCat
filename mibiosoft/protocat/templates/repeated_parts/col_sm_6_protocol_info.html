@@ -110,6 +110,16 @@
 </style>
 
 <div class="col-sm-6">
+	{% if isAdmin %}
+	<form style="display: inline-block;" method="POST", action="/deleteorganizationprotocol/" id="org_form">
+		{% csrf_token %}
+		<select name="organization_id">
+				<option value="{{org.id}}">{{org.name}}</option>
+		</select>
+		<input type="hidden" value = "{{protocol.id}}" name="protocol_id">
+		<input type="submit" class="btn btn-primary btn-xs" value="Delete from Organization">
+	</form>
+	{% endif %}
 	<div class="well well-sm protocol_div" onclick="location.href='/protocol/{{ protocol.id }}/'">
 		<div class="row">
 			<div class="col-sm-7 fix-margin-left">
