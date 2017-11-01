@@ -414,8 +414,25 @@ $(document).on('ready', function() {
 			'materials': $('[name="text-reagents"]').val(),
 			'change_log': $('[name="change-log"]').val(),
 			'previous_revision': $('[name="BranchFrom"]').val(),
-			'protocol_steps': []
+			'protocol_steps': [],
+			'protocol_questions': []
 		};
+		$('#form').children("#question_holder").children().each(function(child_ind){
+			// console.log($(this));
+			var question = {
+				"question_text": $(this).find('[name="question_text"]').val(),
+				"type": $(this).find(".selected_type").text(),
+				"options": [],
+			}
+
+			if(question["type"] === "Poll"){
+				$(this).find(".question_list").children().each(function(option_ind){
+					$(this).find(".form-control").val()
+					question["options"].push($(this).find(".form-control").val());
+				});
+			}
+			submit_data["protocol_questions"].push(question);
+		});
 		$('#form').children('#step_holder').children('.individual-step:not(#empty-holder)').each(function() {
 			var step = {
 				"title": $(this).find('.title').val(),
@@ -456,7 +473,50 @@ $(document).on('ready', function() {
 		});
 	});
 
+	$(".add_question_btn").on("click", function() {
+		var new_question = $("#hidden_question").clone().show();
+		$(this).siblings('div#question_holder').append(new_question);
+		
+		new_question.find(".question_types>li>a").on("click", function(){
+			var new_str = $(this).html();
+			$(this).parent().parent().siblings('button').children('span').first().html(new_str);
+			$(this).parent().parent().siblings('input').val(new_str);
 
+			if (new_str === "Poll"){
+				$(this).parent().parent().parent().siblings('div.options_div').children('button').trigger("click").trigger("click");
+				$(this).parent().parent().parent().siblings('div.options_div').show();
+			} else {
+				// Clear the options div
+				$(this).parent().parent().parent().siblings('div.options_div').children('div').html("");
+				$(this).parent().parent().parent().siblings('div.options_div').hide();
+			}
+		});
+
+		new_question.find(".add_option_btn").on("click", function(){
+			$(this).siblings('div').append('<div class="input-group"> \
+				<span class="input-group-btn"> \
+					<button type="button" class="btn btn-default minus_button" disabled> \
+						<span class="glyphicon glyphicon-minus"></span> \
+					</button> \
+				</span> \
+				<input name="" class="form-control" type="text" placeholder="Poll Option" /> \
+			</div>');
+
+			if ($(this).siblings('div').children().length > 2) {
+				$(this).siblings('div').find('.minus_button').prop('disabled', false);
+			}
+			
+			$(this).siblings('div').children().last().find(".minus_button").on('click', function() {
+				if ($(this).parent().parent().siblings().length <= 2) {
+					// Disable buttons if there are only 2 options left
+					$(this).parent().parent().siblings('div').find('.minus_button').prop('disabled', true);
+				}
+
+				// Remove the just-removed option
+				$(this).parent().parent().remove();
+			});
+		});
+	});
 
 	$('#save_reagent').on('click', function() {
 		// try form validation
@@ -618,6 +678,24 @@ $(document).on('ready', function() {
 
 .disabled-hide {
 	color: gray;
+}
+
+[name="question_text"] {
+	height: 200px;
+	width: 100%;
+}
+
+.metrics {
+	padding-left:30px;
+	padding-right: 30px;
+}
+
+.question_type_dropdown {
+	height: 100%;
+}
+
+.options_div {
+	display: none;
 }
 
 </style>
@@ -808,6 +886,35 @@ $(document).on('ready', function() {
 	{% csrf_token %}
 
 	<input type="hidden" name="number_to_check" id="number_to_check"/>
+
+	<div id="hidden_question" style="display: none;" class="metrics col-sm-12" hidden>
+			<div class="row">
+				<div class="col-sm-10">
+					<textarea name="question_text"></textarea>
+				</div>
+				<div class="col-sm-2">
+					<button class="btn btn-default dropdown-toggle question_type_dropdown" type="button"  data-toggle="dropdown">
+						<span class="selected_type">Text</span> <span class="caret"></span>
+					</button>
+					<input type="hidden" name="question_type" value="Text"/>
+					<ul class="dropdown-menu question_types" aria-labelledby="question_type_dropdown" >
+						<li><a>Text</a></li>
+						<li><a>Numeric</a></li>
+						<li><a>Poll</a></li>
+					</ul>
+				</div>
+				<div class="col-sm-12 options_div">
+					<div class="question_list">
+					</div>
+					<button type="button" class="btn btn-default add_option_btn">Add Option</button>
+				</div>
+			</div>
+			<hr />
+		</div>
+		
+		<div id="question_holder">
+		</div>	
+		<button type="button" class="btn btn-default add_question_btn">Add Question</button>
 
 	<div class="col-sm-12">
 		<button type="submit" class="btn btn-primary btn-block" style="margin-bottom:15px;">Submit Protocol</button>
