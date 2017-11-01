@@ -519,6 +519,25 @@ $(document).on('ready', function() {
 
 	$('#download_file').on('click', function(e){
 		e.preventDefault();
+		$.ajax({
+			type: "GET",
+			url: "/getmetrics/{{ protocol.id }}",
+			processData: false,
+			contentType: 'application/json',
+			headers: { "X-CSRFToken": getCookie("csrftoken") },
+			success: function(data){
+				data = 'data:text/csv;charset=utf-8,' + data;
+				data = encodeURI(data);
+
+				link = document.createElement('a');
+				link.setAttribute('href', data);
+				link.setAttribute('download', "metrics_{{ protocol.id }}.csv");
+				link.click();
+			},
+			failure: function(){
+				alert("Error connecting to the server.");
+			}
+		});
 	});
 
 	$('#metric_form').on('submit', function(e) {
@@ -1037,7 +1056,7 @@ textarea[name=comment] {
 		<div class="row">
 			<div class="col-sm-12">
 				<div class="panel panel-primary" id="Metrics_pane">
-					<div class="panel-heading">Metrics</div>
+					<div class="panel-heading" style="background-color: #00274c;">Metrics</div>
 					<div class="panel-group">
 						<div class="row" style="padding:15px">
 							<div class="col-xs-4"></div>
