@@ -40,7 +40,6 @@ urlpatterns = [
 	url(r'^import/$', views.import_page, name="import_page"),
 	url(r'^importprotocol/$', views.submit_import, name="submit_import_page"),
 	url(r'^togglefavorite/(?P<protocol_id>[0-9]+)/$', views.toggle_protocol_favorite, name="toggle_favorite"),
-	url(r'^newmessage/(?P<recip_name>\w+)$', views.NewMessageView.as_view(), name="new_message"),
 	url(r'^inbox/$', views.inbox_view, name="inbox"),
 	url(r'^submitmetrics/$', views.submit_metric, name="submit_metric"),
 	url(r'^getmetrics/(?P<protocol_id>[0-9]+)', views.retrieve_data, name="get_metrics"),
