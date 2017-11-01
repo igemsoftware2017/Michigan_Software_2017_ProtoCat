@@ -317,7 +317,7 @@ class Message(models.Model):
 	read = models.BooleanField(default = False)
 
 	def __str__(self):
-		return self.sender.username + " to " + self.recipient.username
+		return self.sender.user.username + " to " + self.recipient.user.username
 
 class MetricQuestion(models.Model):
 	QUESTION_TYPES = (

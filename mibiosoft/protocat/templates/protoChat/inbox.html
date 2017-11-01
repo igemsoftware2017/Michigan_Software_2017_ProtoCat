@@ -1,74 +1,60 @@
-
-
-{% extends 'base.html' %}
-{% block content %}
-{% if user.is_authenticated %}
-
-<style>
-    .hr-short{
-        margin: 5px; 
-    }
-</style>
-
 <script>
+$(document).ready(function(){
+  
+  $("button.reply").on("click", function(event){
 
-    function checkIfOne(){
-        var checkboxes = document.querySelectorAll('input[type="checkbox"]');
-        var checkedOne = Array.prototype.slice.call(checkboxes).some(x => x.checked);
+    namenode = event.target.parentElement.getElementsByClassName('username_hidden')[0];
 
-        if (checkedOne){
-            document.getElementById('btnDel').style.visibility = "visible";
-        }else{
-            document.getElementById('btnDel').style.visibility = "hidden";
-        }
+    var form = `<form method="post">
+    <div class="form-group">
+    {% csrf_token %}
+    <b>Reply</b><br/>
+    <textarea name="message" rows="5" cols="40"></textarea>
+    <input type="hidden" value="${namenode.innerHTML}" name="recipient">
+    <button type="submit" class="btn btn-default">Submit</button>
+    </div></form>`;
 
-    }
-
+    console.log(event.target.parentElement.parentElement.parentElement);
+    var newForm = document.createElement("div");
+    newForm.innerHTML = form;
+    event.target.parentElement.parentElement.append(newForm);
+    event.target.parentElement.removeChild(event.target);
+  })
+})
 </script>
-
-<form method="post">
-{% csrf_token %}
-
-<button class="btn" type="button" id=newMessage onclick="location.href='{% url 'new_message' %}'">New Message</button>
-<button class="btn" id='btnDel' style="visibility: hidden">Delete</button>
-
-<hr class="hr-short">
-
-<table>
-{% for message in message_list %}
-
-    <tr>
-        <td valign="top">
-            <input type="checkbox" onchange="checkIfOne()" name='check{{message.id}}'>
-        </td>
-
-        <td style="padding-left:10px">
-            <div>
-                <p>from: {{message.sender}}
-                <br>
-                {{message.timeSent}}
-                <br>
-                <a href="{% url 'new_message' recip_name=message.sender.user.username %}">Reply</a>
-                </p>
-                <div style="border-left: 1px solid lightgrey; padding-left:10px">
-                    {{message.message | linebreaks}}
-                </div>
-            </div>        
-        </td>
-    </tr>
-    <tr>
-        <td colspan=2>
-            <hr class="hr-short">
-        </td>
-    </tr>
-    
-{% endfor %}
-</table>
-
-</form>
-
-{% else %}
-<p>Must be logged in</p>
-{% endif %}
-{% endblock %}
-
+<div style="width:75%; margin:auto; font-size:2rem; padding-top:15px;">
+  {% for message_chain in message_list %}
+  <ul class="list-group">
+    <li class="list-group-item">
+      {% if message_chain.0.sender != me %}
+      Messages with: <b>{{message_chain.0.sender}}</b>
+      {% else %}
+      Messages with: <b>{{message_chain.0.recipient}}</b>
+      {% endif %}
+      <ul>
+        {% for message in message_chain %}
+        <li>
+          <div style="border-bottom:1px solid #aaa;">
+            {% if message.recipient == me %}
+            <span>From: <b>{{ message.sender }}</b></span>
+            {% else %}
+            <span>To: <b>{{ message.recipient }}</b></span>
+            {% endif %}
+            <button class="reply btn btn-primary btn-sm" style="float:right;margin-left:10px;">Reply</button>
+            <div class="username_hidden" style="display: none;">
+              {% if message_chain.0.sender != me %}
+              {{message_chain.0.sender}}
+              {% else %}
+              {{message_chain.0.recipient}}
+              {% endif %}
+            </div>
+            <span style="float:right;font-size:70%;line-height:35px">{{ message.timeSent }}</span>
+          </div>
+          <p style="padding-left:25px">{{ message.message }}</p>
+        </li>
+        {% endfor %}
+      </ul>
+    </li>
+  </ul>
+  {% endfor %}
+</div>
