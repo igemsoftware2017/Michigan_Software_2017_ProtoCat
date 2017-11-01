@@ -118,6 +118,7 @@
 	for (var i = 0; i < protocols.length; ++i) {
 		if (protocols[i].parent_id == 'root') {
 			to_add.push(protocols[i]);
+			protocols.splice(i, 1)
 			break;
 		}
 	}
@@ -190,15 +191,14 @@
 	$(document).on('ready', function () {
 		var parent_id;
 		while (to_add.length != 0) {
-			temp = to_add.pop();
+			var temp = to_add.pop();
 			addToMe(temp);
-			parent_id = temp.id;
-			for (i = 0; i < protocols.length; ++i) {
-				if (parent_id == protocols[i].parent_id) {
-					to_add.push(protocols[i]);
-					protocols.splice(i, 1);
+			var parent_id = temp.id;
+			protocols.forEach(function(protocol){
+				if (parent_id === protocol.parent_id) {
+					to_add.push(protocol);
 				}
-			}
+			});
 		}
 
 		$("#root ul:empty").remove();
