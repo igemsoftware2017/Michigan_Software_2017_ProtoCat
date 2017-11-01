@@ -17,6 +17,8 @@ import bleach
 from protocat.converter.Converter import converter
 import json
 
+import csv
+from django.http import HttpResponse
 
 def index(request):
 	current_profile_info = request.user
@@ -1065,5 +1067,53 @@ def submit_metric(request):
 
 	return JsonResponse({'success': True})
 
-def retrieve_data(request):
-	pass
+def retrieve_data(request, protocol_id):
+	if request.user.is_anonymous():
+		return JsonResponse({'success': False, 'error': "Please log in to get metrics."})
+	else:
+		user = ProfileInfo.objects.get(user = request.user)
+
+	all_responses = []
+	# Get the questions and responses for the query
+	protocol = Protocol.objects.all().filter(id=protocol_id)[0]
+
+	reg_questions = MetricQuestion.objects.all().filter(protocol=protocol)
+	enum_questions = MetricEnumQuestion.objects.all().filter(protocol=protocol)
+
+	# Get responses for Regular questions
+	for ques in reg_questions:
+		responses = MetricResponse.objects.all().filter(question=ques)
+		for resp in responses:
+			resp_obj = {}
+			resp_obj['user'] = resp.user.id
+			resp_obj['question'] = ques.question_text
+			resp_obj['response'] = resp.response
+			resp_obj['timestamp'] = str(resp.timestamp)
+			all_responses.append(resp_obj)
+
+	# Get responses for enum questions
+	for ques in enum_questions:
+		responses = MetricEnumResponse.objects.all().filter(question=ques)
+		for resp in responses:
+			resp_obj = {}
+			resp_obj['user'] = resp.user.id
+			resp_obj['question'] = ques.question_text
+			resp_obj['response'] = resp.response.option_text
+			resp_obj['timestamp'] = str(resp.timestamp)
+			all_responses.append(resp_obj)
+
+	
+	http_response = HttpResponse(content_type='text/csv')
+	http_response['Content-Disposition'] = 'attachment;filename="metrics_{}.csv"'.format(protocol_id)
+
+	writer = csv.writer(http_response)
+	writer.writerow(['Question', 'Response', 'User', 'Timestamp(UTC'])
+	
+	for response in all_responses:
+		new_row = []
+		for key in response:
+			new_row.append(resp_obj[key])
+
+		writer.writerow(new_row)
+
+	return http_response
