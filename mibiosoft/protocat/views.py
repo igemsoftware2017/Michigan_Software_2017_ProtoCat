@@ -1135,13 +1135,14 @@ def retrieve_data(request, protocol_id):
 	http_response['Content-Disposition'] = 'attachment;filename="metrics_{}.csv"'.format(protocol_id)
 
 	writer = csv.writer(http_response)
-	writer.writerow(['Question', 'Response', 'User', 'Timestamp(UTC'])
+	writer.writerow(['Question', 'Response', 'User ID', 'Timestamp (UTC)'])
 	
 	for response in all_responses:
 		new_row = []
-		for key in response:
-			new_row.append(resp_obj[key])
-
+		new_row.append(response['question'])
+		new_row.append(response['response'])
+		new_row.append(response['user'])
+		new_row.append(response['timestamp'])
 		writer.writerow(new_row)
 
 	return http_response
