@@ -17,6 +17,7 @@ import bleach
 from protocat.converter.Converter import converter
 import json
 
+
 def index(request):
 	current_profile_info = request.user
 	if (not current_profile_info.is_anonymous()):
@@ -26,7 +27,7 @@ def index(request):
 
 	else:
 		current_profile_info = None
-		messages = [];
+		messages = []
 	context = {
 		'title': 'ProtoCat4.0',
 		'current_profile_info': current_profile_info,
@@ -50,7 +51,11 @@ def category_browser(request, current_parent):
 		current_profile_info = None
 	categories = Category.objects.filter(parent_category = current_parent)
 	protocols = Protocol.objects.filter(category = current_parent).filter(searchable = True)
-
+	memberships = Membership.objects.filter(user = current_profile_info)
+	user_orgs = []
+	for x in memberships:
+		if x.isAdmin:
+			user_orgs.append(x.organization)
 	text = 'ProtoCat'
 	context = {
 		'title': 'ProtoCat - Browse Categories',
@@ -58,8 +63,39 @@ def category_browser(request, current_parent):
 		'categories': categories,
 		'protocols': protocols,
 		'current_profile_info': current_profile_info,
+		'user_organizations': user_orgs,
 	}
 	return render(request, 'category_browser.html', context)
+
+def protocol_by_organization(request, organization_id):
+	current_profile_info = request.user
+	if (not current_profile_info.is_anonymous()):
+		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
+	else:
+		current_profile_info = None
+	org = Organization.objects.get(id = organization_id)
+	protocols = Organization_Protocol.objects.filter(organization = org)
+	isAdmin = None
+	try:
+		if Membership.objects.get(user = current_profile_info, organization = org).isAdmin:
+			isAdmin = True
+	except:
+		print("no valid user or organization")
+	result_pro = []
+	for protocol in protocols:
+		result_pro.append(Protocol.objects.get(id = protocol.protocol.id))
+	text = 'ProtoCat'
+	context = {
+		'title': 'ProtoCat - Browse Categories by Organization',
+		'parent_category': None,
+		'categories': None,
+		'protocols': result_pro,
+		'current_profile_info': current_profile_info,
+		'isAdmin': isAdmin,
+		'org': org,
+	}
+	return render(request, 'protocol_by_organization.html', context)
+
 
 def protocol(request, protocol_id):
 	current_profile_info = request.user
@@ -89,6 +125,11 @@ def protocol(request, protocol_id):
 		rating = ProtocolRating.objects.get(person = current_profile_info, protocol = protocol)
 	except:
 		rating = None
+	memberships = Membership.objects.filter(user = current_profile_info)
+	user_orgs = []
+	for x in memberships:
+		if x.isAdmin:
+			user_orgs.append(x.organization)
 
 	if (current_profile_info == None):
 		is_favorite = None
@@ -105,6 +146,7 @@ def protocol(request, protocol_id):
 		'aggregated_reagents': aggregated_reagents,
 		'user_rating': rating,
 		'current_profile_info': current_profile_info,
+		'user_organizations': user_orgs,
 		'is_favorite': is_favorite
 	}
 
@@ -730,11 +772,97 @@ def github_post(request):
 	gh.save()
 	return HttpResponseRedirect('/')
 
+def protocol_history(request, protocol_id):
+	current_profile_info = request.user
+	if (not current_profile_info.is_anonymous()):
+		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
+	else:
+		current_profile_info = None
+	current_protocol = Protocol.objects.all().get(id = protocol_id)
+	protocols = Protocol.objects.all().filter(first_revision = current_protocol.first_revision)
+	context = {
+		'title': 'ProtoCat',
+		'current_profile_info': current_profile_info,
+		'protocols': protocols,
+		'original_protocol': current_protocol
+	}
+	return render(request, "history.html", context)
+
+def organization_create(request):
+	#create a new organization
+	return HttpResponseRedirect('/')
+
+def organization(request):
+	current_profile_info = request.user
+	if (not current_profile_info.is_anonymous()):
+		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
+		try:
+			memberships = Membership.objects.filter(user = current_profile_info)
+		except:
+			return HttpResponse("No active organization")
+		organizations = []
+		for x in memberships:
+			organizations.append(x.organization)
+		context = {
+			'title': 'ProtoCat',
+			'current_profile_info': current_profile_info,
+			'organizations': organizations,
+		}
+		return render(request, 'organization.html', context)
+	else:
+		current_profile_info = None
+		context = {
+			'title': 'ProtoCat',
+			'current_profile_info': current_profile_info,
+		}
+		return render(request, 'index.html', context)
+
+def add_organization_protocol(request):
+	current_profile_info = request.user
+	if (not current_profile_info.is_anonymous()):
+		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
+	else:
+		current_profile_info = None
+	try:
+		org_id = request.POST['organization_id']
+		pro_id = request.POST['protocol_id']
+		org = Organization.objects.get(id = org_id)
+		pro = Protocol.objects.get(id=pro_id)
+		if Organization_Protocol.objects.filter(protocol = pro, organization = org).count()==0:
+			org_pro = Organization_Protocol(protocol = pro, organization = org)
+			org_pro.save()
+		else:
+			print("Already exist")
+		return protocol_by_organization(request, org_id)
+	except:
+		print("error")
+	return category_default(request)
+
+def delete_organization_protocol(request):
+	current_profile_info = request.user
+	if (not current_profile_info.is_anonymous()):
+		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
+	else:
+		current_profile_info = None
+
+	try:
+		org_id = request.POST['organization_id']
+		pro_id = request.POST['protocol_id']
+		org = Organization.objects.get(id = org_id)
+		pro = Protocol.objects.get(id=pro_id)
+		if Organization_Protocol.objects.filter(protocol = pro, organization = org)==None:
+			print("Entry does not exist")
+		else:
+			Organization_Protocol.objects.filter(protocol = pro, organization = org).delete()
+		return protocol_by_organization(request, org_id)
+	except:
+		print("error")
+		return category_default(request)
+
 def import_page(request):
 	current_profile_info = request.user
 	if (not current_profile_info.is_anonymous()):
 		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
-		#print(current_profile_info)
 	else:
 		current_profile_info = None
 
@@ -744,7 +872,6 @@ def import_page(request):
 		'title': 'ProtoCat - Upload Protocol',
 		'current_profile_info': current_profile_info,
 	}
-	#print(len(connection.queries))
 	if (current_profile_info == None):
 		return HttpResponseRedirect('/')
 	else:
@@ -756,13 +883,12 @@ def submit_import(request):
 
 	pio_json = json.loads(pio_data)
 	cat_json = conv.convert_io_to_cat(pio_json)
-	
+
 	current_profile_info = request.user
 	if (not current_profile_info.is_anonymous()):
 		current_profile_info = ProfileInfo.objects.get(user = current_profile_info)
 	else:
 		current_profile_info = None
-	
 	try:
 		# get main data for the Protocol model
 		protocol_title = cat_json['title']
@@ -770,7 +896,7 @@ def submit_import(request):
 		protocol_changes = cat_json['change-log']
 
 		protocol = Protocol(change_log = protocol_changes, title = protocol_title, description = protocol_desc, author = current_profile_info)
-		
+
 		protocol_cat = ""
 		try:
 			# get category and associate it with protocol
@@ -784,13 +910,13 @@ def submit_import(request):
 		previous_protocol_id = -1
 
 		protocol.save()
-		
+
 		for step in cat_json['protocol_steps']:
 			ps = ProtocolStep(title=step['title'], action = step['action'], warning = step['warning'],\
 				step_number = step['step_number'], time = step['time'], protocol = protocol)
 			ps.save()
 		protocol.num_steps = len(cat_json['protocol_steps'])
-		
+
 		try:
 			protocol.materials = bleach.clean(cat_json['materials'])
 		except:
@@ -807,8 +933,7 @@ def submit_import(request):
 		'title': 'ProtoCat - Submit Upload',
 		'current_profile_info': current_profile_info,
 	}
-	return HttpResponseRedirect('/')
-		
+	return HttpResponseRedirect('/protocol/{}'.format(protocol.id))
 def toggle_protocol_favorite(request, protocol_id):
 	if (request.user.profileinfo.favorites.filter(id = protocol_id)):
 		request.user.profileinfo.favorites.remove(protocol_id)
@@ -816,40 +941,6 @@ def toggle_protocol_favorite(request, protocol_id):
 	else:
 		request.user.profileinfo.favorites.add(protocol_id)
 		return JsonResponse({'success': False})
-
-class NewMessageView (FormView):
-	pass
-
-# class NewMessageView (FormView):
-# 	template_name = 'protoChat/new_message.html'
-# 	form_class = forms.NewMessageForm
-	
-# 	def get_context_data(self, **kwargs):
-# 		context = super(NewMessageView, self).get_context_data(**kwargs)
-# 		context['title'] = 'New Message'
-# 		if (self.request.user.is_anonymous()):
-# 			context['current_profile_info'] = None
-# 		else:
-# 			context['current_profile_info'] = self.request.user.profileinfo
-# 		return context
-
-# 	def get_initial(self):
-# 		initial = super(NewMessageView, self).get_initial()
-# 		if 'recip_name' in self.kwargs:
-# 			initial['recipient'] = self.kwargs['recip_name']
-# 		return initial
-
-# 	def form_valid(self, form):
-# 		if self.request.user.is_anonymous():
-# 			return redirect('root_index')
-
-# 		sender = ProfileInfo.objects.get(user = self.request.user)
-# 		recip_user = User.objects.get(username = form.cleaned_data.get('recipient'))
-# 		recip = ProfileInfo.objects.get(user = recip_user)
-# 		message = form.cleaned_data.get('message')
-
-# 		models.Message.objects.create(sender=sender, recipient=recip, message=message)
-# 		return redirect('root_index')
 
 def inbox_view(request):
 
@@ -950,4 +1041,3 @@ def get_protocols_from_category(request, category_id):
 		'protocols': protocols
 	}
 	return render(request, "category_browser_protocols.html", context)
-

@@ -62,6 +62,8 @@ class Reagent(models.Model):
 	def get_website(self):
 		return self.website
 
+
+
 # has links to all the important parts of the protocol
 class Protocol(models.Model):
 	title = models.TextField()
@@ -129,6 +131,51 @@ class Protocol(models.Model):
 			total = total + rating.score
 		count = all_ratings.count()
 		return float(total) / count
+
+
+# favourite protocol
+class Favourite_Protocol(models.Model):
+	user = models.ForeignKey(ProfileInfo)
+	fav_protocol = models.ForeignKey(Protocol)
+	#add note for Favourite_Protocol
+	def __str__(self):
+		return str(self.user)
+	def get_user_protocol(self):
+		return self.fav_protocol
+	def get_protocol_by_user(self):
+		return self.objects.filter(user = self.user)
+	def get_user_by_protocol(self):
+		return self.objects.filter(fav_protocol = self.fav_protocol)
+
+#Add Group
+#Each User can be in multiple groups
+class Organization(models.Model):
+    #TODO:orginaziation many to many field
+    name = models.TextField()
+    description = models.TextField()
+    organization_image = models.ImageField(blank = True, null = True, upload_to = "media")
+    def __str__(self):
+        return str(self.name)
+    def get_members(self):
+        users = Membership.objects.filter(organization = self)
+        resultArray = []
+        for x in users:
+            resultArray.append(str(x.user))
+        return resultArray
+
+class Membership(models.Model):
+    organization = models.ForeignKey(Organization)
+    user = models.ForeignKey(ProfileInfo)
+    isAdmin = models.BooleanField()
+    def __str__(self):
+        return str(self.user)
+
+class Organization_Protocol(models.Model):
+    organization = models.ForeignKey(Organization)
+    protocol = models.ForeignKey(Protocol)
+    def __str__(self):
+        return str(self.organization)
+
 
 # the data for each protocol step
 class ProtocolStep(models.Model):

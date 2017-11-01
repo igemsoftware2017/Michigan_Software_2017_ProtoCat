@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row">
+	{% for protocol in protocols %}
+	<div>
+		{% include 'repeated_parts/col_sm_6_protocol_info.html' %}
+	</div>
+	{% endfor %}
+</div>
+{% endblock %}
