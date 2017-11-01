@@ -1,4 +1,4 @@
-# ProtoCat - Protocol Database Software by Michigan Software 2016
+# ProtoCat - Protocol Database Software by Michigan Software 2017
 
 If you would like to avoid the hassle of installing your own version of Protocat, simply go to [protocat.org](http://protocat.org) for our version on the web.
 
