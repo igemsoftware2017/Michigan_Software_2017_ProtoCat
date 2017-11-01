@@ -964,6 +964,9 @@ def toggle_protocol_favorite(request, protocol_id):
 		return JsonResponse({'success': False})
 
 def inbox_view(request):
+	print ('here1')
+	error_code = request.GET.get('ec', 'ne')
+	print(error_code)
 
 	if request.user.is_anonymous():
 		return redirect('root_index')
@@ -990,12 +993,20 @@ def inbox_view(request):
 				messageObj.save()
 				return redirect('/inbox/')
 			except:
-				error = "User does not exist"
-				defaultTab = 'new'
+				return redirect('/inbox/?ec=nouser')
 		else:
-			error = "Message cannot be empty"
-			defaultTab = 'new'
+			return redirect('/inbox/?ec=nomsg')
 
+
+	if error_code == 'nouser':
+		error = "User does not exist"
+		defaultTab = 'new'
+	if error_code == 'nomsg':
+		error = "Message cannot be empty"
+		defaultTab = 'new'
+	if error_code == 'nousernomsg':
+		error = "User does not exist\nMessage cannot be empty"
+		defaultTab = 'new'
 
 
 	messages = models.Message.objects.filter(Q(recipient=user) | Q(sender=user)).filter(deleted=False).order_by('-timeSent')
