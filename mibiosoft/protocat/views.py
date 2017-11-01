@@ -17,6 +17,8 @@ import bleach
 from protocat.converter.Converter import converter
 import json
 
+import csv
+from django.http import HttpResponse
 
 def index(request):
 	current_profile_info = request.user
@@ -136,6 +138,23 @@ def protocol(request, protocol_id):
 	else:
 		is_favorite = current_profile_info.favorites.filter(id = protocol.id).exists()
 
+	# Get the questions associated with the Protocol
+	questions = MetricQuestion.objects.filter(protocol = protocol)
+	enum_qs = MetricEnumQuestion.objects.filter(protocol = protocol)
+	enum_questions = []
+	for question in enum_qs:
+		enum_ = {}
+		enum_['id'] = question.id
+		enum_['question_text'] = question.question_text
+		enum_['options'] = []
+		opts = MetricEnumOption.objects.filter(enum_question = question)
+		for option in opts:
+			val = {}
+			val['text'] = option.option_text
+			val['id'] = option.id
+			enum_['options'].append(val)
+		enum_questions.append(enum_)
+
 	context = {
 		'title': protocol.title,
 		'protocol': protocol,
@@ -147,7 +166,9 @@ def protocol(request, protocol_id):
 		'user_rating': rating,
 		'current_profile_info': current_profile_info,
 		'user_organizations': user_orgs,
-		'is_favorite': is_favorite
+		'is_favorite': is_favorite,
+		'questions': questions,
+		'enum_questions': enum_questions,
 	}
 
 	return render(request, 'protocol.html', context)
@@ -1013,3 +1034,86 @@ def get_protocols_from_category(request, category_id):
 		'protocols': protocols
 	}
 	return render(request, "category_browser_protocols.html", context)
+
+
+def submit_metric(request):
+	if request.user.is_anonymous():
+		return JsonResponse({'success': False, 'error': "Please log in to submit metrics."})
+	else:
+		user = ProfileInfo.objects.get(user = request.user)
+
+	user = ProfileInfo.objects.get(user = request.user)
+	data = json.loads(request.body)
+	enum_metrics = data['enum']
+	ques_metrics = data['ques']
+	# Add responses for Normal Questions
+	for metric_id in ques_metrics:
+		question = MetricQuestion.objects.all().filter(id=metric_id)[0]
+		resp = MetricResponse()
+		resp.question = question
+		resp.response = ques_metrics[metric_id]
+		resp.user = user
+		resp.save()
+
+	# Add responses for Enum Questions
+	for metric_id in enum_metrics:
+		question = MetricEnumQuestion.objects.all().filter(id=metric_id)[0]
+		response = MetricEnumOption.objects.all().filter(id=enum_metrics[metric_id])[0]
+		resp = MetricEnumResponse()
+		resp.question = question
+		resp.response = response
+		resp.user = user
+		resp.save()
+
+	return JsonResponse({'success': True})
+
+def retrieve_data(request, protocol_id):
+	if request.user.is_anonymous():
+		return JsonResponse({'success': False, 'error': "Please log in to get metrics."})
+	else:
+		user = ProfileInfo.objects.get(user = request.user)
+
+	all_responses = []
+	# Get the questions and responses for the query
+	protocol = Protocol.objects.all().filter(id=protocol_id)[0]
+
+	reg_questions = MetricQuestion.objects.all().filter(protocol=protocol)
+	enum_questions = MetricEnumQuestion.objects.all().filter(protocol=protocol)
+
+	# Get responses for Regular questions
+	for ques in reg_questions:
+		responses = MetricResponse.objects.all().filter(question=ques)
+		for resp in responses:
+			resp_obj = {}
+			resp_obj['user'] = resp.user.id
+			resp_obj['question'] = ques.question_text
+			resp_obj['response'] = resp.response
+			resp_obj['timestamp'] = str(resp.timestamp)
+			all_responses.append(resp_obj)
+
+	# Get responses for enum questions
+	for ques in enum_questions:
+		responses = MetricEnumResponse.objects.all().filter(question=ques)
+		for resp in responses:
+			resp_obj = {}
+			resp_obj['user'] = resp.user.id
+			resp_obj['question'] = ques.question_text
+			resp_obj['response'] = resp.response.option_text
+			resp_obj['timestamp'] = str(resp.timestamp)
+			all_responses.append(resp_obj)
+
+	
+	http_response = HttpResponse(content_type='text/csv')
+	http_response['Content-Disposition'] = 'attachment;filename="metrics_{}.csv"'.format(protocol_id)
+
+	writer = csv.writer(http_response)
+	writer.writerow(['Question', 'Response', 'User', 'Timestamp(UTC'])
+	
+	for response in all_responses:
+		new_row = []
+		for key in response:
+			new_row.append(resp_obj[key])
+
+		writer.writerow(new_row)
+
+	return http_response

@@ -318,3 +318,34 @@ class Message(models.Model):
 
 	def __str__(self):
 		return self.sender.username + " to " + self.recipient.username
+
+class MetricQuestion(models.Model):
+	QUESTION_TYPES = (
+		('N', 'Number'),
+		('T', 'Text')
+	)
+
+	protocol = models.ForeignKey(Protocol, related_name="metric_questions")
+	question_text = models.TextField()
+	question_type = models.CharField(max_length = 1, choices = QUESTION_TYPES)
+
+class MetricResponse(models.Model):
+	question = models.ForeignKey(MetricQuestion, related_name="responses")
+	timestamp = models.DateTimeField(null = True, auto_now_add = True)
+	response = models.TextField()
+	user = models.ForeignKey(ProfileInfo)
+
+class MetricEnumQuestion(models.Model):
+	protocol = models.ForeignKey(Protocol, related_name="metric_enum_questions")
+	question_text = models.TextField()
+
+class MetricEnumOption(models.Model):
+	enum_question = models.ForeignKey(MetricEnumQuestion, related_name="options")
+	option_text = models.TextField()
+
+class MetricEnumResponse(models.Model):
+	question = models.ForeignKey(MetricEnumQuestion, related_name="responses")	
+	response = models.ForeignKey(MetricEnumOption)
+	timestamp = models.DateTimeField(null = True, auto_now_add = True)
+	user = models.ForeignKey(ProfileInfo)
+

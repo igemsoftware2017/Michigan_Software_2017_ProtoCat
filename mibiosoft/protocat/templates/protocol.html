@@ -516,6 +516,89 @@ $(document).on('ready', function() {
 			offset: $('.navbar-default').height()
 		});
 	});
+
+	$('#download_file').on('click', function(e){
+		e.preventDefault();
+		$.ajax({
+			type: "GET",
+			url: "/getmetrics/{{ protocol.id }}",
+			processData: false,
+			contentType: 'application/json',
+			headers: { "X-CSRFToken": getCookie("csrftoken") },
+			success: function(data){
+				data = 'data:text/csv;charset=utf-8,' + data;
+				data = encodeURI(data);
+
+				link = document.createElement('a');
+				link.setAttribute('href', data);
+				link.setAttribute('download', "metrics_{{ protocol.id }}.csv");
+				link.click();
+			},
+			failure: function(){
+				alert("Error connecting to the server.");
+			}
+		});
+	});
+
+	$('#metric_form').on('submit', function(e) {
+		e.preventDefault();
+		var submit_data = {}
+		submit_data['enum'] = {}
+		submit_data['ques'] = {}
+
+		var metrics = $('#Metrics_pane').children('div.panel-group');
+		//console.log(metrics.html());
+		metrics.children('div.question').each(function(){
+			var id;
+			var val;
+			var enum_question = false;
+			//Try to get Text field
+			id = $(this).children('div').children('div').children('textarea').attr('id');
+			val = $(this).children('div').children('div').children('textarea').val();
+			
+			if (id === undefined){
+				//Try to get numeric field
+				id = $(this).children('div').children('div').children('input').attr('id');
+				val = $(this).children('div').children('div').children('input').val();
+			}
+			if (id === undefined){
+				//try to get the enum options
+				id = $(this).children('div').attr('id');
+				val = $(this).children('div').find('input:checked').val();
+				enum_question = true;
+			}
+
+			if(val === "" || val === undefined){
+				return;
+			}
+			if(enum_question === true){
+				submit_data['enum'][id] = val
+			} else {
+				submit_data['ques'][id] = val
+			}
+		});
+		
+		console.log(submit_data)
+		$.ajax({
+			type: "POST",
+			data: JSON.stringify(submit_data),
+			url: "/submitmetrics/",
+			processData: false,
+			contentType: 'application/json',
+			headers: { "X-CSRFToken": getCookie("csrftoken") },
+			success: function(data){
+				if (data.success) {
+					alert("Your submission has been recieved")
+				}
+				else {
+					alert(data.error);
+				}
+			},
+			failure: function(){
+				alert("Error connecting to the server.");
+			}
+		});
+	});
 });
 
 function NavbarActivator(moved_item) {
@@ -969,6 +1052,59 @@ textarea[name=comment] {
 		</div>
 	</div>
 
+	{% if questions|length > 0 or enum_questions|length > 0 %}
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="panel panel-primary" id="Metrics_pane">
+					<div class="panel-heading" style="background-color: #00274c;">Metrics</div>
+					<div class="panel-group">
+						<div class="row" style="padding:15px">
+							<div class="col-xs-4"></div>
+							<div class="col-xs-4">
+									<input id="download_file" type="submit" value="Download Metrics" class="form-control btn btn-primary btn-block"/>
+							</div>
+						</div>
+							{% for question in questions %}
+						<div class="row panel-heading no-side-margins question">
+							<h3 class="panel-title col-xs-6" style="padding-left:0px;">{{ question.question_text }}</h3>
+							<div class="col-xs-8" style="margin-top:5px;">
+								{% if question.question_type == 'Text' %}
+									<div class="form-group">
+										<textarea id="{{ question.id }}" class="form-control" rows="5"></textarea>
+									</div>
+								{% else %}
+									<div class="form-group">
+										<input id="{{ question.id }}" type="number" class="form-control">
+									</div>
+								{% endif %}
+							</div>
+						</div>
+						{% endfor %}
+						{% for e_question in enum_questions %}
+						<div class="row panel-heading no-side-margins question">
+							<h3 class="panel-title col-xs-6" style="padding-left:0px;">{{ e_question.question_text }}</h3>
+							<div id="{{ e_question.id }}" class="col-xs-8" style="margin-top:5px;">
+								{% for option in e_question.options %}
+									<div class="radio">
+										<label><input type="radio" name="{{ e_question.id }}" value="{{ option.id }}">{{ option.text }}</label><br />
+									</div>
+								{% endfor %}
+							</div>
+						</div>
+						{% endfor %}
+						<div class="row" style="padding:10px;">
+							<div class="col-sm-12" id="metric-submit-div" >
+									<form id="metric_form" method="POST" action="/submitmetrics/">
+										<input type="submit" class="form-control btn btn-primary btn-block" value="Submit Response">
+										{% csrf_token %}			
+									</form>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	{% endif %}
 
 	<div class="row">
 		<div id="comments" class="col-sm-12 waypoint">
