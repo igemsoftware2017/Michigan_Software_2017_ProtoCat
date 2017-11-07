@@ -785,25 +785,31 @@ $(document).on('ready', function() {
 
 	<div id="hidden_question" style="display: none;" class="metrics col-sm-12" hidden>
 		<div class="row">
-			<div class="col-sm-10">
-				<textarea name="question_text"></textarea>
-			</div>
-			<div class="col-sm-2">
-				<button class="btn btn-default dropdown-toggle question_type_dropdown" type="button"  data-toggle="dropdown">
-					<span class="selected_type">Text</span> <span class="caret"></span>
-				</button>
-				<input type="hidden" name="question_type" value="Text"/>
-				<ul class="dropdown-menu question_types" aria-labelledby="question_type_dropdown" >
-					<li><a>Text</a></li>
-					<li><a>Numeric</a></li>
-					<li><a>Poll</a></li>
-				</ul>
-			</div>
-			<div class="col-sm-12 options_div">
-				<div class="question_list">
+		<div class="panel panel-primary">
+			<div class="panel-body">
+				<div class="col-sm-10">
+					<label class="control-label"> Question Text </label>
+
+					<textarea name="question_text"></textarea>
 				</div>
-				<button type="button" class="btn btn-default add_option_btn">Add Option</button>
-			</div>
+				<div class="col-sm-2">
+					<button class="btn btn-default dropdown-toggle question_type_dropdown" type="button"  data-toggle="dropdown">
+						<span class="selected_type">Text</span> <span class="caret"></span>
+					</button>
+					<input type="hidden" name="question_type" value="Text"/>
+					<ul class="dropdown-menu question_types" aria-labelledby="question_type_dropdown" >
+						<li><a>Text</a></li>
+						<li><a>Numeric</a></li>
+						<li><a>Poll</a></li>
+					</ul>
+				</div>
+				<div class="col-sm-12 options_div">
+					<div class="question_list">
+					</div>
+					<button type="button" class="btn btn-default add_option_btn">Add Option</button>
+				</div>
+				</div>
+				</div>
 		</div>
 		<hr />
 	</div>
